@@ -19,8 +19,8 @@ NULL
 #' stored in the result as metadata. They can be accessesed as an IRanges
 #' object by using \code{metadata()[["tRNA_structures"]]}.
 #'
-#' @param gr a GRanges object created by \code{import.tRNAscanAsGRanges} or
-#' GRanges with equivalent information.
+#' @param gr a GRanges object with tRNA information. It has to pass the
+#' \code{istRNAGRanges} function.
 #' @param structure optional parameter for returning just partial sequences.
 #' The following values are accepted:
 #' \code{anticodonloop}, \code{Dloop}, \code{Tloop}, \code{acceptorStem},
@@ -118,22 +118,26 @@ setMethod(
 .getAcceptorStem <- function(x, strList){
   # acceptor stem must be 7 nt long
   # remove discriminator
-  browser()
   end <- as.integer(ifelse(x$tRNA_CCA.end,
                            .get_tRNA_length(x) - 3,
                            .get_tRNA_length(x))) - 1
-  prime3 <- mapply(function(z,zz){z[(zz-8):(zz),]},
-                   strList,
-                   end,
-                   SIMPLIFY = FALSE)
+  prime3 <- mapply(
+    function(z,zz){
+      z[(zz-8):(zz),]
+    },
+    strList,
+    end,
+    SIMPLIFY = FALSE)
   last5primePaired <- lapply(prime3,
                              function(z){
                                z[z$reverse < 10 & z$reverse != 0,]$reverse[1]
                              })
-  first3primePaired <- mapply(function(z,zz){z[z$reverse == zz,]$forward},
-                              prime3,
-                              last5primePaired,
-                              SIMPLIFY = FALSE)
+  first3primePaired <- mapply(
+    function(z,zz){
+      z[z$reverse == zz,]$forward},
+    prime3,
+    last5primePaired,
+    SIMPLIFY = FALSE)
   coord <- list("prime5" = list(start = rep(1,length(x)),
                                 # one position more is attributed to the
                                 # acceptor stem

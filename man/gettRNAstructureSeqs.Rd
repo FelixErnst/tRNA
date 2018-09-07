@@ -22,8 +22,8 @@ gettRNAstructureSeqs(gr, structure = "", joinCompletely = FALSE,
 \S4method{gettRNAstructureGRanges}{GRanges}(gr, structure = "")
 }
 \arguments{
-\item{gr}{a GRanges object created by \code{import.tRNAscanAsGRanges} or
-GRanges with equivalent information.}
+\item{gr}{a GRanges object with tRNA information. It has to pass the
+\code{istRNAGRanges} function.}
 
 \item{structure}{optional parameter for returning just partial sequences.
 The following values are accepted:

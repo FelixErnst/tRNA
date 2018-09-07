@@ -5,11 +5,11 @@ NULL
 # tRNA
 ################################################################################
 
-#' @rdname checktRNAGRanges
+#' @rdname istRNAGRanges
 #' @export
 setGeneric (
-  name = "checktRNAGRanges",
-  def = function(gr) standardGeneric("checktRNAGRanges")
+  name = "istRNAGRanges",
+  def = function(gr) standardGeneric("istRNAGRanges")
 )
 
 # Structures and Sequences -----------------------------------------------------

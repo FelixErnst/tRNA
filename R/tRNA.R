@@ -23,7 +23,8 @@ TRNA_FEATURES <- c(
   "tRNA_type",
   "tRNA_anticodon",
   "tRNA_seq",
-  "tRNA_str"
+  "tRNA_str",
+  "tRNA_CCA.end"
 )
 
 TRNA_STRUCTURES <- c(

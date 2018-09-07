@@ -1,13 +1,13 @@
 #' @include tRNA.R
 NULL
 
-#' @name checktRNAGRanges
-#' @aliases checktRNAGRanges
+#' @name istRNAGRanges
+#' @aliases istRNAGRanges
 #'
 #' @title tRNA compatibility check
 #'
 #' @description
-#' \code{checktRNAGRanges} checks whether a GRanges object contains the
+#' \code{istRNAGRanges} checks whether a GRanges object contains the
 #' information expected for a tRNA result.
 #'
 #' @param gr the \code{GRanges} object to test
@@ -16,17 +16,17 @@ NULL
 #'
 #' @examples
 #' data("gr", package = "tRNA", envir = environment())
-#' checktRNAGRanges(gr)
+#' istRNAGRanges(gr)
 NULL
-#' @rdname checktRNAGRanges
+#' @rdname istRNAGRanges
 #' @export
 setMethod(
-  f = "checktRNAGRanges",
+  f = "istRNAGRanges",
   signature = signature(gr = "GRanges"),
   definition = function(gr) .check_trna_granges(gr,
                                                 TRNA_FEATURES))
 
-# checks whether a GRanges object is trnascan compatible
+# checks whether a GRanges object is tRNA compatible
 .check_trna_granges <- function(gr,features){
   if(class(gr) != "GRanges"){
     stop("Input is not a GRanges object.",

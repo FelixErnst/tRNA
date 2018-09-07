@@ -14,7 +14,7 @@ biocViews:
     Software,
     Visualization
 Depends:
-    R (>= 3.5.1),
+    R (>= 3.5),
     GenomicRanges
 Imports:
     stringr,

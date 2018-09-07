@@ -1,4 +1,4 @@
-library(tRNAscanImport)
+library(tRNA)
 
 context("dot bracket annotations")
 test_that("dot bracket annotations:",{

@@ -23,9 +23,10 @@ NULL
 #' \code{istRNAGRanges} function.
 #' @param structure optional parameter for returning just partial sequences.
 #' The following values are accepted:
-#' \code{anticodonloop}, \code{Dloop}, \code{Tloop}, \code{acceptorStem},
-#' \code{anticodonStem}, \code{DStem}, \code{TStem}, \code{variableLoop},
-#' \code{discriminator}. (default: \code{structure = ""})
+#' \code{anticodonStem}, \code{Dprime5}, \code{DStem}, \code{Dloop},
+#' \code{Dprime3}, \code{acceptorStem}, \code{anticodonloop},
+#' \code{variableLoop}, \code{TStem}, \code{Tloop}, \code{discriminator}.
+#' (default: \code{structure = ""})
 #' @param joinCompletely Should the sequence parts, which are to be returned, be
 #' joined into one sequence? (default: \code{joinCompletely = FALSE}))
 #' Setting this to TRUE excludes \code{joinFeatures} be set to TRUE as well. In
@@ -48,22 +49,11 @@ NULL
 #' @export
 #' @examples
 #' data("gr", package = "tRNA", envir = environment())
-#' gettRNAstructureGRanges(gr, structure = "anticodonloop")
-#' gettRNAstructureSeqs(gr, structure = "anticodonloop")
+#' gettRNAstructureGRanges(gr, structure = "anticodonLoop")
+#' gettRNAstructureSeqs(gr, structure = "anticodonLoop")
 #' gettRNABasePairing(gr[1:10])
 #' getBasePairing(gr[1:10]$tRNA_str)
 NULL
-
-tRNAStructureFunctionList <- list(
-  anticodonloop = ".getAnticodonloop",
-  Dloop = ".getDloop",
-  Tloop = ".getTloop",
-  acceptorStem = ".getAcceptorStem",
-  anticodonStem = ".getAnticodonStem",
-  DStem = ".getDstem",
-  TStem = ".getTstem",
-  variableloop = ".getVariableLoop",
-  discriminator = ".getDiscriminator")
 
 #' @rdname gettRNAstructureSeqs
 #'
@@ -114,7 +104,9 @@ setMethod(
          gr)
 }
 
-####################################################
+################################################################################
+################################################################################
+################################################################################
 .getAcceptorStem <- function(x, strList){
   # acceptor stem must be 7 nt long
   # remove discriminator
@@ -139,23 +131,38 @@ setMethod(
     last5primePaired,
     SIMPLIFY = FALSE)
   coord <- list("prime5" = list(start = rep(1,length(x)),
-                                # one position more is attributed to the
-                                # acceptor stem
-                                end = unname(unlist(last5primePaired) + 1)),
+                                end = unname(unlist(last5primePaired))),
                 "prime3" = list(start = unname(unlist(first3primePaired)),
                                 # discriminator base is remove
                                 end = end))
   return(coord)
 }
-####################################################
-.getDstem <- function(x, strList){
+
+################################################################################
+################################################################################
+################################################################################
+.getDprime5 <- function(x, strList){
   acceptor <- .getAcceptorStem(x, strList)
+  start <- acceptor$prime5$end + 1
+  end <- acceptor$prime5$end - 1 +
+    stringr::str_locate(substr(x$tRNA_str,
+                               acceptor$prime5$end + 1,
+                               .get_tRNA_length(x)),
+                        ">")[,"start"]
+  coord <- list(start = unname(start),
+                end = unname(end))
+  return(coord)
+}
+
+################################################################################
+.getDstem <- function(x, strList){
+  Dprime5 <- .getDprime5(x, strList)
   # DStem starts for this with the last unpaired residue. However, the
   # difference towards the acceptor stem is also group towards the DStem
-  start5acceptor <- acceptor$prime5$end + 1
-  start5 <- acceptor$prime5$end - 1 +
+  start5acceptor <- Dprime5$end + 1
+  start5 <- start5acceptor - 1 +
     stringr::str_locate(substr(x$tRNA_str,
-                               acceptor$prime5$end,
+                               Dprime5$end,
                                .get_tRNA_length(x)),
                         "\\.>")[,"start"]
   # D loop is expected to at least three nt long
@@ -170,13 +177,22 @@ setMethod(
                                .get_tRNA_length(x)),
                         "<")[,"start"]
   # if the Dstem is not 4 nt long, but the D loop is longer or equal than 6
-  f <- (end5 - start5) < 4 & (start3 - end5) > 6
+  f <- (end5 - start5 + 1) < 4 & (start3 - end5) > 6
   if(any(f)){
     end5[f] <- end5[f] + 1
     start3[f] <- start3[f] - 1
   }
   #
   end3 <- start3 + (end5 - start5)
+  # if the Dstem is has more than one unpaired residue following
+  f <- !is.na(stringr::str_locate(substr(x$tRNA_str,
+                                  end3,
+                                  end3 + 2),
+                           "\\.\\.")[,"start"])
+  if(any(f)){
+    end3[f] <- end3[f] + 1
+  }
+  #
   coord <- list("prime5" = list(start = unname(start5acceptor),
                                 end = unname(end5)),
                 "prime3" = list(start = unname(start3),
@@ -191,7 +207,97 @@ setMethod(
   return(coord)
 }
 
-####################################################
+################################################################################
+.getDloop <- function(x, strList){
+  dstem <- .getDstem(x, strList)
+  coord <- list(start = (dstem$prime5$end + 1),
+                end = (dstem$prime3$start - 1))
+  if(any(is.na(dstem$prime5$start))) {
+    f <- which(is.na(dstem$prime5$start))
+    Dprime5 <- .getDprime5(x, strList)
+    start <- Dprime5$end[f]
+    # assumes minimum length of D of 3 nt
+    end <- start + 1 +
+      stringr::str_locate(substr(x[f]$tRNA_str,
+                                 start + 2,
+                                 .get_tRNA_length(x)),
+                          ">")[,"start"]
+    coord$start[f] <- start
+    coord$end[f] <- end
+  }
+  return(coord)
+}
+
+################################################################################
+.getDprime3 <- function(x, strList){
+  dstem <- .getDstem(x, strList)
+  start <- dstem$prime3$end + 1
+  end <- dstem$prime3$end + 1
+  coord <- list(start = unname(start),
+                end = unname(end))
+  return(coord)
+}
+
+################################################################################
+################################################################################
+################################################################################
+.getAnticodonStem <- function(x, strList){
+  Dprime3 <- .getDprime3(x, strList)
+  start5 <- Dprime3$end + 1
+  # anticodon loop must at least be 4 nt long
+  end5 <- start5 +
+    stringr::str_locate(substr(x$tRNA_str,
+                               start5 + 2,
+                               .get_tRNA_length(x)),
+                        "\\.\\.\\.\\.\\.")[,"start"]
+  start3 <- start5 + 1 +
+    stringr::str_locate(substr(x$tRNA_str,
+                               start5 + 2,
+                               .get_tRNA_length(x)),
+                        "<")[,"start"]
+  end3 <- start3 + 1 +
+    stringr::str_locate(substr(x$tRNA_str,
+                               start3 + 2,
+                               .get_tRNA_length(x)),
+                        "<\\.\\.|<\\.>|<>")[,"start"]
+  # adjust coordinated for tRNA with non canonical base pairing at end of
+  # acceptor stem
+  f <- (start3 - 9) > end5
+  if(any(f)){
+    end5[f] <- end5[f] + 1
+    start3[f] <- start3[f] - 1
+  }
+  #
+  coord <- list("prime5" = list(start = unname(start5),
+                                end = unname(end5)),
+                "prime3" = list(start = unname(start3),
+                                end = unname(end3)))
+  return(coord)
+}
+
+################################################################################
+.getAnticodonLoop <- function(x, strList){
+  anticodon <- .getAnticodonStem(x, strList)
+  coord <- list(start = (anticodon$prime5$end + 1),
+                end = (anticodon$prime3$start - 1))
+  return(coord)
+}
+
+################################################################################
+################################################################################
+################################################################################
+.getVariableLoop <- function(x, strList){
+  anticodon <- .getAnticodonStem(x, strList)
+  tstem <- .getTstem(x, strList)
+  coord <- list(start = (anticodon$prime3$end + 1),
+                end = (tstem$prime5$start - 1))
+  return(coord)
+}
+
+
+################################################################################
+################################################################################
+################################################################################
 .getTstem <- function(x, strList){
   acceptor <- .getAcceptorStem(x, strList)
   end3 <- acceptor$prime3$start - 1
@@ -226,84 +332,8 @@ setMethod(
   }
   return(coord)
 }
-####################################################
-.getAnticodonStem <- function(x, strList){
-  dstem <- .getDstem(x, strList)
-  start <- dstem$prime3$end
-  if(any(is.na(dstem$prime5$start))){
-    f <- which(is.na(dstem$prime5$start))
-    dloop <- .getDloop(x, strList)
-    start[f] <- dloop$end[f]
-  }
-  start5 <- start + 1
-  # anticodon loop must at least be 4 nt long
-  end5 <- start5 +
-    stringr::str_locate(substr(x$tRNA_str,
-                               start5 + 2,
-                               .get_tRNA_length(x)),
-                        "\\.\\.\\.\\.\\.")[,"start"]
-  start3 <- start5 + 1 +
-    stringr::str_locate(substr(x$tRNA_str,
-                               start5 + 2,
-                               .get_tRNA_length(x)),
-                        "<")[,"start"]
-  end3 <- start3 + 1 +
-    stringr::str_locate(substr(x$tRNA_str,
-                               start3 + 2,
-                               .get_tRNA_length(x)),
-                        "<\\.\\.|<\\.>|<>")[,"start"]
-  # adjust coordinated for tRNA with non canonical base pairing at end of
-  # acceptor stem
-  f <- (start3 - 9) > end5
-  if(any(f)){
-    end5[f] <- end5[f] + 1
-    start3[f] <- start3[f] - 1
-  }
-  #
-  coord <- list("prime5" = list(start = unname(start5),
-                                end = unname(end5)),
-                "prime3" = list(start = unname(start3),
-                                end = unname(end3)))
-  return(coord)
-}
-####################################################
-####################################################
-####################################################
-.getDloop <- function(x, strList){
-  dstem <- .getDstem(x, strList)
-  coord <- list(start = (dstem$prime5$end + 1),
-                end = (dstem$prime3$start - 1))
-  if(any(is.na(dstem$prime5$start))) {
-    f <- which(is.na(dstem$prime5$start))
-    acceptor <- .getAcceptorStem(x, strList)
-    start <- acceptor$prime5$end[f]
-    # assumes minimum length of D of 3 nt
-    end <- start + 1 +
-      stringr::str_locate(substr(x[f]$tRNA_str,
-                                 start + 2,
-                                 .get_tRNA_length(x)),
-                          ">")[,"start"]
-    coord$start[f] <- start
-    coord$end[f] <- end
-  }
-  return(coord)
-}
-####################################################
-.getAnticodonloop <- function(x, strList){
-  anticodon <- .getAnticodonStem(x, strList)
-  coord <- list(start = (anticodon$prime5$end + 1),
-                end = (anticodon$prime3$start - 1))
-  return(coord)
-}
-####################################################
-.getVariableLoop <- function(x, strList){
-  anticodon <- .getAnticodonStem(x, strList)
-  tstem <- .getTstem(x, strList)
-  coord <- list(start = (anticodon$prime3$end + 1),
-                end = (tstem$prime5$start - 1))
-  return(coord)
-}
-####################################################
+
+################################################################################
 .getTloop <- function(x, strList){
   tstem <- .getTstem(x, strList)
   coord <- list(start = (tstem$prime5$end + 1),
@@ -322,7 +352,10 @@ setMethod(
   }
   return(coord)
 }
-####################################################
+
+################################################################################
+################################################################################
+################################################################################
 .getDiscriminator <- function(x, strList){
   return(as.integer(ifelse(x$tRNA_CCA.end,
                            .get_tRNA_length(x)-3,

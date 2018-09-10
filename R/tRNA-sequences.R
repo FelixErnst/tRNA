@@ -1,20 +1,6 @@
 #' @include tRNA.R
 NULL
 
-TRNA_STRUCTURE_ORDER <- c("acceptorStem.prime5",
-                          "DStem.prime5",
-                          "Dloop",
-                          "DStem.prime3",
-                          "anticodonStem.prime5",
-                          "anticodonloop",
-                          "anticodonStem.prime3",
-                          "variableloop",
-                          "TStem.prime5",
-                          "Tloop",
-                          "TStem.prime3",
-                          "acceptorStem.prime3",
-                          "discriminator")
-
 #' @rdname gettRNAstructureSeqs
 #'
 #' @importFrom stringr str_locate

@@ -28,16 +28,49 @@ TRNA_FEATURES <- c(
 )
 
 TRNA_STRUCTURES <- c(
-  "anticodonloop",
-  "Dloop",
-  "Tloop",
   "acceptorStem",
-  "anticodonStem",
+  "Dprime5",
   "DStem",
-  "TStem",
+  "Dloop",
+  "Dprime3",
+  "anticodonStem",
+  "anticodonLoop",
   "variableLoop",
+  "TStem",
+  "Tloop",
   "discriminator"
 )
+
+tRNAStructureFunctionList <- list(
+  acceptorStem = ".getAcceptorStem",
+  Dprime5 = ".getDprime5",
+  DStem = ".getDstem",
+  Dloop = ".getDloop",
+  Dprime3 = ".getDprime3",
+  anticodonStem = ".getAnticodonStem",
+  anticodonLoop = ".getAnticodonLoop",
+  variableLoop = ".getVariableLoop",
+  TStem = ".getTstem",
+  Tloop = ".getTloop",
+  discriminator = ".getDiscriminator")
+
+
+TRNA_STRUCTURE_ORDER <- c("acceptorStem.prime5",
+                          "Dprime5",
+                          "DStem.prime5",
+                          "Dloop",
+                          "DStem.prime3",
+                          "Dprime3",
+                          "anticodonStem.prime5",
+                          "anticodonLoop",
+                          "anticodonStem.prime3",
+                          "variableLoop",
+                          "TStem.prime5",
+                          "Tloop",
+                          "TStem.prime3",
+                          "acceptorStem.prime3",
+                          "discriminator")
+
 
 # data -------------------------------------------------------------------------
 

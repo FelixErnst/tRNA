@@ -27,9 +27,10 @@ gettRNAstructureSeqs(gr, structure = "", joinCompletely = FALSE,
 
 \item{structure}{optional parameter for returning just partial sequences.
 The following values are accepted:
-\code{anticodonloop}, \code{Dloop}, \code{Tloop}, \code{acceptorStem},
-\code{anticodonStem}, \code{DStem}, \code{TStem}, \code{variableLoop},
-\code{discriminator}. (default: \code{structure = ""})}
+\code{anticodonStem}, \code{Dprime5}, \code{DStem}, \code{Dloop},
+\code{Dprime3}, \code{acceptorStem}, \code{anticodonloop},
+\code{variableLoop}, \code{TStem}, \code{Tloop}, \code{discriminator}.
+(default: \code{structure = ""})}
 
 \item{joinCompletely}{Should the sequence parts, which are to be returned, be
 joined into one sequence? (default: \code{joinCompletely = FALSE}))
@@ -68,8 +69,8 @@ object by using \code{metadata()[["tRNA_structures"]]}.
 }
 \examples{
 data("gr", package = "tRNA", envir = environment())
-gettRNAstructureGRanges(gr, structure = "anticodonloop")
-gettRNAstructureSeqs(gr, structure = "anticodonloop")
+gettRNAstructureGRanges(gr, structure = "anticodonLoop")
+gettRNAstructureSeqs(gr, structure = "anticodonLoop")
 gettRNABasePairing(gr[1:10])
 getBasePairing(gr[1:10]$tRNA_str)
 }

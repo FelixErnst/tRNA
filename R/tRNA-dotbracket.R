@@ -75,7 +75,8 @@ getBasePairing <- function(dotBracket){
     stop("Following structures are invalid: '",
          paste(unique(unlist(lengthMatch)),
                collapse = "'"),
-         "' .\n They contain unmatched positions.")
+         "' .\n They contain unmatched positions.",
+         call. = FALSE)
   }
   structure <- mapply(.get_base_pairing_data_frame,
                       open,

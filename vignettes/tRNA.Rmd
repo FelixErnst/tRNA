@@ -21,6 +21,13 @@ bibliography: references.bib
 BiocStyle::markdown(css.files = c('custom.css'))
 ```
 
+# Introduction
+
+The tRNA package allows information of tRNA to be accessed and subset based on 
+these features. The package expects a `GRanges` object with certain columns
+as input. The following columns are a requirement: `tRNA_length`, `tRNA_type`,
+`tRNA_anticodon`, `tRNA_seq`, `tRNA_str`, `tRNA_CCA.end`.
+
 # Loading tRNA information
 
 ```{r}
@@ -59,15 +66,14 @@ metadata(seqs)[["tRNA_structures"]]
 The structure information can be queried for subsetting using the 
 `hasAccpeptorStem()` as an example.
 
-```{r}
+```{r echo=TRUE, results="hide"}
 gr[hasAcceptorStem(gr, unpaired = TRUE)]
 # mismatches and bulged are subsets of unpaired
 gr[hasAcceptorStem(gr, mismatches = TRUE)]
 gr[hasAcceptorStem(gr, bulged = TRUE)]
 # combination of different structure parameters
 gr[hasAcceptorStem(gr, mismatches = TRUE) & 
-     hasDloop(gr, length = 8) & 
-     hasVariableLoop(gr, paired = TRUE)]
+     hasDloop(gr, length = 8)]
 ```
 
 To retrieve detailed information on the base pairing `gettRNABasePairing()` or

@@ -36,8 +36,9 @@ setMethod(
   if(length(intersect(features,colnames(S4Vectors::mcols(gr)))) !=
      length(features)){
     stop("Input GRanges object does not meet the requirements of the ",
-         "function. Please refer to the vignette of tRNAscanImport for ",
-         "an exmaple on what information is expected.",
+         "function. The following columns are expected:\n'",
+         paste(features, collapse = "', '"),
+         "'.",
          call. = FALSE)
   }
   return(TRUE)

@@ -6,7 +6,16 @@ NULL
 #' @title Subsetting tRNA
 #'
 #' @description
-#' title
+#' The functions \code{has*} can be used to subset the GRanges object containing
+#' information about tRNAs.
+#'
+#' Please not that the settings \code{mismatches} and \code{bulged} take
+#' precedence before \code{unpaired} or \code{paired}. This means that by
+#' setting either \code{mismatches} or \code{bulged} to either \code{TRUE} or
+#' \code{FALSE}, \code{unpaired = TRUE} or \code{paired = TRUE} are
+#' automatically set to allow specific subsetting. If this removes elements from
+#' the results, please consider constructing a logical vectors with two calls as
+#' suggested in the examples.
 #'
 #' @param gr a GRanges object from a tRNAscan import or with equivalent
 #' information
@@ -23,6 +32,7 @@ NULL
 #' data("gr", package = "tRNA", envir = environment())
 #' hasTStem(gr, length = 5, mismatches = TRUE)
 #' gr[hasTStem(gr, length = 5, mismatches = TRUE)]
+#' gr[hasDStem(gr, unpaired = FALSE) & hasDStem(gr, mismatches = FALSE)]
 NULL
 
 #' @rdname tRNA-subset
@@ -121,70 +131,32 @@ setMethod(
       bulged <- FALSE
     }
   }
-  # get structure information
+  # get structure information, only one information is returned
   strList <- .get_base_pairing(gr$tRNA_str)
-  str <- .get_tRNA_structures(tRNAStructureFunctionList[[ident]],
+  str <- .get_tRNA_structures(ident,
                               gr,
-                              strList)[[1]]
-  if(!is.na(unpaired) ||
-     !is.na(length)){
-    strList <- mapply(.subset_structure,
-                      split(c(str$prime5,str$prime3),
-                            c(1:length(str$prime5),1:length(str$prime3))),
-                      strList,
-                      SIMPLIFY = FALSE)
-  }
+                              strList)
+  strList <- .get_ident_structures(ident,
+                                   gr,
+                                   strList,
+                                   str)[[1]]
+  # check if structure was found
+  structureFound <- lapply(lapply(unlist(str),width), 
+                           function(x){ x != 0 })
+  ans <- ans & Reduce("&",structureFound)
   # apply structure subsetting
   if(!is.na(unpaired)){
-    #
-    forwardContinously <- vapply(
-      strList,
-      function(str){
-        .is_continous_evenly_spaced(str[str$forward != 0,]$forward)
-      },
-      logical(1))
-    reverseContinously <- vapply(
-      strList,
-      function(str){
-        .is_continous_evenly_spaced(str[str$reverse != 0,]$reverse)
-      },
-      logical(1))
-    forwardLength <- vapply(
-      strList,
-      function(str){
-        max(str[str$forward != 0,]$forward) -
-          min(str[str$forward != 0,]$forward) + 1
-      },
-      double(1))
-    reverseLength <- vapply(
-      strList,
-      function(str){
-        max(str[str$reverse != 0,]$reverse) -
-          min(str[str$reverse != 0,]$reverse) + 1
-      },
-      double(1))
-    #
     ansMismatches <- ans
     ansBulged <- ans
     if(assertive::is_false(mismatches)){
-      ansMismatches <- forwardLength == reverseLength &
-        forwardContinously &
-        reverseContinously
+      ansMismatches <- .get_mismatches(strList = strList)[["F"]]
     } else if(assertive::is_true(mismatches)) {
-      ansMismatches <- forwardLength == reverseLength &
-        ((forwardContinously & !reverseContinously) |
-           (!forwardContinously & reverseContinously) |
-           (!forwardContinously & !reverseContinously))
+      ansMismatches <- .get_mismatches(strList = strList)[["T"]]
     }
     if(assertive::is_false(bulged)){
-      ansBulged <- forwardLength == reverseLength &
-        ((forwardContinously & reverseContinously) |
-           (!forwardContinously & !reverseContinously))
+      ansBulged <- .get_bulges(strList = strList)[["F"]]
     } else if(assertive::is_true(bulged)) {
-      ansBulged <- forwardLength != reverseLength &
-        ((forwardContinously & !reverseContinously) |
-           (!forwardContinously & reverseContinously) |
-           (!forwardContinously & !reverseContinously))
+      ansBulged <- .get_bulges(strList = strList)[["T"]]
     }
     if(assertive::is_true(mismatches) &&
        assertive::is_true(bulged)){
@@ -196,15 +168,12 @@ setMethod(
   # apply length subsetting
   if(!is.na(length)){
     assertive::assert_all_are_whole_numbers(length)
-    isLength <- lapply(strList,
-                       function(str){
-                         max(max(str[str$forward != 0,]$forward) -
-                               min(str[str$forward != 0,]$forward),
-                             max(str[str$reverse != 0,]$reverse) -
-                               min(str[str$reverse != 0,]$reverse)) + 1
-                       })
-    ans <- ans &
-      isLength == length
+    isLength <- .get_length(ident = ident,
+                            strList = strList)
+    ansLength <- isLength == length
+    # if no length is found, NA is returned. Set these to FALSE
+    ansLength[is.na(ansLength)] <- FALSE
+    ans <- ans & ansLength
   }
   return(unname(ans))
 }
@@ -290,19 +259,20 @@ setMethod(
   if(!is.na(paired)){
     assertive::assert_is_a_bool(paired)
   }
-  #
+  # get structure information, only one information is returned
+  browser()
   strList <- .get_base_pairing(gr$tRNA_str)
-  str <- .get_tRNA_structures(tRNAStructureFunctionList[[ident]],
+  str <- .get_tRNA_structures(ident,
                               gr,
-                              strList)[[1]]
-  if(!is.na(paired) ||
-     !is.na(length)){
-    strList <- mapply(.subset_structure,
-                      split(str,1:length(str)),
-                      strList,
-                      MoreArgs = list(pairedOnly = FALSE),
-                      SIMPLIFY = FALSE)
-  }
+                              strList)
+  strList <- .get_ident_structures(ident,
+                                   gr,
+                                   strList,
+                                   str)[[1]]
+  # check if structure was found
+  structureFound <- lapply(lapply(unlist(str),width), 
+                           function(x){ x != 0 })
+  ans <- ans & Reduce("&",structureFound)
   # apply paired subsetting
   if(!is.na(paired)){
     pairedAns <- vapply(
@@ -315,54 +285,24 @@ setMethod(
     if(any(pairedAns) &&
        (!is.na(mismatches) ||
         !is.na(bulged))){
-      forwardContinously <- vapply(
-        strList,
-        function(str){
-          .is_continous_evenly_spaced(str[str$forward != 0,]$forward)
-        },
-        logical(1))
-      reverseContinously <- vapply(
-        strList,
-        function(str){
-          .is_continous_evenly_spaced(str[str$reverse != 0,]$reverse)
-        },
-        logical(1))
-      forwardLength <- vapply(
-        strList,
-        function(str){
-          max(str[str$forward != 0,]$forward) -
-            min(str[str$forward != 0,]$forward) + 1
-        },
-        double(1))
-      reverseLength <- vapply(
-        strList,
-        function(str){
-          max(str[str$reverse != 0,]$reverse) -
-            min(str[str$reverse != 0,]$reverse) + 1
-        },
-        double(1))
-      #
       ansMismatches <- ans
       ansBulged <- ans
+      # preparation since the assumption is that equal length is the same on 5'
+      # and 3'end
+      strList[pairedAns] <- lapply(strList[pairedAns],
+                                     function(str){
+                                       str[seq_len(floor(nrow(str)/2)),]
+                                     })
+      #
       if(assertive::is_false(mismatches)){
-        ansMismatches <- forwardLength == reverseLength &
-          forwardContinously &
-          reverseContinously
+        ansMismatches <- .get_mismatches(strList = strList)[["F"]]
       } else if(assertive::is_true(mismatches)) {
-        ansMismatches <- forwardLength == reverseLength &
-          ((forwardContinously & !reverseContinously) |
-             (!forwardContinously & reverseContinously) |
-             (!forwardContinously & !reverseContinously))
+        ansMismatches <- .get_mismatches(strList = strList)[["T"]]
       }
       if(assertive::is_false(bulged)){
-        ansBulged <- forwardLength == reverseLength &
-          ((forwardContinously & reverseContinously) |
-             (!forwardContinously & !reverseContinously))
+        ansBulged <- .get_bulges(strList = strList)[["F"]]
       } else if(assertive::is_true(bulged)) {
-        ansBulged <- forwardLength != reverseLength &
-          ((forwardContinously & !reverseContinously) |
-             (!forwardContinously & reverseContinously) |
-             (!forwardContinously & !reverseContinously))
+        ansBulged <- .get_bulges(strList = strList)[["T"]]
       }
       if(assertive::is_true(mismatches) &&
          assertive::is_true(bulged)){
@@ -371,17 +311,19 @@ setMethod(
         ans <- ans & ansMismatches & ansBulged
       }
     }
-    ans <- ans &
-      pairedAns
+    if(assertive::is_true(paired)){
+      ans <- ans &
+        pairedAns
+    } else {
+      ans <- ans &
+        !pairedAns
+    }
   }
   # apply length subsetting
   if(!is.na(length)){
     assertive::assert_all_are_whole_numbers(length)
-    isLength <- lapply(strList,
-                       function(str){
-                         max(str$pos) -
-                           min(str$pos) + 1
-                       })
+    isLength <- .get_length(ident = ident,
+                            strList = strList)
     ans <- ans &
       isLength == length
   }

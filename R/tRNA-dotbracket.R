@@ -13,11 +13,18 @@ STRUCTURE_CLOSE_CHR <- c("<","\\]","\\)","\\}")
 #' \code{getBasePairing} converts a dot bracket annotation into a
 #' \code{data.frame}. Base pairing is indicated by corresponding numbers
 #' in the forward and reverse columns.
+#' 
+#' \code{getHairpinLoops} and \code{getStems} are helper functions for getting
+#' coordinates for stems and hairpin loops as \code{IRanges} objects.
 #'
 #' @return
+#' \code{getBasePairing}: 
 #' The result is a data.frame with three columns: pos, forward, reverse. If a
 #' position is unpaired, forward and reverse will be \code{0}, otherwise it
 #' will match the base paired positions.
+#' \code{getHairpinLoops}, \code{getStems}: 
+#' return a list of list of \code{IRanges} describing all coordinates found for
+#' the given structures.
 #'
 #' @param gr a GRanges object created by \code{import.tRNAscanAsGRanges} or
 #' GRanges with equivalent information. The \code{tRNA_str} column will be used
@@ -127,4 +134,40 @@ getBasePairing <- function(dotBracket){
   z <- z[order(z$pos),c("pos","forward","reverse")]
   rownames(z) <- NULL
   return(z)
+}
+
+#' @rdname getBasePairing
+#' @export
+getHairpinLoops <- function(dotBracket){
+  strList <- getBasePairing(dotBracket)
+  .get_hairpin_loops(strList)
+}
+
+.get_hairpin_loops <- function(strList){
+  tmp <- lapply(strList,
+                function(z){
+                  ans <- z[z$forward != 0,]
+                  if(nrow(ans) == 0) return(list(NA,NA))
+                  f <- c(ans$reverse,NA)
+                  f <- f[2:length(f)]
+                  ans <- ans[ans$forward == f & !is.na(f),]
+                  if(nrow(ans) == 0) return(list(NA,NA))
+                  return(list(start = ans$forward + 1,
+                              end = ans$reverse - 1))
+                })
+  ans <- lapply(tmp,
+                function(z){
+                  .get_IRanges2(z$start,
+                                z$end,
+                                seq_along(z$start))
+                })
+  return(ans)
+}
+
+#' @rdname getBasePairing
+#' @export
+getStems <- function(dotBracket){
+  strList <- getBasePairing(dotBracket)
+  browser()
+  return(ans)
 }

@@ -39,7 +39,7 @@ setMethod(
     if(joinCompletely){
       # get Ranges
       strList <- .get_base_pairing(gr$tRNA_str)
-      res <- .get_tRNA_structures(tRNAStructureFunctionList,
+      res <- .get_tRNA_structures(names(tRNAStructureFunctionList),
                                   gr,
                                   strList)
       # get sequences

@@ -80,10 +80,20 @@ creating a bulge}
 a logical vector of the length or input GRanges object
 }
 \description{
-title
+The functions \code{has*} can be used to subset the GRanges object containing
+information about tRNAs.
+
+Please not that the settings \code{mismatches} and \code{bulged} take
+precedence before \code{unpaired} or \code{paired}. This means that by
+setting either \code{mismatches} or \code{bulged} to either \code{TRUE} or
+\code{FALSE}, \code{unpaired = TRUE} or \code{paired = TRUE} are
+automatically set to allow specific subsetting. If this removes elements from
+the results, please consider constructing a logical vectors with two calls as
+suggested in the examples.
 }
 \examples{
 data("gr", package = "tRNA", envir = environment())
 hasTStem(gr, length = 5, mismatches = TRUE)
 gr[hasTStem(gr, length = 5, mismatches = TRUE)]
+gr[hasDStem(gr, unpaired = FALSE) & hasDStem(gr, mismatches = FALSE)]
 }

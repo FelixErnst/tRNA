@@ -30,7 +30,26 @@ as input. The following columns are a requirement: `tRNA_length`, `tRNA_type`,
 
 # Loading tRNA information
 
-```{r}
+For working with the tRNA packages, tRNA information can be retrieved in a 
+number of ways:
+
+  1. A `GRanges` object can be constructed by hand containing the
+required colums (see above)
+  2. a tRNAscan result file can be loaded using 
+  `import.tRNAscanAsGRanges()` from `tRNAscanImport` package
+  3. selected tRNA information can be retrieved using
+  `import.tRNAdb()` from `tRNAdbImport` package
+
+For this vignette a predefined `GRanges` object is loaded.
+
+```{r, echo=FALSE}
+suppressPackageStartupMessages(
+  library(tRNA)
+)
+data("gr", package = "tRNA", envir = environment())
+```
+
+```{r, eval=FALSE}
 library(tRNA)
 data("gr", package = "tRNA", envir = environment())
 ```
@@ -39,10 +58,11 @@ data("gr", package = "tRNA", envir = environment())
 
 To retrieve the sequences for individual tRNA structure elements 
 `gettRNAstructureGRanges` or `gettRNAstructureSeqs` can be used. Be aware, that
-`gettRNAstructureSeqs` is currently a bit experimental.
+`gettRNAstructureSeqs` is currently a bit experimental. (Please report any 
+unexpected results. Thanks!)
 
 ```{r}
-# just retreve the coordinates of the anticodonloop
+# just get the coordinates of the anticodonloop
 gettRNAstructureGRanges(gr,
                         structure = "anticodonLoop")
 gettRNAstructureSeqs(gr,
@@ -63,7 +83,7 @@ metadata(seqs)[["tRNA_structures"]]
 
 # Subsetting tRNA sequences
 
-The structure information can be queried for subsetting using the 
+The structure information can be queried for subsetting using the function
 `hasAccpeptorStem()` as an example.
 
 ```{r echo=TRUE, results="hide"}
@@ -84,6 +104,10 @@ expected with pairs of `><{}[]()`.
 head(gettRNABasePairing(gr)[[1]])
 head(getBasePairing(gr[1]$tRNA_str)[[1]])
 ```
+
+# Visualization
+
+
 
 # Session info
 

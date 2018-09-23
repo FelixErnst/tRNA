@@ -7,6 +7,8 @@
 \alias{gettRNABasePairing}
 \alias{gettRNABasePairing,GRanges-method}
 \alias{getBasePairing}
+\alias{getHairpinLoops}
+\alias{getStems}
 \title{Accessing Dot Bracket annotation}
 \usage{
 gettRNABasePairing(gr)
@@ -14,6 +16,10 @@ gettRNABasePairing(gr)
 \S4method{gettRNABasePairing}{GRanges}(gr)
 
 getBasePairing(dotBracket)
+
+getHairpinLoops(dotBracket)
+
+getStems(dotBracket)
 }
 \arguments{
 \item{gr}{a GRanges object created by \code{import.tRNAscanAsGRanges} or
@@ -25,12 +31,19 @@ structure in the dot bracket annotations. Valid characters are:
 \code{.(\\{[><]\\})}}
 }
 \value{
+\code{getBasePairing}: 
 The result is a data.frame with three columns: pos, forward, reverse. If a
 position is unpaired, forward and reverse will be \code{0}, otherwise it
 will match the base paired positions.
+\code{getHairpinLoops}, \code{getStems}: 
+return a list of list of \code{IRanges} describing all coordinates found for
+the given structures.
 }
 \description{
 \code{getBasePairing} converts a dot bracket annotation into a
 \code{data.frame}. Base pairing is indicated by corresponding numbers
 in the forward and reverse columns.
+
+\code{getHairpinLoops} and \code{getStems} are helper functions for getting
+coordinates for stems and hairpin loops as \code{IRanges} objects.
 }

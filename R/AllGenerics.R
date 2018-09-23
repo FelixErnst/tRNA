@@ -38,6 +38,15 @@ setGeneric (
   def = function(gr) standardGeneric("gettRNABasePairing")
 )
 
+# Features ---------------------------------------------------------------------
+
+#' @rdname gettRNASummary
+#' @export
+setGeneric (
+  name = "gettRNASummary",
+  def = function(gr) standardGeneric("gettRNASummary")
+)
+
 # Subsetting -------------------------------------------------------------------
 
 #' @rdname tRNA-subset
@@ -110,4 +119,19 @@ setGeneric (
                  paired = NA,
                  mismatches = NA,
                  bulged = NA) standardGeneric("hasVariableLoop")
+)
+
+# Visualization ----------------------------------------------------------------
+
+#' @rdname plottRNAFeatures
+#' @export
+setGeneric (
+  name = "plottRNAFeatures",
+  def = function(grl) standardGeneric("plottRNAFeatures")
+)
+#' @rdname plottRNAFeatures
+#' @export
+setGeneric (
+  name = "gettRNAFeaturePlots",
+  def = function(grl) standardGeneric("gettRNAFeaturePlots")
 )

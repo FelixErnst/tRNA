@@ -41,6 +41,24 @@ TRNA_STRUCTURES <- c(
   "discriminator"
 )
 
+TRNA_STRUCTURES_LOOP <- c(
+  "Dprime5",
+  "Dloop",
+  "Dprime3",
+  "anticodonLoop",
+  "variableLoop",
+  "Tloop",
+  "discriminator"
+)
+
+TRNA_STRUCTURES_PAIRED <- c(
+  "acceptorStem",
+  "DStem",
+  "anticodonStem",
+  "variableLoop",
+  "TStem"
+)
+
 tRNAStructureFunctionList <- list(
   acceptorStem = ".getAcceptorStem",
   Dprime5 = ".getDprime5",
@@ -71,6 +89,36 @@ TRNA_STRUCTURE_ORDER <- c("acceptorStem.prime5",
                           "acceptorStem.prime3",
                           "discriminator")
 
+TRNA_COLOUR_PALETTE <- "Set1"
+TRNA_COLOUR_YES <- "green"
+TRNA_COLOUR_NO <- "red"
+# options
+.onLoad <- function(libname,pkgname){
+  options("tRNA_colour_palette" = TRNA_COLOUR_PALETTE)
+  options("tRNA_colour_yes" = TRNA_COLOUR_YES)
+  options("tRNA_colour_no" = TRNA_COLOUR_NO)
+}
+# get a qualitative color palette
+.get_colour <- function(ident){
+  .checkValueValidity(ident,c("palette","yes","no"))
+  # construct complete ident
+  ident <- paste0("tRNA_colour_",ident)
+  colour_palette <- getOption(ident)
+  if(!assertive::is_a_string(colour_palette)){
+    identVar <- toupper(ident)
+    colour_palette <- get(identVar)
+    warning("The option '",
+            ident,
+            "' is not a valid palette ", 
+            " identifier for RColorBrewer. ",
+            "Please set '",
+             ident,
+             "' to a valid ",
+             " palette identifier for a RColorBrewer.",
+            call. = FALSE)
+  }
+  colour_palette
+}
 
 # data -------------------------------------------------------------------------
 
@@ -82,3 +130,7 @@ TRNA_STRUCTURE_ORDER <- c("acceptorStem.prime5",
 #' @format object of class \code{GRanges}
 #' @keywords datasets tRNA
 "gr"
+#' @name tRNA-data
+"gr_human"
+#' @name tRNA-data
+"gr_eco"

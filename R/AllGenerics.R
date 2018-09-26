@@ -37,6 +37,12 @@ setGeneric (
   name = "gettRNABasePairing",
   def = function(gr) standardGeneric("gettRNABasePairing")
 )
+#' @rdname getBasePairing
+#' @export
+setGeneric (
+  name = "gettRNALoopIDs",
+  def = function(gr) standardGeneric("gettRNALoopIDs")
+)
 
 # Features ---------------------------------------------------------------------
 

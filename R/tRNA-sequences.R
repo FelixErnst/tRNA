@@ -74,8 +74,7 @@ setMethod(
     } else {
       # get Ranges
       strList <- gettRNABasePairing(gr)
-      functions <- tRNAStructureFunctionList[structure]
-      res <- .get_tRNA_structures(functions, gr, strList)
+      res <- .get_tRNA_structures(structure, gr, strList)
       seqs <- mapply(.assemble_sequences,
                      res,
                      names(res),

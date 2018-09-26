@@ -87,12 +87,12 @@ setMethod(
                                  strList){
   # get start data
   ans <- list()
-  hairpins <- .get_hairpin_loops(strList)
-  tRNAHalfPos <- .get_middle_of_tRNA(strList,
-                                     hairpins)
+  loopPositions <- .get_loop_positions(strList)
+  tRNAStructureTypes <- .get_tRNA_structure_type(loopPositions)
   # discriminator stem
   discriminator <- .getDiscriminator(gr,
-                                     strList)
+                                     strList,
+                                     tRNAStructureTypes)
   ans[["discriminator"]] <- .get_IRanges(discriminator,
                                          gr$tRNA_anticodon)
   if(all(structure %in% names(ans))){
@@ -101,24 +101,26 @@ setMethod(
   # acceptor stem
   acceptorStem <- .getAcceptorStem(gr,
                                    strList,
-                                   tRNAHalfPos,
+                                   tRNAStructureTypes,
+                                   loopPositions,
                                    discriminator)
   # T stem
   TStem <- .getTstem(gr,
                      strList,
-                     tRNAHalfPos,
+                     tRNAStructureTypes,
+                     loopPositions,
                      acceptorStem)
   # D stem
   DStem <- .getDstem(gr,
                      strList,
-                     tRNAHalfPos,
+                     tRNAStructureTypes,
+                     loopPositions,
                      acceptorStem)
   # anticodon stem
   anticodonStem <- .getAnticodonStem(gr,
                                      strList,
-                                     DStem,
-                                     TStem,
-                                     acceptorStem)
+                                     tRNAStructureTypes,
+                                     loopPositions)
   ##############################################################################
   # Intermediate control step
   ##############################################################################
@@ -184,19 +186,28 @@ setMethod(
   }
   ##############################################################################
   if(any(structure %in% c("Dloop","Tloop","anticodonLoop"))){
-    # D loop and T loop
+    # D loop, T loop and anticodon loop
     Dloop <- .getDloop(gr,
                        strList,
-                       DStem,
-                       acceptorStem)
+                       tRNAStructureTypes,
+                       loopPositions,
+                       DStem)
     Tloop <- .getTloop(gr,
                        strList,
-                       TStem,
-                       acceptorStem)
+                       tRNAStructureTypes,
+                       loopPositions,
+                       TStem)
+    anticodonLoop <- .getAnticodonLoop(gr,
+                                       strList,
+                                       tRNAStructureTypes,
+                                       loopPositions,
+                                       anticodonStem)
     ans[["Dloop"]] <- .get_IRanges(Dloop,
                                    gr$tRNA_anticodon)
     ans[["Tloop"]] <- .get_IRanges(Tloop,
                                    gr$tRNA_anticodon)
+    ans[["anticodonLoop"]] <- .get_IRanges(anticodonLoop,
+                                           gr$tRNA_anticodon)
   }
   if(all(structure %in% names(ans))){
     return(ans[structure])
@@ -220,50 +231,93 @@ setMethod(
                                    gr$tRNA_anticodon)
   ans[["variableLoop"]] <- .get_IRanges(variableLoop,
                                         gr$tRNA_anticodon)
-  if(all(structure %in% names(ans))){
-    return(ans[structure])
-  }
-  # anticodon loop
-  anticodonLoop <- .getAnticodonLoop(gr,
-                                     strList,
-                                     anticodonStem,
-                                     DStem,
-                                     TStem,
-                                     Dloop,
-                                     Tloop,
-                                     acceptorStem)
-  ans[["anticodonLoop"]] <- .get_IRanges(anticodonLoop,
-                                         gr$tRNA_anticodon)
   if(!all(structure %in% names(ans))){
     stop("Something went wrong.")
   }
   ans
 }
 
-#
-.get_middle_of_tRNA <- function(strList,
-                                hairpins){
-  length <- unlist(lapply(strList, nrow))
-  middle <- ceiling(length / 2)
-  # 
-  tmp <- mapply(
-    function(z,zmiddle){
-      loopMiddle <- ceiling((start(z) + end(z)) / 2)
-      # if all loops are present
-      if(length(loopMiddle) == 4) return(loopMiddle[2])
-      # otherwise choose the one which is closest to the middle
-      diff <- abs(loopMiddle - zmiddle)
-      f <- which(diff == min(diff))
-      # if it is a draw return first one
-      if(length(f) > 1) return(loopMiddle[f[1]])
+# returns the boundary positions of the center of the tRNA
+.get_loop_positions <- function(strList){
+  loopids <- .get_loop_ids(strList)
+  min <- .local_min(loopids)
+  ans <- mapply(
+    function(z,zz){
+      m <- unlist(lapply(zz,
+                         function(zzz){
+                           # not length but max number of distinct occurances
+                           zzzz <- diff(which(z == z[zzz]))
+                           length(zzzz[zzzz > 1]) + 1
+                         }))
+      f <- z[zz[which(m == max(m))]]
+      # no acceptor found, return empty IRanges
+      if(0 %in% f) return(IRanges::IRanges())
       #
-      loopMiddle[f]
+      f <- z[zz[which(m == max(m))[1]]]
+      f <- which(z == f)
+      forw <- c(2,diff(f))
+      rev <- rev(c(-2,diff(rev(f))))
+      IRanges::IRanges(start = f[which(forw > 1)],
+                       end = f[which(rev < -1)])
     },
-    hairpins,
-    middle)
-  ans <- unname(unlist(tmp))
+    loopids,
+    min,
+    SIMPLIFY = FALSE)
   return(ans)
 }
+
+.local_max <- function(list){
+  .local_min_max(list)
+}
+.local_min <- function(list){
+  .local_min_max(list, type = "min")
+}
+
+.local_min_max <- function(list,
+                           type = "max"){
+  z <- -.Machine$integer.max
+  if(type == "min"){
+    z <- .Machine$integer.max
+  }
+  ans <- lapply(
+    list,
+    function(x){
+      y <- diff(c(z, x))
+      y <- diff(c(z, x)) > 0L
+      y <- cumsum(rle(y)$lengths)
+      y <- y[seq.int(1L, length(y), 2L)]
+      y <- y[y != 1 & y != max(x)]
+      y
+    })
+  ans
+}
+
+# returns the type of tRNA
+# either canonical, armless_dloop, armless_tloop, armless_ac, 
+# armless_d_t, centerless, unrecognized
+.get_tRNA_structure_type <- function(loopPositions){
+  ans <- rep("unrecognized", length(loopPositions))
+  noLoops <- lapply(loopPositions,length)
+  # if four our five loops are found, it is a canonical tRNA
+  ans[noLoops == 4 | noLoops == 5] <- "canonical"
+  # one arm is missing
+  one_arm_missing <- lapply(loopPositions[noLoops == 3],
+                            function(z){
+                              w <- BiocGenerics::width(z)
+                              which(w == max(w))[1]
+                            })
+  tmp <- rep("unrecognized",length(one_arm_missing))
+  tmp[one_arm_missing == 1] <- "armless_dloop"
+  tmp[one_arm_missing == 2] <- "armless_ac"
+  tmp[one_arm_missing == 3] <- "armless_tloop"
+  ans[noLoops == 3] <- tmp
+  # two arms are missing
+  ans[noLoops == 2] <- "armless_d_t"
+  # only the acceptor stem exists
+  ans[noLoops == 1] <- "centerless"
+  ans
+}
+
 
 # calculate the width of the ranges.
 # In case of invalid structures NA are returned, which require the width
@@ -341,13 +395,12 @@ setMethod(
 ################################################################################
 .getAcceptorStem <- function(x,
                              strList,
-                             tRNAHalfPos,
+                             tRNAStructureTypes,
+                             loopPositions,
                              discriminator){
   # 3'end
   # remove discriminator
   end <- discriminator - 1
-  # the acceptor must pair with a residue on both half of the tRNA
-  minEnd <- tRNAHalfPos
   # 5'start is opposite of the discriminator 
   start5 <- mapply(
     function(z,zend){
@@ -359,29 +412,29 @@ setMethod(
     },
     strList,
     end)
+  # use center positions to get search parameters
+  tmp <- sapply(loopPositions,
+                     function(l){
+                       if(length(l) == 0) return(c(NA,NA))
+                       list(start(l)[1],
+                            end(l)[length(l)])
+                     })
+  maxStart <- tmp[1,]
+  minEnd <- tmp[2,]
   # get the last base paired position, which is before the D stem
   # returns both end5 and start3
   tmp <- mapply(
-    function(z,zend){
-      if(is.na(zend)) return(c(NA,NA))
+    function(z,zstart,zend){
+      if(is.na(zstart) | is.na(zend)) return(c(NA,NA))
       ans <- z[z$forward <= zend & 
                  z$reverse >= zend & 
                  z$forward != 0, ]
-      if(nrow(ans) == 0) return(c(NA,NA))
-      d <- z[z$pos < zend & 
-               z$reverse < zend & 
-               z$forward != 0, ]
-      if(nrow(d) != 0){
-        ans <- ans[ans$forward < min(d$forward),]
-      } else{
-        # if no d stem found use this artifical threshold of distance, between
-        # start and end of acceptor
-        ans <- ans[(ans$reverse - ans$forward) > zend,]
-      }
+      ans <- ans[ans$forward <= zstart,]
       if(nrow(ans) == 0) return(c(NA,NA))
       return(c(max(ans$forward),min(ans$reverse)))
     },
     strList,
+    maxStart,
     minEnd)
   end5 <- tmp[1,]
   start3 <- tmp[2,]
@@ -418,12 +471,23 @@ setMethod(
 ################################################################################
 .getDstem <- function(x,
                       strList,
-                      tRNAHalfPos,
+                      tRNAStructureTypes,
+                      loopPositions,
                       acceptor){
-  minStart <- acceptor$prime5$end + 1
-  # the D stem should be paired in the first half of the tRNA. Otherwise no
-  # D stem present
-  maxEnd <- tRNAHalfPos
+  # for start search use acceptor
+  width <- .get_width(acceptor$prime5$start,
+                      acceptor$prime5$end)
+  minStart <- .get_start_end(acceptor$prime5$end, width, NA) + 1
+  # for end search use center positions
+  maxEnd <- mapply(
+    function(l, type){
+      if(type %in% c("armless_dloop",
+                     "armless_d_t",
+                     "unrecognized")) return(NA)
+      return(start(l)[2])
+    },
+    loopPositions,
+    tRNAStructureTypes)
   # get the first basepair which is completly in first half of tRNA
   # make sure if the start position is a mismatch to extend the end for this as
   # well
@@ -470,35 +534,33 @@ setMethod(
 ################################################################################
 .getDloop <- function(x,
                       strList,
-                      dstem,
-                      acceptor){
+                      tRNAStructureTypes,
+                      loopPositions,
+                      dstem){
   coord <- list(start = (dstem$prime5$end + 1),
                 end = (dstem$prime3$start - 1))
-  # If no D stem was found, assign D loop until next paired region, if in first
-  # tRNA half
+  # If no D stem was found, assign D loop from center positions
   f <- which(is.na(dstem$prime5$start) |
                is.na(dstem$prime5$end) |
                is.na(dstem$prime3$start) |
                is.na(dstem$prime3$end))
   if(length(f) > 0) {
-    width <- .get_width(acceptor$prime5$start[f],
-                        acceptor$prime5$end[f])
-    start <- .get_start_end(acceptor$prime5$end[f], width, NA) + 1
-    maxEnd <- floor(.get_start_end(acceptor$prime3$end[f], width, NA) / 2)
-    end <- mapply(
-      function(z,zstart,zend){
-        if(is.na(zstart) | is.na(zend)) return(NA)
-        ans <- z[z$pos >= zstart & 
-                   z$pos <= zend &
-                   z$forward != 0,]
-        if(nrow(ans) == 0) return(NA)
-        min(ans$pos) - 1
+    tmp <- mapply(
+      function(l, type){
+        start <- NA
+        end <- NA
+        if(type %in% c("armless_dloop",
+                       "armless_d_t")){
+          start <- start(l[1]) + 1
+          end <- end(l[1])
+        }
+        return(c(start,
+                 end))
       },
-      strList[f],
-      start,
-      maxEnd)
-    coord$start[f] <- start
-    coord$end[f] <- end
+      loopPositions[f],
+      tRNAStructureTypes[f])
+    coord$start[f] <- tmp[1,]
+    coord$end[f] <- tmp[2,]
   }
   return(coord)
 }
@@ -528,20 +590,36 @@ setMethod(
 ################################################################################
 .getAnticodonStem <- function(x,
                               strList,
-                              Dstem,
-                              TStem,
-                              acceptorStem){
-  minStart <- Dstem$prime3$end + 1
-  maxEnd <- TStem$prime5$start - 1
-  # if one of the stems was not found use acceptor
-  f <- which(is.na(minStart))
-  if(length(f) > 0){
-    minStart[f] <- acceptorStem$prime5$end[f] + 1
-  }
-  f <- which(is.na(maxEnd))
-  if(length(f) > 0){
-    maxEnd[f] <- acceptorStem$prime3$start[f] - 1
-  }
+                              tRNAStructureTypes,
+                              loopPositions){
+  # for search parameters use center positions 
+  tmp <- mapply(
+    function(l, type){
+      start <- NA
+      end <- NA
+      if(type == "canonical") {
+        start <- end(l)[2]
+        end <- start(l)[3]
+      }
+      if(type %in% c("armless_dloop")){
+        start <- end(l)[1] 
+        end <- start(l)[2]
+      }
+      if(type %in% c("armless_tloop")){
+        start <- end(l)[length(l)-1]
+        end <- start(l)[length(l)]
+      }
+      if(type %in% c("armless_d_t")){
+        start <- end(l)[1]
+        end <- start(l)[2]
+      }
+      return(c(start,
+               end))
+    },
+    loopPositions,
+    tRNAStructureTypes)
+  minStart <- tmp[1,]
+  maxEnd <- tmp[2,]
   # 
   tmp <- mapply(
     function(z,zstart,zend){
@@ -595,12 +673,9 @@ setMethod(
 ################################################################################
 .getAnticodonLoop <- function(x,
                               strList,
-                              anticodon,
-                              dstem,
-                              tstem,
-                              dloop,
-                              tloop,
-                              acceptor){
+                              tRNAStructureTypes,
+                              loopPositions,
+                              anticodon){
   coord <- list(start = (anticodon$prime5$end + 1),
                 end = (anticodon$prime3$start - 1))
   # if anticodon stem not found, set d and t stem coordinates
@@ -608,23 +683,26 @@ setMethod(
   if(length(f) == 0){
     return(coord)
   }
-  coord$start[f] <- dstem$prime3$end[f] + 1
-  coord$end[f] <- tstem$prime5$start[f] - 1
-  # if d or t stem not found, set loop coordinates
-  if(!any(is.na(coord$start) | is.na(coord$end))){
-    return(coord)
-  }
-  f <- which(is.na(coord$start))
-  coord$start[f] <- dloop$end[f] + 1
-  f <- which(is.na(coord$end))
-  coord$end[f] <- tloop$start[f] - 1
-  # if loops have undefined coordinates use acceptor
-  f <- which(is.na(coord$start) | is.na(coord$end))
-  if(length(f) == 0){
-    return(coord)
-  }
-  coord$start[f] <- acceptor$prime5$end[f] + 1
-  coord$end[f] <- acceptor$prime3$start[f] - 1
+  # if some anticodon stems are not present, use center positions
+  tmp <- mapply(
+    function(l, type){
+      start <- NA
+      end <- NA
+      if(type == "centerless"){
+        start <- start(l[1]) + 1
+        end <- end(l[1]) - 1
+      }
+      if(type == "armless_ac"){
+        start <- start(l[2])
+        end <- end(l[2])
+      }
+      return(c(start,
+               end))
+    },
+    loopPositions[f],
+    tRNAStructureTypes[f])
+  coord$start[f] <- tmp[1,]
+  coord$end[f] <- tmp[2,]
   return(coord)
 }
 
@@ -654,15 +732,23 @@ setMethod(
 ################################################################################
 .getTstem <- function(x,
                       strList,
-                      tRNAHalfPos,
+                      tRNAStructureTypes,
+                      loopPositions,
                       acceptor){
-  # get prerequisite data
+  # get maximal end from acceptor
   width <- .get_width(acceptor$prime3$start,
                       acceptor$prime3$end)
   maxEnd <- .get_start_end(acceptor$prime3$start, width, NA) - 1
-  # the T stem should be paired in the second half of the tRNA. Otherwise no
-  # D stem present
-  minStart <- tRNAHalfPos
+  # for start search use center positions
+  minStart <- mapply(
+    function(l, type){
+      if(type %in% c("armless_tloop",
+                     "armless_d_t",
+                     "unrecognized")) return(NA)
+      return(end(l)[length(l)-1])
+    },
+    loopPositions,
+    tRNAStructureTypes)
   # get the last basepair which is completly in second half of tRNA and
   # make sure to avoid the variable loop potential basepairs
   # make sure if the start position is a mismatch to extend the end for this as
@@ -710,35 +796,33 @@ setMethod(
 ################################################################################
 .getTloop <- function(x,
                       strList,
-                      tstem,
-                      acceptor){
+                      tRNAStructureTypes,
+                      loopPositions,
+                      tstem){
   coord <- list(start = (tstem$prime5$end + 1),
                 end = (tstem$prime3$start - 1))
-  # If no T stem was found, assign T loop until next paired region, if in second
-  # half of tRNA
+  # If no T stem was found, assign loop from center positions
   f <- which(is.na(tstem$prime5$start) |
                is.na(tstem$prime5$end) |
                is.na(tstem$prime3$start) |
                is.na(tstem$prime3$end))
   if(length(f) > 0) {
-    width <- .get_width(acceptor$prime3$start[f],
-                        acceptor$prime3$end[f])
-    end <- .get_start_end(acceptor$prime3$start[f] , width, NA) - 1
-    start <- floor(.get_start_end(acceptor$prime3$end[f], width, NA) / 2)
-    end <- mapply(
-      function(z,zstart,zend){
-        if(is.na(zstart) | is.na(zend)) return(NA)
-        ans <- z[z$pos >= zstart & 
-                   z$pos <= zend &
-                   z$forward != 0,]
-        if(nrow(ans) == 0) return(NA)
-        max(ans$pos) + 1
+    tmp <- mapply(
+      function(l, type){
+        start <- NA
+        end <- NA
+        if(type %in% c("armless_tloop",
+                       "armless_d_t")){
+          start <- start(l[length(l)])
+          end <- end(l[length(l)]) - 1
+        }
+        return(c(start,
+                 end))
       },
-      strList[f],
-      start,
-      end)
-    coord$start[f] <- start
-    coord$end[f] <- end
+      loopPositions[f],
+      tRNAStructureTypes[f])
+    coord$start[f] <- tmp[1,]
+    coord$end[f] <- tmp[2,]
   }
   return(coord)
 }
@@ -746,8 +830,12 @@ setMethod(
 ################################################################################
 ################################################################################
 ################################################################################
-.getDiscriminator <- function(x, strList){
-  return(as.integer(ifelse(x$tRNA_CCA.end,
+.getDiscriminator <- function(x,
+                              strList,
+                              tRNAStructureTypes){
+  ans <- as.integer(ifelse(x$tRNA_CCA.end,
                            .get_tRNA_length(x)-3,
-                           .get_tRNA_length(x))))
+                           .get_tRNA_length(x)))
+  ans[tRNAStructureTypes == "unrecognized"] <- NA
+  return(ans)
 }

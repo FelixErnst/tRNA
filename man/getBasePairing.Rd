@@ -3,23 +3,28 @@
 \docType{methods}
 \name{gettRNABasePairing}
 \alias{gettRNABasePairing}
+\alias{gettRNALoopIDs}
 \alias{getBasePairing}
 \alias{gettRNABasePairing}
+\alias{gettRNALoopIDs}
+\alias{getLoopIDs}
 \alias{gettRNABasePairing,GRanges-method}
 \alias{getBasePairing}
-\alias{getHairpinLoops}
-\alias{getStems}
+\alias{gettRNALoopIDs,GRanges-method}
+\alias{getLoopIDs}
 \title{Accessing Dot Bracket annotation}
 \usage{
 gettRNABasePairing(gr)
+
+gettRNALoopIDs(gr)
 
 \S4method{gettRNABasePairing}{GRanges}(gr)
 
 getBasePairing(dotBracket)
 
-getHairpinLoops(dotBracket)
+\S4method{gettRNALoopIDs}{GRanges}(gr)
 
-getStems(dotBracket)
+getLoopIDs(dotBracket)
 }
 \arguments{
 \item{gr}{a GRanges object created by \code{import.tRNAscanAsGRanges} or

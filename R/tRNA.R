@@ -133,4 +133,6 @@ TRNA_COLOUR_NO <- "red"
 #' @name tRNA-data
 "gr_human"
 #' @name tRNA-data
+"gr_human2"
+#' @name tRNA-data
 "gr_eco"

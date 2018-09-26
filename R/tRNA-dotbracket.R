@@ -5,7 +5,7 @@ STRUCTURE_OPEN_CHR <- c(">","\\[","\\(","\\{")
 STRUCTURE_CLOSE_CHR <- c("<","\\]","\\)","\\}")
 
 #' @name getBasePairing
-#' @aliases getBasePairing gettRNABasePairing
+#' @aliases getBasePairing gettRNABasePairing gettRNALoopIDs getLoopIDs
 #'
 #' @title Accessing Dot Bracket annotation
 #'
@@ -98,22 +98,26 @@ getBasePairing <- function(dotBracket){
 # assembles base pairing data.frame
 .get_base_pairing_data_frame <- function(open,
                                          close){
-  lapply(seq_along(close),
-         function(i){
-           op <- open[[i]][,"start"]
-           cl <- close[[i]][,"start"]
-           if(length(cl) > 0){
-             forward <- rep(0, length(cl))
-             for(j in seq_along(cl)){
-               forward[j] <- rev(op[op < cl[j]])[1]
-               op <- op[op != forward[j]]
-             }
-             ans <- data.frame(forward = forward,
-                               reverse = cl)
-             return(ans)
-           }
-           return(NULL)
-         })
+  ans <- mapply(
+    function(op,cl){
+      op <- op[,"start"]
+      cl <- cl[,"start"]
+      if(length(cl) > 0){
+        forward <- rep(0, length(cl))
+        for(j in seq_along(cl)){
+          forward[j] <- rev(op[op < cl[j]])[1]
+          op <- op[op != forward[j]]
+        }
+        ans <- data.frame(forward = forward,
+                          reverse = cl)
+        return(ans)
+      }
+      return(NULL)
+    },
+    open,
+    close,
+    SIMPLIFY = FALSE)
+  ans
 }
 # add missing value to base pairing data.frame
 .complete_base_pairing_data_frame <- function(z,
@@ -134,13 +138,6 @@ getBasePairing <- function(dotBracket){
   z <- z[order(z$pos),c("pos","forward","reverse")]
   rownames(z) <- NULL
   return(z)
-}
-
-#' @rdname getBasePairing
-#' @export
-getHairpinLoops <- function(dotBracket){
-  strList <- getBasePairing(dotBracket)
-  .get_hairpin_loops(strList)
 }
 
 .get_hairpin_loops <- function(strList){
@@ -166,8 +163,68 @@ getHairpinLoops <- function(dotBracket){
 
 #' @rdname getBasePairing
 #' @export
-getStems <- function(dotBracket){
+setMethod(
+  f = "gettRNALoopIDs",
+  signature = signature(gr = "GRanges"),
+  definition = function(gr) {
+    .check_trna_granges(gr, TRNA_FEATURES)
+    .get_loop_ids(.get_base_pairing(gr$tRNA_str))
+  }
+)
+
+#' @rdname getBasePairing
+#' @export
+getLoopIDs <- function(dotBracket){
   strList <- getBasePairing(dotBracket)
-  browser()
+  .get_loop_ids(strList)
+}
+
+
+.get_loop_ids <- function(strList){
+  # browser()
+  length <- unlist(lapply(strList,nrow))
+  nls <- rep(0,length(strList))
+  ls <- rep(0,length(strList))
+  hxs <- rep(1,length(strList))
+  stacks <- vector(mode = "list", length = length(strList))
+  loops <- vector(mode = "list", length = length(strList))
+  ans <- mapply(
+    function(z,
+             len,
+             nl,
+             l,
+             hx,
+             stack,
+             loop){
+      for(i in seq_len(len)){
+        # opening
+        if(z[i,"forward"] != 0 && i < z[i,"reverse"]){
+          nl <- nl + 1
+          l <- nl
+          stack[hx] <- i
+          hx <- hx + 1
+        }
+        loop[i] <- l
+        # closing
+        if(z[i,"forward"] != 0 && i > z[i,"reverse"]){
+          hx <- hx - 1
+          if(hx > 1){
+            l <- loop[stack[hx - 1]]
+          } else {
+            l <- 0
+          }
+          if(hx < 1) return(NA)
+        }
+      }
+      return(loop)
+    },
+    strList,
+    length,
+    nls,
+    ls,
+    hxs,
+    stacks,
+    loops,
+    SIMPLIFY = FALSE)
   return(ans)
 }

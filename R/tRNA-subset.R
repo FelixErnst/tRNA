@@ -132,6 +132,7 @@ setMethod(
     }
   }
   # get structure information, only one information is returned
+  # browser()
   strList <- .get_base_pairing(gr$tRNA_str)
   str <- .get_tRNA_structures(ident,
                               gr,
@@ -168,14 +169,28 @@ setMethod(
   # apply length subsetting
   if(!is.na(length)){
     assertive::assert_all_are_whole_numbers(length)
-    isLength <- .get_length(ident = ident,
-                            strList = strList)
+    isLength <- unlist(.get_structures_length(str))
     ansLength <- isLength == length
     # if no length is found, NA is returned. Set these to FALSE
     ansLength[is.na(ansLength)] <- FALSE
     ans <- ans & ansLength
   }
   return(unname(ans))
+}
+
+# returns the length of the structure elements
+.get_structures_length <- function(str){
+  ans <- lapply(str,
+                function(s){
+                  if(is.list(s)){
+                    z <- sapply(s, .get_widths)
+                    z <- rowMeans(z)
+                  } else {
+                    z <- .get_widths(s)
+                  }
+                  z
+                })
+  ans
 }
 
 
@@ -260,7 +275,7 @@ setMethod(
     assertive::assert_is_a_bool(paired)
   }
   # get structure information, only one information is returned
-  browser()
+  # browser()
   strList <- .get_base_pairing(gr$tRNA_str)
   str <- .get_tRNA_structures(ident,
                               gr,
@@ -322,10 +337,11 @@ setMethod(
   # apply length subsetting
   if(!is.na(length)){
     assertive::assert_all_are_whole_numbers(length)
-    isLength <- .get_length(ident = ident,
-                            strList = strList)
-    ans <- ans &
-      isLength == length
+    isLength <- unlist(.get_structures_length(str))
+    ansLength <- isLength == length
+    # if no length is found, NA is returned. Set these to FALSE
+    ansLength[is.na(ansLength)] <- FALSE
+    ans <- ans & ansLength
   }
   return(unname(ans))
 }

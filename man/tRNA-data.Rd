@@ -7,6 +7,8 @@
 \alias{tRNA-data}
 \alias{gr_human}
 \alias{tRNA-data}
+\alias{gr_human2}
+\alias{tRNA-data}
 \alias{gr_eco}
 \title{tRNA example data}
 \format{object of class \code{GRanges}}
@@ -14,6 +16,8 @@
 tRNA
 
 gr_human
+
+gr_human2
 
 gr_eco
 }

@@ -19,7 +19,7 @@ NULL
 #' stored in the result as metadata. They can be accessesed as an IRanges
 #' object by using \code{metadata()[["tRNA_structures"]]}.
 #'
-#' @param gr a GRanges object with tRNA information. It has to pass the
+#' @param x a GRanges object with tRNA information. It has to pass the
 #' \code{istRNAGRanges} function.
 #' @param structure optional parameter for returning just partial sequences.
 #' The following values are accepted:
@@ -62,18 +62,18 @@ NULL
 #' @export
 setMethod(
   f = "gettRNAstructureGRanges",
-  signature = signature(gr = "GRanges"),
-  definition = function(gr,
+  signature = signature(x = "GRanges"),
+  definition = function(x,
                         structure) {
     # input check
-    .check_trna_granges(gr, TRNA_FEATURES)
+    .check_trna_granges(x, TRNA_FEATURES)
     .check_trna_structure_ident(structure)
     if(structure == ""){
       structure <- TRNA_STRUCTURES
     }
     #
-    strList <- gettRNABasePairing(gr)
-    res <- .get_tRNA_structures(structure, gr, strList)
+    strList <- gettRNABasePairing(x)
+    res <- .get_tRNA_structures(structure, x, strList)
     return(res)
   }
 )

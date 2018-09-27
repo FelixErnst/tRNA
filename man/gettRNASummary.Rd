@@ -4,17 +4,18 @@
 \name{gettRNASummary}
 \alias{gettRNASummary}
 \alias{gettRNASummary}
+\alias{gettRNASummary,GRangesList-method}
 \alias{gettRNASummary,GRanges-method}
 \title{Summary of tRNA features}
 \usage{
-gettRNASummary(gr)
+gettRNASummary(x)
 
-\S4method{gettRNASummary}{GRanges}(gr)
+\S4method{gettRNASummary}{GRangesList}(x)
+
+\S4method{gettRNASummary}{GRanges}(x)
 }
 \arguments{
-\item{gr}{a GRanges object, which passes the \code{istRNAGRanges} test.}
-
-\item{grl}{a GRangesList object with GRanges elements , which passes the 
+\item{x}{a GRanges or a GRangesList object. All elements have to pass the
 \code{istRNAGRanges} test.}
 }
 \value{

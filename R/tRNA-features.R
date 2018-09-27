@@ -11,8 +11,7 @@ NULL
 #' of tRNAs from a GRanges object. Logical values are converted to numeric
 #' values.
 #' 
-#' @param gr a GRanges object, which passes the \code{istRNAGRanges} test. 
-#' @param grl a GRangesList object with GRanges elements , which passes the 
+#' @param x a GRanges or a GRangesList object. All elements have to pass the
 #' \code{istRNAGRanges} test.
 #'
 #' @return a DataFrame object 
@@ -48,43 +47,54 @@ TRNA_SUMMARY_FEATURES_OPTIONAL <- c("score" = ".get_score",
                                     "tRNAscan_infernal" = ".get_infernal_score")
 
 TRNA_SUMMARY_FEATURES_RENAMED <- c("tRNAscan_intron.start" = "tRNAscan_intron")
+#' @rdname gettRNASummary
+#' @export
+setMethod(
+  f = "gettRNASummary",
+  signature = signature(x = "GRangesList"),
+  definition = function(x) {
+    ans <- lapply(x, gettRNASummary)
+    names(ans) <- names(x)
+    return(ans)
+  }
+)
 
 #' @rdname gettRNASummary
 #' @export
 setMethod(
   f = "gettRNASummary",
-  signature = signature(gr = "GRanges"),
-  definition = function(gr) {
+  signature = signature(x = "GRanges"),
+  definition = function(x) {
     # Input check
-    istRNAGRanges(gr)
+    istRNAGRanges(x)
     # get default features
     df <-  S4Vectors::DataFrame(lapply(TRNA_SUMMARY_FEATURES,
                                        function(f){
-                                         do.call(f,list(gr))
+                                         do.call(f,list(x))
                                        })) 
     # get list features from structure informations
-    strList <- getBasePairing(gr$tRNA_str)
+    strList <- getBasePairing(x$tRNA_str)
     str <- .get_tRNA_structures(TRNA_STRUCTURES,
-                                gr,
+                                x,
                                 strList)
     strListSubsetAll <- .get_ident_structures(ident = TRNA_STRUCTURES,
-                                              gr = gr,
+                                              gr = x,
                                               strList = strList,
                                               str = str)
     strListSubsetPaired <- strListSubsetAll[TRNA_STRUCTURES_PAIRED]
     data <- lapply(TRNA_SUMMARY_FEATURES_LIST,
                    function(f){
-                     do.call(f,list(gr,
+                     do.call(f,list(x,
                                     str))
                    })
     dataSubset <- lapply(TRNA_SUMMARY_FEATURES_LIST_SUBSET,
                          function(f){
-                           do.call(f,list(gr,
+                           do.call(f,list(x,
                                           strListSubsetAll))
                          })
     dataSubsetPaired <- lapply(TRNA_SUMMARY_FEATURES_LIST_SUBSET_PAIRED,
                    function(f){
-                     do.call(f,list(gr,
+                     do.call(f,list(x,
                                     strListSubsetPaired))
                    })
     dfAdd <- do.call(cbind,
@@ -99,13 +109,13 @@ setMethod(
                                 unlist(lapply(dataSubsetPaired,names))))
     df <- cbind(df,dfAdd)
     # get optional features
-    dataFeatures <- colnames(S4Vectors::mcols(gr))
+    dataFeatures <- colnames(S4Vectors::mcols(x))
     dataFeatures <- dataFeatures[dataFeatures %in% names(TRNA_SUMMARY_FEATURES_OPTIONAL)]
     if(length(dataFeatures) > 0){
       dfAdd <- S4Vectors::DataFrame(
         lapply(TRNA_SUMMARY_FEATURES_OPTIONAL[dataFeatures],
                function(f){
-                 do.call(f,list(gr))
+                 do.call(f,list(x))
                })) 
       df <- cbind(df, dfAdd)
     }

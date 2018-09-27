@@ -21,48 +21,48 @@
 \alias{hasVariableLoop,GRanges-method}
 \title{Subsetting tRNA}
 \usage{
-hasTStem(gr, length = NA, unpaired = NA, mismatches = NA, bulged = NA)
+hasTStem(x, length = NA, unpaired = NA, mismatches = NA, bulged = NA)
 
-hasDStem(gr, length = NA, unpaired = NA, mismatches = NA, bulged = NA)
+hasDStem(x, length = NA, unpaired = NA, mismatches = NA, bulged = NA)
 
-hasAcceptorStem(gr, length = NA, unpaired = NA, mismatches = NA,
+hasAcceptorStem(x, length = NA, unpaired = NA, mismatches = NA,
   bulged = NA)
 
-hasAnticodonStem(gr, length = NA, unpaired = NA, mismatches = NA,
+hasAnticodonStem(x, length = NA, unpaired = NA, mismatches = NA,
   bulged = NA)
 
-hasTloop(gr, length = NA)
+hasTloop(x, length = NA)
 
-hasDloop(gr, length = NA)
+hasDloop(x, length = NA)
 
-hasAnticodonLoop(gr, length = NA)
+hasAnticodonLoop(x, length = NA)
 
-hasVariableLoop(gr, length = NA, paired = NA, mismatches = NA,
+hasVariableLoop(x, length = NA, paired = NA, mismatches = NA,
   bulged = NA)
 
-\S4method{hasTStem}{GRanges}(gr, length = NA, unpaired = NA,
+\S4method{hasTStem}{GRanges}(x, length = NA, unpaired = NA,
   mismatches = NA, bulged = NA)
 
-\S4method{hasDStem}{GRanges}(gr, length = NA, unpaired = NA,
+\S4method{hasDStem}{GRanges}(x, length = NA, unpaired = NA,
   mismatches = NA, bulged = NA)
 
-\S4method{hasAcceptorStem}{GRanges}(gr, length = NA, unpaired = NA,
+\S4method{hasAcceptorStem}{GRanges}(x, length = NA, unpaired = NA,
   mismatches = NA, bulged = NA)
 
-\S4method{hasAnticodonStem}{GRanges}(gr, length = NA, unpaired = NA,
+\S4method{hasAnticodonStem}{GRanges}(x, length = NA, unpaired = NA,
   mismatches = NA, bulged = NA)
 
-\S4method{hasTloop}{GRanges}(gr, length = NA)
+\S4method{hasTloop}{GRanges}(x, length = NA)
 
-\S4method{hasDloop}{GRanges}(gr, length = NA)
+\S4method{hasDloop}{GRanges}(x, length = NA)
 
-\S4method{hasAnticodonLoop}{GRanges}(gr, length = NA)
+\S4method{hasAnticodonLoop}{GRanges}(x, length = NA)
 
-\S4method{hasVariableLoop}{GRanges}(gr, length = NA, paired = NA,
+\S4method{hasVariableLoop}{GRanges}(x, length = NA, paired = NA,
   mismatches = NA, bulged = NA)
 }
 \arguments{
-\item{gr}{a GRanges object from a tRNAscan import or with equivalent
+\item{x}{a GRanges object from a tRNAscan import or with equivalent
 information}
 
 \item{length}{the length as integer}

@@ -1,9 +1,6 @@
 #' @include tRNA.R
 NULL
 
-STRUCTURE_OPEN_CHR <- c("<","\\[","\\(","\\{")
-STRUCTURE_CLOSE_CHR <- c(">","\\]","\\)","\\}")
-
 #' @name getBasePairing
 #' @aliases getBasePairing gettRNABasePairing gettRNALoopIDs getLoopIDs
 #'
@@ -19,30 +16,33 @@ STRUCTURE_CLOSE_CHR <- c(">","\\]","\\)","\\}")
 #'
 #' @return
 #' \code{getBasePairing}: 
-#' The result is a data.frame with three columns: pos, forward, reverse. If a
-#' position is unpaired, forward and reverse will be \code{0}, otherwise it
-#' will match the base paired positions.
-#' \code{getHairpinLoops}, \code{getStems}: 
-#' return a list of list of \code{IRanges} describing all coordinates found for
-#' the given structures.
+#' The result is a data.frame with following columns: pos, forward, reverse, chr
+#' and base (if \code{sequence} was provided or a \code{GRanges} objects was 
+#' used). If a position is unpaired, forward and reverse will be \code{0}, 
+#' otherwise it will match the base paired positions.
+#' \code{gettRNALoopIDs}, \code{getLoopIDs}: 
+#' return a list of list of loop ids.
 #'
-#' @param gr a GRanges object created by \code{import.tRNAscanAsGRanges} or
-#' GRanges with equivalent information. The \code{tRNA_str} column will be used
-#' for input into \code{getBasePairing}.
+#' @param x a GRanges object created by \code{import.tRNAscanAsGRanges} or
+#' GRanges with equivalent information. The \code{tRNA_str} and \code{tRNA_seq} 
+#' columns will be used for input into \code{getBasePairing}.
 #'
 #' @importFrom stringr str_locate_all str_locate
 NULL
+
+STRUCTURE_OPEN_CHR <- c("<","\\[","\\(","\\{")
+STRUCTURE_CLOSE_CHR <- c(">","\\]","\\)","\\}")
 
 #' @rdname getBasePairing
 #'
 #' @export
 setMethod(
   f = "gettRNABasePairing",
-  signature = signature(gr = "GRanges"),
-  definition = function(gr) {
-    .check_trna_granges(gr, TRNA_FEATURES)
-    .get_base_pairing(gr$tRNA_str,
-                      as.character(gr$tRNA_seq))
+  signature = signature(x = "GRanges"),
+  definition = function(x) {
+    .check_trna_granges(x, TRNA_FEATURES)
+    .get_base_pairing(x$tRNA_str,
+                      as.character(x$tRNA_seq))
   }
 )
 
@@ -244,10 +244,10 @@ getBasePairing <- function(dotBracket,
 #' @export
 setMethod(
   f = "gettRNALoopIDs",
-  signature = signature(gr = "GRanges"),
-  definition = function(gr) {
-    .check_trna_granges(gr, TRNA_FEATURES)
-    .get_ids_of_loops(getBasePairing(gr$tRNA_str))
+  signature = signature(x = "GRanges"),
+  definition = function(x) {
+    .check_trna_granges(x, TRNA_FEATURES)
+    .get_ids_of_loops(getBasePairing(x$tRNA_str))
   }
 )
 

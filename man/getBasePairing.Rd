@@ -14,22 +14,22 @@
 \alias{getLoopIDs}
 \title{Accessing Dot Bracket annotation}
 \usage{
-gettRNABasePairing(gr)
+gettRNABasePairing(x)
 
-gettRNALoopIDs(gr)
+gettRNALoopIDs(x)
 
-\S4method{gettRNABasePairing}{GRanges}(gr)
+\S4method{gettRNABasePairing}{GRanges}(x)
 
 getBasePairing(dotBracket, sequence)
 
-\S4method{gettRNALoopIDs}{GRanges}(gr)
+\S4method{gettRNALoopIDs}{GRanges}(x)
 
 getLoopIDs(dotBracket)
 }
 \arguments{
-\item{gr}{a GRanges object created by \code{import.tRNAscanAsGRanges} or
-GRanges with equivalent information. The \code{tRNA_str} column will be used
-for input into \code{getBasePairing}.}
+\item{x}{a GRanges object created by \code{import.tRNAscanAsGRanges} or
+GRanges with equivalent information. The \code{tRNA_str} and \code{tRNA_seq} 
+columns will be used for input into \code{getBasePairing}.}
 
 \item{dotBracket}{character vectors describing a nucleotide sequence
 structure in the dot bracket annotations. Valid characters are:
@@ -43,12 +43,12 @@ can be used.}
 }
 \value{
 \code{getBasePairing}: 
-The result is a data.frame with three columns: pos, forward, reverse. If a
-position is unpaired, forward and reverse will be \code{0}, otherwise it
-will match the base paired positions.
-\code{getHairpinLoops}, \code{getStems}: 
-return a list of list of \code{IRanges} describing all coordinates found for
-the given structures.
+The result is a data.frame with following columns: pos, forward, reverse, chr
+and base (if \code{sequence} was provided or a \code{GRanges} objects was 
+used). If a position is unpaired, forward and reverse will be \code{0}, 
+otherwise it will match the base paired positions.
+\code{gettRNALoopIDs}, \code{getLoopIDs}: 
+return a list of list of loop ids.
 }
 \description{
 \code{getBasePairing} converts a dot bracket annotation into a

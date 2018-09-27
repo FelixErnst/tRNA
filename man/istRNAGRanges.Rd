@@ -7,12 +7,12 @@
 \alias{istRNAGRanges,GRanges-method}
 \title{tRNA compatibility check}
 \usage{
-istRNAGRanges(gr)
+istRNAGRanges(x)
 
-\S4method{istRNAGRanges}{GRanges}(gr)
+\S4method{istRNAGRanges}{GRanges}(x)
 }
 \arguments{
-\item{gr}{the \code{GRanges} object to test}
+\item{x}{the \code{GRanges} object to test}
 }
 \value{
 a logical value

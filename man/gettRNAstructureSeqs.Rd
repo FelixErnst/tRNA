@@ -11,18 +11,18 @@
 \alias{gettRNAstructureGRanges,GRanges-method}
 \title{tRNA structures and sequences}
 \usage{
-gettRNAstructureGRanges(gr, structure = "")
+gettRNAstructureGRanges(x, structure = "")
 
-gettRNAstructureSeqs(gr, structure = "", joinCompletely = FALSE,
+gettRNAstructureSeqs(x, structure = "", joinCompletely = FALSE,
   joinFeatures = FALSE, padSequences = TRUE)
 
-\S4method{gettRNAstructureSeqs}{GRanges}(gr, structure = "",
+\S4method{gettRNAstructureSeqs}{GRanges}(x, structure = "",
   joinCompletely = FALSE, joinFeatures = FALSE, padSequences = TRUE)
 
-\S4method{gettRNAstructureGRanges}{GRanges}(gr, structure = "")
+\S4method{gettRNAstructureGRanges}{GRanges}(x, structure = "")
 }
 \arguments{
-\item{gr}{a GRanges object with tRNA information. It has to pass the
+\item{x}{a GRanges object with tRNA information. It has to pass the
 \code{istRNAGRanges} function.}
 
 \item{structure}{optional parameter for returning just partial sequences.

@@ -12,14 +12,14 @@ NULL
 #' @export
 setMethod(
   f = "gettRNAstructureSeqs",
-  signature = signature(gr = "GRanges"),
-  definition = function(gr,
+  signature = signature(x = "GRanges"),
+  definition = function(x,
                         structure,
                         joinCompletely,
                         joinFeatures,
                         padSequences) {
     # input check
-    .check_trna_granges(gr, TRNA_FEATURES)
+    .check_trna_granges(x, TRNA_FEATURES)
     .check_trna_structure_ident(structure)
     if(structure == ""){
       structure <- TRNA_STRUCTURES
@@ -32,21 +32,21 @@ setMethod(
               'joinCompletely' takes precedence.")
     }
     # Make sure sequences are a DNAStringSet
-    if(class(gr$tRNA_seq) != "DNAStringSet"){
-      gr$tRNA_seq <- Biostrings::DNAStringSet(gr$tRNA_seq)
+    if(class(x$tRNA_seq) != "DNAStringSet"){
+      x$tRNA_seq <- Biostrings::DNAStringSet(x$tRNA_seq)
     }
     # join completly or get splitup sequences
     if(joinCompletely){
       # get Ranges
-      strList <- getBasePairing(gr$tRNA_str)
+      strList <- getBasePairing(x$tRNA_str)
       res <- .get_tRNA_structures(names(tRNAStructureFunctionList),
-                                  gr,
+                                  x,
                                   strList)
       # get sequences
       seqs <- mapply(.assemble_sequences,
                      res,
                      names(res),
-                     MoreArgs = list(gr,
+                     MoreArgs = list(x,
                                      joinFeatures = FALSE,
                                      padSequences = TRUE,
                                      strList))
@@ -73,12 +73,12 @@ setMethod(
       S4Vectors::metadata(seqs) <- list("tRNA_structures" = ir)
     } else {
       # get Ranges
-      strList <- gettRNABasePairing(gr)
-      res <- .get_tRNA_structures(structure, gr, strList)
+      strList <- gettRNABasePairing(x)
+      res <- .get_tRNA_structures(structure, x, strList)
       seqs <- mapply(.assemble_sequences,
                      res,
                      names(res),
-                     MoreArgs = list(gr,
+                     MoreArgs = list(x,
                                      joinFeatures,
                                      padSequences,
                                      strList))

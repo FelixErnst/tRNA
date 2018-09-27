@@ -98,6 +98,9 @@ gr[hasAcceptorStem(gr, mismatches = TRUE) &
 
 # Visualization
 
+To get an overview of tRNA feature and compare different datasets, 
+`gettRNAFeaturePlots` can be used. It accepts a named `GRangesList` as input.
+
 ```{r}
 # load tRNA data for E. coli and H. sapiens
 data("gr_eco", package = "tRNA", envir = environment())
@@ -125,8 +128,36 @@ plots$tRNAscan_intron
 plots$variableLoop_length
 ```
 
+To check whether features correlate with additional scores, optional
+arguments can be added to `gettRNAFeaturePlots` or used from the `score` column
+of the `GRanges` objects. For the first provided a list of scores with the same 
+dimensions as the GRangesList object as argument `scores` and for the latter 
+set `plotScore = TRUE`.
 
+```{r, eval=FALSE}
+# score column will be used
+plots <- gettRNAFeaturePlots(grl,
+                             plotScores = TRUE)
+```
+```{r}
+plots <- gettRNAFeaturePlots(grl,
+                             scores = list(runif(length(grl[[1]]),0,100),
+                                           runif(length(grl[[2]]),0,100),
+                                           runif(length(grl[[3]]),0,100)))
+```
+```{r plot6, fig.cap = "tRNA length and score correlation."}
+plots$length
+```
+```{r plot7, fig.cap = "variable loop length and score correlation."}
+plots$variableLoop_length
+```
 
+The plots can be of course modified.
+
+```{r plot8, fig.cap = "Customized plot switching out the point and violin plot into a boxplot."}
+plots$length$layers <- plots$length$layers[c(-1,-2)]
+plots$length + ggplot2::geom_boxplot()
+```
 
 # Options
 
@@ -139,7 +170,7 @@ options("tRNA_colour_yes")
 options("tRNA_colour_no")
 ```
 
-# Dot bracket annotation functions
+# Dot bracket annotation
 
 To retrieve detailed information on the base pairing `gettRNABasePairing()` or
 `getBasePairing()` depending on the input type. The DotBracket annotation is
@@ -152,7 +183,7 @@ head(getBasePairing(gr[1]$tRNA_str)[[1]])
 ```
 
 The loop ids for the structure elements can be retrieved with 
-`gettRNALoopIDs()` or `getLoopIDs()`
+`gettRNALoopIDs()` or `getLoopIDs()`.
 
 ```{r}
 gettRNALoopIDs(gr)[[1]]

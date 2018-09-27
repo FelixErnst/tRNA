@@ -17,7 +17,7 @@ NULL
 #' the results, please consider constructing a logical vectors with two calls as
 #' suggested in the examples.
 #'
-#' @param gr a GRanges object from a tRNAscan import or with equivalent
+#' @param x a GRanges object from a tRNAscan import or with equivalent
 #' information
 #' @param length the length as integer
 #' @param unpaired logical: has unpaired nucleotides
@@ -39,13 +39,13 @@ NULL
 #' @export
 setMethod(
   f = "hasTStem",
-  signature = signature(gr = "GRanges"),
-  definition = function(gr,
+  signature = signature(x = "GRanges"),
+  definition = function(x,
                         length,
                         unpaired,
                         mismatches,
                         bulged) .subset_tRNA_stem("TStem",
-                                                  gr,
+                                                  x,
                                                   length,
                                                   unpaired,
                                                   mismatches,
@@ -55,13 +55,13 @@ setMethod(
 #' @export
 setMethod(
   f = "hasDStem",
-  signature = signature(gr = "GRanges"),
-  definition = function(gr,
+  signature = signature(x = "GRanges"),
+  definition = function(x,
                         length,
                         unpaired,
                         mismatches,
                         bulged) .subset_tRNA_stem("DStem",
-                                                  gr,
+                                                  x,
                                                   length,
                                                   unpaired,
                                                   mismatches,
@@ -71,13 +71,13 @@ setMethod(
 #' @export
 setMethod(
   f = "hasAcceptorStem",
-  signature = signature(gr = "GRanges"),
-  definition = function(gr,
+  signature = signature(x = "GRanges"),
+  definition = function(x,
                         length,
                         unpaired,
                         mismatches,
                         bulged) .subset_tRNA_stem("acceptorStem",
-                                                  gr,
+                                                  x,
                                                   length,
                                                   unpaired,
                                                   mismatches,
@@ -87,13 +87,13 @@ setMethod(
 #' @export
 setMethod(
   f = "hasAnticodonStem",
-  signature = signature(gr = "GRanges"),
-  definition = function(gr,
+  signature = signature(x = "GRanges"),
+  definition = function(x,
                         length,
                         unpaired,
                         mismatches,
                         bulged) .subset_tRNA_stem("anticodonStem",
-                                                  gr,
+                                                  x,
                                                   length,
                                                   unpaired,
                                                   mismatches,
@@ -200,10 +200,10 @@ setMethod(
 #' @export
 setMethod(
   f = "hasTloop",
-  signature = signature(gr = "GRanges"),
-  definition = function(gr,
+  signature = signature(x = "GRanges"),
+  definition = function(x,
                         length) .subset_tRNA_loop("Tloop",
-                                                  gr,
+                                                  x,
                                                   length,
                                                   NA,
                                                   NA,
@@ -213,10 +213,10 @@ setMethod(
 #' @export
 setMethod(
   f = "hasDloop",
-  signature = signature(gr = "GRanges"),
-  definition = function(gr,
+  signature = signature(x = "GRanges"),
+  definition = function(x,
                         length) .subset_tRNA_loop("Dloop",
-                                                  gr,
+                                                  x,
                                                   length,
                                                   NA,
                                                   NA,
@@ -226,10 +226,10 @@ setMethod(
 #' @export
 setMethod(
   f = "hasAnticodonLoop",
-  signature = signature(gr = "GRanges"),
-  definition = function(gr,
+  signature = signature(x = "GRanges"),
+  definition = function(x,
                         length) .subset_tRNA_loop("anticodonLoop",
-                                                  gr,
+                                                  x,
                                                   length,
                                                   NA,
                                                   NA,
@@ -239,13 +239,13 @@ setMethod(
 #' @export
 setMethod(
   f = "hasVariableLoop",
-  signature = signature(gr = "GRanges"),
-  definition = function(gr,
+  signature = signature(x = "GRanges"),
+  definition = function(x,
                         length,
                         paired,
                         mismatches,
                         bulged) .subset_tRNA_loop("variableLoop",
-                                                  gr,
+                                                  x,
                                                   length,
                                                   paired,
                                                   mismatches,

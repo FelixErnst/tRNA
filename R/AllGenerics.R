@@ -9,7 +9,7 @@ NULL
 #' @export
 setGeneric (
   name = "istRNAGRanges",
-  def = function(gr) standardGeneric("istRNAGRanges")
+  def = function(x) standardGeneric("istRNAGRanges")
 )
 
 # Structures and Sequences -----------------------------------------------------
@@ -18,14 +18,14 @@ setGeneric (
 #' @export
 setGeneric (
   name = "gettRNAstructureGRanges",
-  def = function(gr,
+  def = function(x,
                  structure = "") standardGeneric("gettRNAstructureGRanges")
 )
 #' @rdname gettRNAstructureSeqs
 #' @export
 setGeneric (
   name = "gettRNAstructureSeqs",
-  def = function(gr,
+  def = function(x,
                  structure = "",
                  joinCompletely = FALSE,
                  joinFeatures = FALSE,
@@ -35,13 +35,13 @@ setGeneric (
 #' @export
 setGeneric (
   name = "gettRNABasePairing",
-  def = function(gr) standardGeneric("gettRNABasePairing")
+  def = function(x) standardGeneric("gettRNABasePairing")
 )
 #' @rdname getBasePairing
 #' @export
 setGeneric (
   name = "gettRNALoopIDs",
-  def = function(gr) standardGeneric("gettRNALoopIDs")
+  def = function(x) standardGeneric("gettRNALoopIDs")
 )
 
 # Features ---------------------------------------------------------------------
@@ -50,7 +50,7 @@ setGeneric (
 #' @export
 setGeneric (
   name = "gettRNASummary",
-  def = function(gr) standardGeneric("gettRNASummary")
+  def = function(x) standardGeneric("gettRNASummary")
 )
 
 # Subsetting -------------------------------------------------------------------
@@ -59,7 +59,7 @@ setGeneric (
 #' @export
 setGeneric (
   name = "hasTStem",
-  def = function(gr,
+  def = function(x,
                  length = NA,
                  unpaired = NA,
                  mismatches = NA,
@@ -69,7 +69,7 @@ setGeneric (
 #' @export
 setGeneric (
   name = "hasDStem",
-  def = function(gr,
+  def = function(x,
                  length = NA,
                  unpaired = NA,
                  mismatches = NA,
@@ -79,7 +79,7 @@ setGeneric (
 #' @export
 setGeneric (
   name = "hasAcceptorStem",
-  def = function(gr,
+  def = function(x,
                  length = NA,
                  unpaired = NA,
                  mismatches = NA,
@@ -89,7 +89,7 @@ setGeneric (
 #' @export
 setGeneric (
   name = "hasAnticodonStem",
-  def = function(gr,
+  def = function(x,
                  length = NA,
                  unpaired = NA,
                  mismatches = NA,
@@ -99,28 +99,28 @@ setGeneric (
 #' @export
 setGeneric (
   name = "hasTloop",
-  def = function(gr,
+  def = function(x,
                  length = NA) standardGeneric("hasTloop")
 )
 #' @rdname tRNA-subset
 #' @export
 setGeneric (
   name = "hasDloop",
-  def = function(gr,
+  def = function(x,
                  length = NA) standardGeneric("hasDloop")
 )
 #' @rdname tRNA-subset
 #' @export
 setGeneric (
   name = "hasAnticodonLoop",
-  def = function(gr,
+  def = function(x,
                  length = NA) standardGeneric("hasAnticodonLoop")
 )
 #' @rdname tRNA-subset
 #' @export
 setGeneric (
   name = "hasVariableLoop",
-  def = function(gr,
+  def = function(x,
                  length = NA,
                  paired = NA,
                  mismatches = NA,
@@ -129,15 +129,12 @@ setGeneric (
 
 # Visualization ----------------------------------------------------------------
 
-#' @rdname plottRNAFeatures
-#' @export
-setGeneric (
-  name = "plottRNAFeatures",
-  def = function(grl) standardGeneric("plottRNAFeatures")
-)
-#' @rdname plottRNAFeatures
+#' @rdname gettRNAFeaturePlots
 #' @export
 setGeneric (
   name = "gettRNAFeaturePlots",
-  def = function(grl) standardGeneric("gettRNAFeaturePlots")
+  def = function(x,
+                 plotScores = FALSE,
+                 scores = NA,
+                 scoreLabel = "Score") standardGeneric("gettRNAFeaturePlots")
 )

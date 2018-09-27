@@ -1,24 +1,48 @@
 #' @include tRNA.R
 NULL
 
-#' @name plottRNAFeatures
+#' @name gettRNAFeaturePlots
 #' 
 #' @title Graphical summary of tRNA features
 #' 
 #' @description 
+#' \code{gettRNAFeaturePlots} generates a plot for every feature found with
+#' \code{gettRNASummary}. Based on the datatype, it will generate suitable point
+#' or bar plots. Names of the GRangesList will be used as Organism identifiers
+#' and used for colouring.
 #' 
-#' @return a ggplot2
+#' The options \code{tRNA_colour_palette}, \code{tRNA_colour_yes} and
+#' \code{tRNA_colour_no} will be used for colours.
+#' 
+#' @param x a named GRangesList object.
+#' @param plotScores logical value, whether to plot scores. If scores are not
+#' provided with an additional argument, it will try to use the column "score"
+#' of the GRanges objects.
+#' @param scores a list of scores, which have to have the same dimensions as the
+#' GRangesList or GRanges object.
+#' @param scoreLabel a string to use as a label for the x axis.
+#' 
+#' @return a list of ggplot2 plots. These can be customized further.
+#' 
+#' @import ggplot2
 #' 
 #' @export
 #' 
 #' @examples 
-#' \donttest{
-#' }
+#' data("gr", package = "tRNA", envir = environment())
+#' data("gr_eco", package = "tRNA", envir = environment())
+#' grl <- GRangesList(Sce = gr,
+#'                    Eco = gr_eco)
+#' plots <- gettRNAFeaturePlots(grl)
+#' 
+#' # customized plots
+#' plots$length$layers <- plots$length$layers[c(-1,-2)]
+#' plots$length + ggplot2::geom_boxplot()
+NULL
 
 TRNA_PLOT_LABELS <- list(gc = "GC content [%]",
                          width = "gene width [bp]",
                          length = "Length [nt]",
-                         score = "Score",
                          cca = "genomically encoded 3'-CCA ends [%]",
                          
                          features_all_valid = "all tRNA structures found [%]",
@@ -66,7 +90,6 @@ TRNA_PLOT_LABELS <- list(gc = "GC content [%]",
 TRNA_PLOT_DATATYPES <- list(gc = "percent",
                             width = NA,
                             length = NA,
-                            score = NA,
                             cca = "yn",
                             
                             features_all_valid = "yn",
@@ -110,17 +133,20 @@ TRNA_PLOT_DATATYPES <- list(gc = "percent",
                             tRNAscan_sec.str.score = NA,
                             tRNAscan_infernal = NA)
 
-#' @rdname plottRNAFeatures
+#' @rdname gettRNAFeaturePlots
 #' @export
 setMethod(
   f = "gettRNAFeaturePlots",
-  signature = signature(grl = "GRangesList"),
-  definition = function(grl) {
+  signature = signature(x = "GRangesList"),
+  definition = function(x,
+                        plotScores,
+                        scores,
+                        scoreLabel) {
     # Input check
-    if(length(grl) == 0)
+    if(length(x) == 0)
       stop("GRangesList of length == 0 provided.",
            call. = FALSE)
-    names <- names(grl)
+    names <- names(x)
     if(any(duplicated(names))){
       stop("Duplicated names in GRangesList not supported.",
            call. = FALSE)
@@ -129,16 +155,45 @@ setMethod(
       stop("GrangesList elements are not named.",
            call. = FALSE)
     }
+    if(!is.na(scores[1])){
+      plotScores <- TRUE
+      if(length(x) != length(scores)){
+        stop("GRanges and scores are not of the same length.",
+             call. = FALSE)
+      }
+      checkScores <- mapply(function(a,b){length(a) != length(b)},
+                            x,
+                            scores)
+      if(any(checkScores)){
+        stop("GRanges and scores are not of the same length.",
+             call. = FALSE)
+      }
+    }
+    assertive::assert_is_a_non_empty_string(scoreLabel)
+    assertive::assert_is_a_bool(plotScores)
+    if(plotScores && is.na(scores[1])){
+      scores <- lapply(x, score)
+      if(any(vapply(scores, is.null, logical(1)))){
+        stop("No scores provided and no scores found in the GRanges objects.",
+             call. = FALSE)
+      }
+    }
     # aggregate data
-    data <- lapply(seq_len(length(grl)),
+    data <- lapply(seq_len(length(x)),
                    function(i){
-                     mcoldata <- gettRNASummary(grl[[i]])
-                     name <- names(grl[i])
+                     mcoldata <- gettRNASummary(x[[i]])
+                     name <- names(x[i])
                      coldata <- lapply(seq_len(ncol(mcoldata)),
-                                       function(i){
-                                         column <- mcoldata[,i]
-                                         column <- column[!is.na(column)]
+                                       function(j){
+                                         column <- mcoldata[,j]
+                                         f <- which(!is.na(column))
+                                         column <- column[f]
                                          if(length(column) == 0) return(NULL)
+                                         if(plotScores){
+                                           return(data.frame(id = name,
+                                                             value = column,
+                                                             score = scores[[i]][f]))
+                                         }
                                          data.frame(id = name,
                                                     value = column)
                                        })
@@ -160,10 +215,20 @@ setMethod(
                       if(is.null(data[[i]])){
                         return(NULL)
                       }
-                      .get_plot(df = data[i],
-                                colour_palette = colour_palette,
-                                colour_yes = colour_yes,
-                                colour_no = colour_no)
+                      if(plotScores){
+                        .get_plot_w_scores(
+                          df = data[i],
+                          scoreLabel,
+                          colour_palette = colour_palette,
+                          colour_yes = colour_yes,
+                          colour_no = colour_no)
+                      } else {
+                        .get_plot_wo_scores(
+                          df = data[i],
+                          colour_palette = colour_palette,
+                          colour_yes = colour_yes,
+                          colour_no = colour_no)
+                      }
                     })
     names(plots) <- dataNames
     plots <- plots[!vapply(plots, is.null, logical(1))]
@@ -172,10 +237,79 @@ setMethod(
 )
 
 # get a plot for one data type
-.get_plot <- function(df,
-                      colour_palette,
-                      colour_yes,
-                      colour_no){
+.get_plot_w_scores <- function(df,
+                               scoreLabel,
+                               colour_palette,
+                               colour_yes,
+                               colour_no){
+  writtenNames <- TRNA_PLOT_LABELS
+  dataType <- TRNA_PLOT_DATATYPES
+  name <- names(df)
+  if(length(dataType[[name]]) == 0){
+    stop("Something went wrong.")
+  }
+  if(is.na(dataType[[name]])){
+    min <- min(df[[name]]$value)
+    max <- max(df[[name]]$value)
+    plot <- ggplot2::ggplot(df[[name]],
+                            ggplot2::aes_(x = ~score,
+                                          y = ~value,
+                                          group = ~id,
+                                          colour = ~id)) +
+      ggplot2::scale_y_continuous(name = writtenNames[[name]]) +
+      ggplot2::scale_colour_brewer(name = "Organism",
+                                   palette = colour_palette) + 
+      ggplot2::expand_limits(y = c(min - 1,
+                                   max + 1)) +
+      ggplot2::xlab(label = scoreLabel)
+    if(all((df[[name]]$value %% 1) == 0)){
+      plot <- plot + 
+        ggplot2::geom_jitter(height = 0.2)
+    } else {
+      plot <- plot + 
+        ggplot2::geom_point()
+    }
+  } 
+  if(!is.na(dataType[[name]]) &&
+     dataType[[name]] == "percent"){
+    plot <- ggplot2::ggplot(df[[name]],
+                            ggplot2::aes_(x = ~score,
+                                          y = ~value,
+                                          group = ~id,
+                                          colour = ~id)) +
+      ggplot2::geom_point() +
+      ggplot2::scale_y_continuous(name = writtenNames[[name]],
+                                  breaks = c(0,0.25,0.5,0.75,1),
+                                  labels = scales::percent,
+                                  limits = c(0,1)) +
+      ggplot2::scale_colour_brewer(name = "Organism",
+                                   palette = colour_palette) +
+      ggplot2::xlab(label = scoreLabel)
+  }
+  if(!is.na(dataType[[name]]) &&
+     dataType[[name]] == "yn"){
+    df[[name]][df[[name]]$value == 1,"colour"] <- colour_yes
+    df[[name]][df[[name]]$value == 0,"colour"] <- colour_no
+    df[[name]][df[[name]]$value == 1,"value"] <- "Yes"
+    df[[name]][df[[name]]$value == 0,"value"] <- "No"
+    plot <- ggplot2::ggplot(df[[name]],
+                            ggplot2::aes_(x = ~score,
+                                          y = ~value,
+                                          group = ~id,
+                                          colour = ~id)) +
+      ggplot2::geom_jitter(height = 0.2) +
+      ggplot2::scale_y_discrete(name = writtenNames[[name]]) +
+      ggplot2::scale_colour_brewer(name = "Organism",
+                                   palette = colour_palette) +
+      ggplot2::xlab(label = scoreLabel)
+  }
+  return(plot)
+}
+
+.get_plot_wo_scores <- function(df,
+                                colour_palette,
+                                colour_yes,
+                                colour_no){
   writtenNames <- TRNA_PLOT_LABELS
   dataType <- TRNA_PLOT_DATATYPES
   name <- names(df)

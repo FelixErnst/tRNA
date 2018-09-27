@@ -10,7 +10,7 @@ NULL
 #' \code{istRNAGRanges} checks whether a GRanges object contains the
 #' information expected for a tRNA result.
 #'
-#' @param gr the \code{GRanges} object to test
+#' @param x the \code{GRanges} object to test
 #'
 #' @return a logical value
 #'
@@ -22,8 +22,8 @@ NULL
 #' @export
 setMethod(
   f = "istRNAGRanges",
-  signature = signature(gr = "GRanges"),
-  definition = function(gr) .check_trna_granges(gr,
+  signature = signature(x = "GRanges"),
+  definition = function(x) .check_trna_granges(x,
                                                 TRNA_FEATURES))
 
 # checks whether a GRanges object is tRNA compatible

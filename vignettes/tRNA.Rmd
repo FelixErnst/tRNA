@@ -96,18 +96,68 @@ gr[hasAcceptorStem(gr, mismatches = TRUE) &
      hasDloop(gr, length = 8)]
 ```
 
+# Visualization
+
+```{r}
+# load tRNA data for E. coli and H. sapiens
+data("gr_eco", package = "tRNA", envir = environment())
+data("gr_human", package = "tRNA", envir = environment())
+
+# get summary plots
+grl <- GRangesList(Sce = gr,
+                   Hsa = gr_human,
+                   Eco = gr_eco)
+plots <- gettRNAFeaturePlots(grl)
+```
+```{r plot1, fig.cap = "tRNA length."}
+plots$length
+```
+```{r plot2, fig.cap = "tRNAscan-SE scores."}
+plots$tRNAscan_score
+```
+```{r plot3, fig.cap = "tRNA GC content."}
+plots$gc
+```
+```{r plot4, fig.cap = "tRNAs with introns."}
+plots$tRNAscan_intron
+```
+```{r plot5, fig.cap = "Length of the variable loop."}
+plots$variableLoop_length
+```
+
+
+
+
+# Options
+
+The output of the plot figures can be customized slightly on creation with the 
+following options.
+
+```{r}
+options("tRNA_colour_palette")
+options("tRNA_colour_yes")
+options("tRNA_colour_no")
+```
+
+# Dot bracket annotation functions
+
 To retrieve detailed information on the base pairing `gettRNABasePairing()` or
 `getBasePairing()` depending on the input type. The DotBracket annotation is
-expected with pairs of `><{}[]()`.
+expected with pairs of `<>{}[]()` (Please note the orientation. For `<>` the
+orientation is correct, if inverted).
 
 ```{r}
 head(gettRNABasePairing(gr)[[1]])
 head(getBasePairing(gr[1]$tRNA_str)[[1]])
 ```
 
-# Visualization
+The loop ids for the structure elements can be retrieved with 
+`gettRNALoopIDs()` or `getLoopIDs()`
 
-
+```{r}
+gettRNALoopIDs(gr)[[1]]
+getLoopIDs(gr[1]$tRNA_str)
+```
 
 # Session info
 

@@ -63,7 +63,7 @@ setMethod(
                                          do.call(f,list(gr))
                                        })) 
     # get list features from structure informations
-    strList <- .get_base_pairing(gr$tRNA_str)
+    strList <- getBasePairing(gr$tRNA_str)
     str <- .get_tRNA_structures(TRNA_STRUCTURES,
                                 gr,
                                 strList)
@@ -289,7 +289,7 @@ setMethod(
                                   strList,
                                   str){
   if(missing(strList) || missing(str)){
-    strList <- .get_base_pairing(gr$tRNA_str)
+    strList <- getBasePairing(gr$tRNA_str)
     str <- .get_tRNA_structures(ident,
                                 gr,
                                 strList)

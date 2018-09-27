@@ -239,7 +239,7 @@ setMethod(
 
 # returns the boundary positions of the center of the tRNA
 .get_loop_positions <- function(strList){
-  loopids <- .get_loop_ids(strList)
+  loopids <- .get_ids_of_loops(strList)
   min <- .local_min(loopids)
   ans <- mapply(
     function(z,zz){

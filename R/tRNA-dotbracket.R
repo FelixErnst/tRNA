@@ -1,8 +1,8 @@
 #' @include tRNA.R
 NULL
 
-STRUCTURE_OPEN_CHR <- c(">","\\[","\\(","\\{")
-STRUCTURE_CLOSE_CHR <- c("<","\\]","\\)","\\}")
+STRUCTURE_OPEN_CHR <- c("<","\\[","\\(","\\{")
+STRUCTURE_CLOSE_CHR <- c(">","\\]","\\)","\\}")
 
 #' @name getBasePairing
 #' @aliases getBasePairing gettRNABasePairing gettRNALoopIDs getLoopIDs
@@ -30,7 +30,7 @@ STRUCTURE_CLOSE_CHR <- c("<","\\]","\\)","\\}")
 #' GRanges with equivalent information. The \code{tRNA_str} column will be used
 #' for input into \code{getBasePairing}.
 #'
-#' @importFrom stringr str_locate_all
+#' @importFrom stringr str_locate_all str_locate
 NULL
 
 #' @rdname getBasePairing
@@ -41,7 +41,8 @@ setMethod(
   signature = signature(gr = "GRanges"),
   definition = function(gr) {
     .check_trna_granges(gr, TRNA_FEATURES)
-    .get_base_pairing(gr$tRNA_str)
+    .get_base_pairing(gr$tRNA_str,
+                      as.character(gr$tRNA_seq))
   }
 )
 
@@ -50,19 +51,64 @@ setMethod(
 #' @param dotBracket character vectors describing a nucleotide sequence
 #' structure in the dot bracket annotations. Valid characters are:
 #' \code{.(\\{[><]\\})}
+#' @param sequence optional: character vectors describing a nucleotide sequence.
+#' The same number of sequences with the same length as the dot bracket string 
+#' have to be used. Each nucleotide sequence has to be a character vector.
+#' The identity of the nucleotides are not control, so in theory all letters 
+#' can be used.
 #'
 #' @export
-getBasePairing <- function(dotBracket){
+getBasePairing <- function(dotBracket,
+                           sequence){
   assertive::assert_is_non_empty(dotBracket)
-  .check_dot_bracket(dotBracket)
   dotBracket <- unlist(dotBracket)
+  .check_dot_bracket(dotBracket)
   assertive::assert_all_are_non_missing_nor_empty_character(dotBracket)
-  ans <- .get_base_pairing(dotBracket)
+  if(!missing(sequence)){
+    assertive::assert_is_non_empty(sequence)
+    sequence <- unlist(sequence)
+    assertive::assert_all_are_non_missing_nor_empty_character(sequence)
+    # check that the number and the length of sequences matches those of the
+    # dot bracket annotation
+    if(length(sequence) != length(dotBracket)){
+      stop("Number of dot bracket strings and sequences do not match.",
+           call. = FALSE)
+    }
+    check <- unlist(mapply(
+      function(d,s){
+        nchar(d) != nchar(s)
+      },
+      dotBracket,sequence))
+    if(any(check)){
+      stop("Length of dot bracket annotation and sequence do not match for ",
+           "the following pairs:\n'",
+           paste(which(check),collapse = "', '"),
+           "'.",
+           call. = FALSE)
+    }
+  } else {
+    sequence <- rep(NA,length(dotBracket))
+  }
+  ans <- .get_base_pairing(dotBracket,
+                           sequence)
   return(ans)
 }
 
 # convert dot bracket annotation in ct like format
-.get_base_pairing <- function(x){
+.get_base_pairing <- function(x,
+                              seq){
+  # special case for <>. This is the usually used orientation (eg. by ViennaRNA)
+  # , but tRNAscan files use a different orientation. If the first occurance is 
+  # < switch out the orientation.
+  f <- which(stringr::str_locate(x, ">")[,"start"] < 
+               stringr::str_locate(x, "<")[,"start"])
+  if(length(f) > 0){
+    tmp <- gsub("<","a",x[f])
+    tmp <- gsub(">","b",tmp)
+    tmp <- gsub("a",">",tmp)
+    tmp <- gsub("b","<",tmp)
+    x[f] <- tmp
+  }
   open <- lapply(STRUCTURE_OPEN_CHR,
                  function(chr){
                    stringr::str_locate_all(x, chr)
@@ -79,27 +125,51 @@ getBasePairing <- function(dotBracket){
                         })
   # check for unmatched positions
   if(any(unlist(lapply(lengthMatch,length)) != 0)){
-    stop("Following structures are invalid: '",
+    stop("Following structures are invalid: \n'",
          paste(unique(unlist(lengthMatch)),
-               collapse = "'"),
-         "' .\n They contain unmatched positions.",
+               collapse = "', '"),
+         "'.\nThey contain unmatched positions.",
          call. = FALSE)
   }
   structure <- mapply(.get_base_pairing_data_frame,
                       open,
-                      close)
+                      close,
+                      STRUCTURE_OPEN_CHR,
+                      STRUCTURE_CLOSE_CHR)
   structure <- split(structure,1:length(x))
+  # check if any positions are unmatched due to orientation
+  check <- vapply(structure,
+                  function(z){
+                    any(vapply(z,
+                               function(zz){
+                                 any(is.na(zz$forward))
+                               },
+                               logical(1)))
+                  },
+                  logical(1))
+  if(any(check)){
+    stop("Following structures are invalid: \n'",
+         paste(unique(unlist(which(check))),
+               collapse = "', '"),
+         "'.\nThe order of the opening and closing characters is wrong.",
+         call. = FALSE)
+  }
+  #
   structure <- mapply(.complete_base_pairing_data_frame,
                       structure,
                       lapply(x,nchar),
+                      seq,
                       SIMPLIFY = FALSE)
   return(structure)
 }
 # assembles base pairing data.frame
 .get_base_pairing_data_frame <- function(open,
-                                         close){
+                                         close,
+                                         opchr,
+                                         clchr){
+  ident <- gsub("\\\\","",paste0(opchr,clchr))
   ans <- mapply(
-    function(op,cl){
+    function(op,cl,id){
       op <- op[,"start"]
       cl <- cl[,"start"]
       if(length(cl) > 0){
@@ -109,21 +179,24 @@ getBasePairing <- function(dotBracket){
           op <- op[op != forward[j]]
         }
         ans <- data.frame(forward = forward,
-                          reverse = cl)
+                          reverse = cl,
+                          chr = id)
         return(ans)
       }
       return(NULL)
     },
     open,
     close,
+    MoreArgs = list(ident),
     SIMPLIFY = FALSE)
   ans
 }
 # add missing value to base pairing data.frame
 .complete_base_pairing_data_frame <- function(z,
-                                              n){
+                                              n,
+                                              s){
   z <- do.call(rbind,z[!vapply(z,is.null,logical(1))])
-  z2 <- z[,c(2,1)]
+  z2 <- z[,c("reverse","forward","chr")]
   colnames(z2) <- colnames(z)
   z <- rbind(z,z2)
   z$pos <- z$forward
@@ -133,9 +206,15 @@ getBasePairing <- function(dotBracket){
     z <- rbind(z,
                data.frame(pos = missing,
                           forward = rep(0,length(missing)),
-                          reverse = rep(0,length(missing))))
+                          reverse = rep(0,length(missing)),
+                          chr = rep(".",length(missing))))
   }
-  z <- z[order(z$pos),c("pos","forward","reverse")]
+  z <- z[order(z$pos),c("pos","forward","reverse","chr")]
+  # add sequence if not NA
+  if(!is.na(s)){
+    z$base <- strsplit(s,"")[[1]]
+  }
+  #
   rownames(z) <- NULL
   return(z)
 }
@@ -168,7 +247,7 @@ setMethod(
   signature = signature(gr = "GRanges"),
   definition = function(gr) {
     .check_trna_granges(gr, TRNA_FEATURES)
-    .get_loop_ids(.get_base_pairing(gr$tRNA_str))
+    .get_ids_of_loops(getBasePairing(gr$tRNA_str))
   }
 )
 
@@ -176,55 +255,49 @@ setMethod(
 #' @export
 getLoopIDs <- function(dotBracket){
   strList <- getBasePairing(dotBracket)
-  .get_loop_ids(strList)
+  .get_ids_of_loops(strList)
 }
 
 
-.get_loop_ids <- function(strList){
-  # browser()
-  length <- unlist(lapply(strList,nrow))
-  nls <- rep(0,length(strList))
-  ls <- rep(0,length(strList))
-  hxs <- rep(1,length(strList))
-  stacks <- vector(mode = "list", length = length(strList))
-  loops <- vector(mode = "list", length = length(strList))
-  ans <- mapply(
-    function(z,
-             len,
-             nl,
-             l,
-             hx,
-             stack,
-             loop){
-      for(i in seq_len(len)){
-        # opening
-        if(z[i,"forward"] != 0 && i < z[i,"reverse"]){
-          nl <- nl + 1
-          l <- nl
-          stack[hx] <- i
-          hx <- hx + 1
-        }
-        loop[i] <- l
-        # closing
-        if(z[i,"forward"] != 0 && i > z[i,"reverse"]){
-          hx <- hx - 1
-          if(hx > 1){
-            l <- loop[stack[hx - 1]]
-          } else {
-            l <- 0
-          }
-          if(hx < 1) return(NA)
-        }
-      }
-      return(loop)
-    },
-    strList,
-    length,
-    nls,
-    ls,
-    hxs,
-    stacks,
-    loops,
-    SIMPLIFY = FALSE)
+.get_ids_of_loops <- function(strList){
+  ans <- mapply(.get_loop_ids,
+                strList,
+                SIMPLIFY = FALSE)
   return(ans)
 }
+
+# z = the base pairing table with forward, reverse and chr column
+.get_loop_ids_c <- function(z){
+  len <- nrow(z)
+  nl <- 0
+  l <- 0
+  hx <- 1
+  stack <- c()
+  loop <- c()
+  for(i in seq_len(len)){
+    # opening
+    if(z[i,"forward"] != 0 && 
+       i < z[i,"reverse"] &&
+       z[i,"chr"] != "."){
+      nl <- nl + 1
+      l <- nl
+      stack[hx] <- i
+      hx <- hx + 1
+    }
+    loop[i] <- l
+    # closing
+    if(z[i,"forward"] != 0 && 
+       i > z[i,"reverse"] &&
+       z[i,"chr"] != "."){
+      hx <- hx - 1
+      if(hx > 1){
+        l <- loop[stack[hx - 1]]
+      } else {
+        l <- 0
+      }
+      if(hx < 1) return(NA)
+    }
+  }
+  return(loop)
+}
+.get_loop_ids <- compiler::cmpfun(.get_loop_ids_c)

@@ -133,7 +133,7 @@ setMethod(
   }
   # get structure information, only one information is returned
   # browser()
-  strList <- .get_base_pairing(gr$tRNA_str)
+  strList <- getBasePairing(gr$tRNA_str)
   str <- .get_tRNA_structures(ident,
                               gr,
                               strList)
@@ -276,7 +276,7 @@ setMethod(
   }
   # get structure information, only one information is returned
   # browser()
-  strList <- .get_base_pairing(gr$tRNA_str)
+  strList <- getBasePairing(gr$tRNA_str)
   str <- .get_tRNA_structures(ident,
                               gr,
                               strList)

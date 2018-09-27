@@ -38,7 +38,7 @@ setMethod(
     # join completly or get splitup sequences
     if(joinCompletely){
       # get Ranges
-      strList <- .get_base_pairing(gr$tRNA_str)
+      strList <- getBasePairing(gr$tRNA_str)
       res <- .get_tRNA_structures(names(tRNAStructureFunctionList),
                                   gr,
                                   strList)

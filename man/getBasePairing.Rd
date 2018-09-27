@@ -20,7 +20,7 @@ gettRNALoopIDs(gr)
 
 \S4method{gettRNABasePairing}{GRanges}(gr)
 
-getBasePairing(dotBracket)
+getBasePairing(dotBracket, sequence)
 
 \S4method{gettRNALoopIDs}{GRanges}(gr)
 
@@ -34,6 +34,12 @@ for input into \code{getBasePairing}.}
 \item{dotBracket}{character vectors describing a nucleotide sequence
 structure in the dot bracket annotations. Valid characters are:
 \code{.(\\{[><]\\})}}
+
+\item{sequence}{optional: character vectors describing a nucleotide sequence.
+The same number of sequences with the same length as the dot bracket string 
+have to be used. Each nucleotide sequence has to be a character vector.
+The identity of the nucleotides are not control, so in theory all letters 
+can be used.}
 }
 \value{
 \code{getBasePairing}: 

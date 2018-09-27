@@ -25,7 +25,6 @@ Imports:
     IRanges,
     XVector,
     Biostrings,
-    graphics,
     ggplot2,
     scales
 Suggests:

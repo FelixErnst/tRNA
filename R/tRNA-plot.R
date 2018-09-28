@@ -8,7 +8,7 @@ NULL
 #' @description 
 #' \code{gettRNAFeaturePlots} generates a plot for every feature found with
 #' \code{gettRNASummary}. Based on the datatype, it will generate suitable point
-#' or bar plots. Names of the GRangesList will be used as Organism identifiers
+#' or bar plots. Names of the GRangesList will be used as sample identifiers
 #' and used for colouring.
 #' 
 #' The options \code{tRNA_colour_palette}, \code{tRNA_colour_yes} and
@@ -41,8 +41,8 @@ NULL
 NULL
 
 TRNA_PLOT_LABELS <- list(gc = "GC content [%]",
-                         width = "gene width [bp]",
-                         length = "Length [nt]",
+                         width = "gene length [bp]",
+                         length = "tRNA Length [nt]",
                          cca = "genomically encoded 3'-CCA ends [%]",
                          
                          features_all_valid = "all tRNA structures found [%]",
@@ -50,16 +50,16 @@ TRNA_PLOT_LABELS <- list(gc = "GC content [%]",
                          features_Tstem_found = "with T loop [%]",
                          
                          acceptorStem_length = "Acceptor stem length [nt]",
-                         Dprime5_length = "Length [nt]",
+                         Dprime5_length = "Center (5' of D-Stem) length [nt]",
                          DStem_length = "D stem length [nt]",
                          Dloop_length = "D loop length [nt]",
-                         Dprime3_length = "Length [nt]",
+                         Dprime3_length = "Center (3' of D-Stem) length [nt]",
                          anticodonStem_length = "Anticodon stem length [nt]",
                          anticodonLoop_length = "Anticodon loop length [nt]",
                          variableLoop_length = "Variable loop length [nt]",
                          TStem_length = "T stem length [nt]",
                          Tloop_length = "T loop length [nt]",
-                         discriminator_length = "Length [nt]",
+                         discriminator_length = "Discriminator Length [nt]",
                          
                          acceptorStem_unpaired = "Acceptor stem unpaired [%]",
                          DStem_unpaired = "D stem stem unpaired [%]",
@@ -182,6 +182,8 @@ setMethod(
     data <- lapply(seq_len(length(x)),
                    function(i){
                      mcoldata <- gettRNASummary(x[[i]])
+                     # remove the scores from the summary
+                     mcoldata <- mcoldata[,!(colnames(mcoldata) == "score")]
                      name <- names(x[i])
                      coldata <- lapply(seq_len(ncol(mcoldata)),
                                        function(j){
@@ -257,7 +259,7 @@ setMethod(
                                           group = ~id,
                                           colour = ~id)) +
       ggplot2::scale_y_continuous(name = writtenNames[[name]]) +
-      ggplot2::scale_colour_brewer(name = "Organism",
+      ggplot2::scale_colour_brewer(name = "Sample",
                                    palette = colour_palette) + 
       ggplot2::expand_limits(y = c(min - 1,
                                    max + 1)) +
@@ -282,7 +284,7 @@ setMethod(
                                   breaks = c(0,0.25,0.5,0.75,1),
                                   labels = scales::percent,
                                   limits = c(0,1)) +
-      ggplot2::scale_colour_brewer(name = "Organism",
+      ggplot2::scale_colour_brewer(name = "Sample",
                                    palette = colour_palette) +
       ggplot2::xlab(label = scoreLabel)
   }
@@ -299,7 +301,7 @@ setMethod(
                                           colour = ~id)) +
       ggplot2::geom_jitter(height = 0.2) +
       ggplot2::scale_y_discrete(name = writtenNames[[name]]) +
-      ggplot2::scale_colour_brewer(name = "Organism",
+      ggplot2::scale_colour_brewer(name = "Sample",
                                    palette = colour_palette) +
       ggplot2::xlab(label = scoreLabel)
   }
@@ -326,12 +328,14 @@ setMethod(
       ggplot2::geom_violin(scale = "width") +
       ggplot2::geom_jitter(width = 0.2,
                            height = 0.2) +
-      ggplot2::scale_x_discrete(name = "Organism") +
+      ggplot2::scale_x_discrete(name = "Sample") +
       ggplot2::scale_y_continuous(name = writtenNames[[name]]) +
-      ggplot2::scale_colour_brewer(name = "Organism",
+      ggplot2::scale_colour_brewer(name = "Sample",
                                    palette = colour_palette) + 
       ggplot2::expand_limits(y = c(min - 1,
-                                   max + 1))
+                                   max + 1)) + 
+      ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 15, 
+                                                         hjust = 1))
   } 
   if(!is.na(dataType[[name]]) &&
      dataType[[name]] == "percent"){
@@ -341,13 +345,15 @@ setMethod(
                                           colour = ~id)) +
       ggplot2::geom_violin(scale = "width") +
       ggplot2::geom_jitter(width = 0.2) +
-      ggplot2::scale_x_discrete(name = "Organism") +
+      ggplot2::scale_x_discrete(name = "Sample") +
       ggplot2::scale_y_continuous(name = writtenNames[[name]],
                                   breaks = c(0,0.25,0.5,0.75,1),
                                   labels = scales::percent,
                                   limits = c(0,1)) +
-      ggplot2::scale_colour_brewer(name = "Organism",
-                                   palette = colour_palette)
+      ggplot2::scale_colour_brewer(name = "Sample",
+                                   palette = colour_palette) + 
+      ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 15, 
+                                                         hjust = 1))
   }
   if(!is.na(dataType[[name]]) &&
      dataType[[name]] == "yn"){
@@ -360,13 +366,15 @@ setMethod(
                                           y = ~((..count..)/sum(..count..)),
                                           fill = ~colour)) +
       ggplot2::geom_bar(position = "fill") +
-      ggplot2::scale_x_discrete(name = "Organism") +
+      ggplot2::scale_x_discrete(name = "Sample") +
       ggplot2::scale_y_continuous(name = writtenNames[[name]],
                                   labels = scales::percent,
                                   limits = c(0,1)) +
       ggplot2::scale_fill_identity(name = "",
                                    guide = "legend",
-                                   labels = c("Yes","No"))
+                                   labels = c("Yes","No")) + 
+      ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 15, 
+                                                         hjust = 1))
   }
   return(plot)
 }

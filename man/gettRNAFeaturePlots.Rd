@@ -31,7 +31,7 @@ a list of ggplot2 plots. These can be customized further.
 \description{
 \code{gettRNAFeaturePlots} generates a plot for every feature found with
 \code{gettRNASummary}. Based on the datatype, it will generate suitable point
-or bar plots. Names of the GRangesList will be used as Organism identifiers
+or bar plots. Names of the GRangesList will be used as sample identifiers
 and used for colouring.
 
 The options \code{tRNA_colour_palette}, \code{tRNA_colour_yes} and

@@ -234,7 +234,7 @@ setMethod(
   if(!all(structure %in% names(ans))){
     stop("Something went wrong.")
   }
-  ans
+  ans[structure]
 }
 
 # returns the boundary positions of the center of the tRNA

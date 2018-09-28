@@ -18,7 +18,6 @@ setMethod(
                         joinCompletely,
                         joinFeatures,
                         padSequences) {
-    browser()
     # input check
     .check_trna_granges(x, TRNA_FEATURES)
     .check_trna_structure_ident(structure)

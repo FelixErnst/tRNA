@@ -132,7 +132,6 @@ setMethod(
     }
   }
   # get structure information, only one information is returned
-  # browser()
   strList <- getBasePairing(gr$tRNA_str)
   str <- .get_tRNA_structures(ident,
                               gr,
@@ -275,7 +274,6 @@ setMethod(
     assertive::assert_is_a_bool(paired)
   }
   # get structure information, only one information is returned
-  # browser()
   strList <- getBasePairing(gr$tRNA_str)
   str <- .get_tRNA_structures(ident,
                               gr,

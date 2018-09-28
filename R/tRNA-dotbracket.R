@@ -28,6 +28,13 @@ NULL
 #' columns will be used for input into \code{getBasePairing}.
 #'
 #' @importFrom stringr str_locate_all str_locate
+#' 
+#' @examples 
+#' data("gr", package = "tRNA", envir = environment())
+#' gettRNABasePairing(gr[1])
+#' getBasePairing(gr[1]$tRNA_str)
+#' gettRNALoopIDs(gr[1])
+#' getLoopIDs(gr[1]$tRNA_str)
 NULL
 
 STRUCTURE_OPEN_CHR <- c("<","\\[","\\(","\\{")
@@ -119,10 +126,11 @@ getBasePairing <- function(dotBracket,
                   })
   lengthOpen <- lapply(open,function(z){lapply(z,length)})
   lengthClose <- lapply(close,function(z){lapply(z,length)})
-  lengthMatch <- lapply(seq_along(lengthOpen),
-                        function(i){
-                          which(unlist(lengthOpen[[i]]) != unlist(lengthClose[[i]]))
-                        })
+  lengthMatch <- lapply(
+    seq_along(lengthOpen),
+    function(i){
+      which(unlist(lengthOpen[[i]]) != unlist(lengthClose[[i]]))
+    })
   # check for unmatched positions
   if(any(unlist(lapply(lengthMatch,length)) != 0)){
     stop("Following structures are invalid: \n'",
@@ -136,7 +144,7 @@ getBasePairing <- function(dotBracket,
                       close,
                       STRUCTURE_OPEN_CHR,
                       STRUCTURE_CLOSE_CHR)
-  structure <- split(structure,1:length(x))
+  structure <- split(structure,seq_len(length(x)))
   # check if any positions are unmatched due to orientation
   check <- vapply(structure,
                   function(z){
@@ -200,7 +208,7 @@ getBasePairing <- function(dotBracket,
   colnames(z2) <- colnames(z)
   z <- rbind(z,z2)
   z$pos <- z$forward
-  missing <- 1:n
+  missing <- seq_len(n)
   missing <- missing[!(missing %in% z$forward)]
   if(length(missing) > 0){
     z <- rbind(z,

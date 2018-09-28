@@ -33,7 +33,7 @@ setMethod(
               'joinCompletely' takes precedence.")
     }
     # Make sure sequences are a DNAStringSet
-    if(class(x$tRNA_seq) != "DNAStringSet"){
+    if(!is(x$tRNA_seq,"DNAStringSet")){
       x$tRNA_seq <- Biostrings::DNAStringSet(x$tRNA_seq)
     }
     # join completly or get splitup sequences
@@ -56,15 +56,15 @@ setMethod(
       ir <- lapply(lapply(unlist(seqs)[TRNA_STRUCTURE_ORDER],
                           BiocGenerics::width),
                    unique)
-      start <- c(1,unlist(ir[1:(length(ir)-1)]))
+      start <- c(1,unlist(ir[seq_len((length(ir) - 1))]))
       end <- unlist(ir)
       ir <- IRanges(start = unlist(lapply(seq_along(start),
                                           function(i){
-                                            sum(start[1:i])
+                                            sum(start[seq_len(i)])
                                           })),
                     end = unlist(lapply(seq_along(end),
                                         function(i){
-                                          sum(end[1:i])
+                                          sum(end[seq_len(i)])
                                         })))
       names(ir) <- names(end)
       # concat sequences
@@ -144,7 +144,9 @@ setMethod(
     prime5 <- .pad_right(x$prime5)
     prime3 <- .pad_left(x$prime3)
     maxWidth <- max(BiocGenerics::width(prime5) + BiocGenerics::width(prime3))
-    addN <- maxWidth - (BiocGenerics::width(prime5) + BiocGenerics::width(prime3))
+    addN <- maxWidth - 
+      (BiocGenerics::width(prime5) + 
+         BiocGenerics::width(prime3))
     addString <- Biostrings::DNAStringSet(rep("--",length(seqs)))
     addString <- Biostrings::xscat(
       addString,
@@ -507,34 +509,38 @@ setMethod(
 .add_padding_unpaired <- function(seqs,
                                   ir,
                                   strList){
-  dims <- lapply(seq_along(strList),
-                 function(i){
-                   z <- strList[[i]][strList[[i]]$pos %in% BiocGenerics::start(ir[i]):BiocGenerics::end(ir[i]),]
-                   z <- z[z$reverse != 0,]
-                   zz <- vapply(seq_len(nrow(z)),
-                                function(j){
-                                  # missing pos on reverse
-                                  z[j,]$reverse - 1 > z[j + 1,]$reverse &
-                                    # not the last position
-                                    j != nrow(z) &
-                                    # not the same bulge on the other side
-                                    (z[j,]$reverse - 1 - z[j + 1,]$reverse) != (z[j + 1,]$forward - 1 - z[j,]$forward)
-                                },logical(1))
-                   # if not unpaired position can be detected it is just a shorter
-                   # stem
-                   if(length(which(zz)) == 0){
-                     return(NULL)
-                   }
-                   return(list(start = z[zz,]$forward + 1 - BiocGenerics::start(ir[i]),
-                               stop = z[which(zz) + 1,]$forward +
-                                 1 -
-                                 BiocGenerics::start(ir[i]) -
-                                 (z[which(zz) + 1,]$forward - z[which(zz),]$forward - 1),
-                               length = z[zz,]$reverse -
-                                 z[which(zz) + 1,]$reverse -
-                                 1 -
-                                 (z[which(zz) + 1,]$forward - z[which(zz),]$forward - 1)))
-                 })
+  dims <- lapply(
+    seq_along(strList),
+    function(i){
+      z <- strList[[i]][strList[[i]]$pos %in% 
+                          BiocGenerics::start(ir[i]):BiocGenerics::end(ir[i]),]
+      z <- z[z$reverse != 0,]
+      zz <- vapply(
+        seq_len(nrow(z)),
+        function(j){
+          # missing pos on reverse
+          z[j,]$reverse - 1 > z[j + 1,]$reverse &
+            # not the last position
+            j != nrow(z) &
+            # not the same bulge on the other side
+            (z[j,]$reverse - 1 - z[j + 1,]$reverse) != 
+              (z[j + 1,]$forward - 1 - z[j,]$forward)
+        },logical(1))
+      # if not unpaired position can be detected it is just a shorter
+      # stem
+      if(length(which(zz)) == 0){
+        return(NULL)
+      }
+      return(list(start = z[zz,]$forward + 1 - BiocGenerics::start(ir[i]),
+                  stop = z[which(zz) + 1,]$forward +
+                    1 -
+                    BiocGenerics::start(ir[i]) -
+                    (z[which(zz) + 1,]$forward - z[which(zz),]$forward - 1),
+                  length = z[zz,]$reverse -
+                    z[which(zz) + 1,]$reverse -
+                    1 -
+                    (z[which(zz) + 1,]$forward - z[which(zz),]$forward - 1)))
+    })
   dims <- dims[!vapply(dims,is.null,logical(1))]
   if(length(dims) == 0){
     return(seqs)

@@ -38,13 +38,14 @@ TRNA_SUMMARY_FEATURES_LIST_SUBSET_PAIRED <-
     "mismatches" = ".get_features_mismatches",
     "bulged" = ".get_features_bulged")
 
-TRNA_SUMMARY_FEATURES_OPTIONAL <- c("score" = ".get_score",
-                                    "tRNAscan_potential.pseudogene" = ".get_potential_pseudogene",
-                                    "tRNAscan_intron.start" = ".get_introns",
-                                    "tRNAscan_score" = ".get_scan_score",
-                                    "tRNAscan_hmm.score" = ".get_hmm_score",
-                                    "tRNAscan_sec.str.score" = ".get_secondary_structure_score",
-                                    "tRNAscan_infernal" = ".get_infernal_score")
+TRNA_SUMMARY_FEATURES_OPTIONAL <- c(
+  "score" = ".get_score",
+  "tRNAscan_potential.pseudogene" = ".get_potential_pseudogene",
+  "tRNAscan_intron.start" = ".get_introns",
+  "tRNAscan_score" = ".get_scan_score",
+  "tRNAscan_hmm.score" = ".get_hmm_score",
+  "tRNAscan_sec.str.score" = ".get_secondary_structure_score",
+  "tRNAscan_infernal" = ".get_infernal_score")
 
 TRNA_SUMMARY_FEATURES_RENAMED <- c("tRNAscan_intron.start" = "tRNAscan_intron")
 #' @rdname gettRNASummary
@@ -110,7 +111,8 @@ setMethod(
     df <- cbind(df,dfAdd)
     # get optional features
     dataFeatures <- colnames(S4Vectors::mcols(x))
-    dataFeatures <- dataFeatures[dataFeatures %in% names(TRNA_SUMMARY_FEATURES_OPTIONAL)]
+    dataFeatures <- dataFeatures[dataFeatures %in% 
+                                   names(TRNA_SUMMARY_FEATURES_OPTIONAL)]
     if(length(dataFeatures) > 0){
       dfAdd <- S4Vectors::DataFrame(
         lapply(TRNA_SUMMARY_FEATURES_OPTIONAL[dataFeatures],
@@ -211,31 +213,33 @@ setMethod(
 }
 .get_features_mismatches <- function(gr,
                                      strList){
-  mismatches <- lapply(TRNA_STRUCTURES_PAIRED,
-                     function(ident){
-                       if(ident == "variableLoop"){
-                         strList[[ident]] <- lapply(strList[[ident]],
-                                           function(str){
-                                             str[seq_len(floor(nrow(str)/2)),]
-                                           })
-                       }
-                       as.numeric(.get_mismatches(strList = strList[[ident]])[["T"]])
-                     })
+  mismatches <- lapply(
+    TRNA_STRUCTURES_PAIRED,
+    function(ident){
+      if(ident == "variableLoop"){
+        strList[[ident]] <- lapply(strList[[ident]],
+                                   function(str){
+                                     str[seq_len(floor(nrow(str)/2)),]
+                                   })
+      }
+      as.numeric(.get_mismatches(strList = strList[[ident]])[["T"]])
+    })
   names(mismatches) <- paste0(TRNA_STRUCTURES_PAIRED,"_mismatches")
   return(mismatches)
 }
 .get_features_bulged <- function(gr,
                                  strList){
-  bulges <- lapply(TRNA_STRUCTURES_PAIRED,
-                     function(ident){
-                       if(ident == "variableLoop"){
-                         strList[[ident]] <- lapply(strList[[ident]],
-                                           function(str){
-                                             str[seq_len(floor(nrow(str)/2)),]
-                                           })
-                       }
-                       as.numeric(.get_bulges(strList = strList[[ident]])[["T"]])
-                     })
+  bulges <- lapply(
+    TRNA_STRUCTURES_PAIRED,
+    function(ident){
+      if(ident == "variableLoop"){
+        strList[[ident]] <- lapply(strList[[ident]],
+                                   function(str){
+                                     str[seq_len(floor(nrow(str)/2)),]
+                                   })
+      }
+      as.numeric(.get_bulges(strList = strList[[ident]])[["T"]])
+    })
   names(bulges) <- paste0(TRNA_STRUCTURES_PAIRED,"_bulges")
   return(bulges)
 }
@@ -307,19 +311,21 @@ setMethod(
   strList <- lapply(ident,
                     function(id){
                       if(is.list(str[[id]])){
-                        strL <- mapply(.subset_structure,
-                                       split(c(str[[id]]$prime5,
-                                               str[[id]]$prime3),
-                                             c(1:length(str[[id]]$prime5),
-                                               1:length(str[[id]]$prime3))),
-                                       strList,
-                                       SIMPLIFY = FALSE)
+                        strL <- mapply(
+                          .subset_structure,
+                          split(c(str[[id]]$prime5,
+                                  str[[id]]$prime3),
+                                c(seq_len(length(str[[id]]$prime5)),
+                                  seq_len(length(str[[id]]$prime3)))),
+                          strList,
+                          SIMPLIFY = FALSE)
                       } else {
-                        strL <- mapply(.subset_structure,
-                                       split(str[[id]],1:length(str[[id]])),
-                                       strList,
-                                       MoreArgs = list(pairedOnly = FALSE),
-                                       SIMPLIFY = FALSE)
+                        strL <- mapply(
+                          .subset_structure,
+                          split(str[[id]],seq_len(length(str[[id]]))),
+                          strList,
+                          MoreArgs = list(pairedOnly = FALSE),
+                          SIMPLIFY = FALSE)
                       }
                       strL
                     })
@@ -376,13 +382,18 @@ setMethod(
                                      gr)[[1]]
   }
   strListDetails <- .get_structures_details(strList)
-  ansMismatchesFalse <- strListDetails[["forwardLength"]] == strListDetails[["reverseLength"]] &
+  ansMismatchesFalse <- strListDetails[["forwardLength"]] == 
+    strListDetails[["reverseLength"]] &
     strListDetails[["forwardContinously"]] &
     strListDetails[["reverseContinously"]]
-  ansMismatchesTrue <- strListDetails[["forwardLength"]] == strListDetails[["reverseLength"]] &
-    ((strListDetails[["forwardContinously"]] & !strListDetails[["reverseContinously"]]) |
-       (!strListDetails[["forwardContinously"]] & strListDetails[["reverseContinously"]]) |
-       (!strListDetails[["forwardContinously"]] & !strListDetails[["reverseContinously"]]))
+  ansMismatchesTrue <- strListDetails[["forwardLength"]] == 
+    strListDetails[["reverseLength"]] &
+    ((strListDetails[["forwardContinously"]] & 
+        !strListDetails[["reverseContinously"]]) |
+       (!strListDetails[["forwardContinously"]] & 
+          strListDetails[["reverseContinously"]]) |
+       (!strListDetails[["forwardContinously"]] & 
+          !strListDetails[["reverseContinously"]]))
   return(list("T" = unname(ansMismatchesTrue),
               "F" = unname(ansMismatchesFalse)))
 }
@@ -397,13 +408,20 @@ setMethod(
                                      gr)[[1]]
   }
   strListDetails <- .get_structures_details(strList)
-  ansBulgedFalse <- strListDetails[["forwardLength"]] == strListDetails[["reverseLength"]] &
-    ((strListDetails[["forwardContinously"]] & strListDetails[["reverseContinously"]]) |
-       (!strListDetails[["forwardContinously"]] & !strListDetails[["reverseContinously"]]))
-  ansBulgedTrue <- strListDetails[["forwardLength"]] != strListDetails[["reverseLength"]] &
-    ((strListDetails[["forwardContinously"]] & !strListDetails[["reverseContinously"]]) |
-       (!strListDetails[["forwardContinously"]] & strListDetails[["reverseContinously"]]) |
-       (!strListDetails[["forwardContinously"]] & !strListDetails[["reverseContinously"]]))
+  ansBulgedFalse <- strListDetails[["forwardLength"]] == 
+    strListDetails[["reverseLength"]] &
+    ((strListDetails[["forwardContinously"]] & 
+        strListDetails[["reverseContinously"]]) |
+       (!strListDetails[["forwardContinously"]] & 
+          !strListDetails[["reverseContinously"]]))
+  ansBulgedTrue <- strListDetails[["forwardLength"]] != 
+    strListDetails[["reverseLength"]] &
+    ((strListDetails[["forwardContinously"]] & 
+        !strListDetails[["reverseContinously"]]) |
+       (!strListDetails[["forwardContinously"]] & 
+          strListDetails[["reverseContinously"]]) |
+       (!strListDetails[["forwardContinously"]] & 
+          !strListDetails[["reverseContinously"]]))
   return(list("T" = unname(ansBulgedTrue),
               "F" = unname(ansBulgedFalse)))
 }

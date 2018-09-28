@@ -1,6 +1,6 @@
 Package: tRNA
 Title: tRNA: Analyzing tRNA sequences and structures
-Version: 0.99.2
+Version: 0.99.3
 Date: 2018-09-28
 Authors@R: person("Felix GM", 
                   "Ernst", 

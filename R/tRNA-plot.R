@@ -40,51 +40,52 @@ NULL
 #' plots$length + ggplot2::geom_boxplot()
 NULL
 
-TRNA_PLOT_LABELS <- list(gc = "GC content [%]",
-                         width = "gene length [bp]",
-                         length = "tRNA Length [nt]",
-                         cca = "genomically encoded 3'-CCA ends [%]",
-                         
-                         features_all_valid = "all tRNA structures found [%]",
-                         features_Dstem_found = "with D loop [%]",
-                         features_Tstem_found = "with T loop [%]",
-                         
-                         acceptorStem_length = "Acceptor stem length [nt]",
-                         Dprime5_length = "Center (5' of D-Stem) length [nt]",
-                         DStem_length = "D stem length [nt]",
-                         Dloop_length = "D loop length [nt]",
-                         Dprime3_length = "Center (3' of D-Stem) length [nt]",
-                         anticodonStem_length = "Anticodon stem length [nt]",
-                         anticodonLoop_length = "Anticodon loop length [nt]",
-                         variableLoop_length = "Variable loop length [nt]",
-                         TStem_length = "T stem length [nt]",
-                         Tloop_length = "T loop length [nt]",
-                         discriminator_length = "Discriminator Length [nt]",
-                         
-                         acceptorStem_unpaired = "Acceptor stem unpaired [%]",
-                         DStem_unpaired = "D stem stem unpaired [%]",
-                         anticodonStem_unpaired = "Anticodon stem unpaired [%]",
-                         variableLoop_unpaired = "Variable loop unpaired [%]",
-                         TStem_unpaired = "T stem unpaired [%]",
-                         
-                         acceptorStem_mismatches = "Acceptor stem mismatches [%]",
-                         DStem_mismatches = "D stem mismatches [%]",
-                         anticodonStem_mismatches = "Anticodon stem mismatches [%]",
-                         variableLoop_mismatches = "Variable loop mismatches [%]",
-                         TStem_mismatches = "T stem mismatches [%]",
-                         
-                         acceptorStem_bulges = "Acceptor stem bulges [%]",
-                         DStem_bulges = "D stem bulges [%]",
-                         anticodonStem_bulges = "Anticodon stem bulges [%]",
-                         variableLoop_bulges = "Variable loop bulges [%]",
-                         TStem_bulges = "T stem bulges [%]",
-                         
-                         tRNAscan_potential.pseudogene = "Potential pseudogenes [%]",
-                         tRNAscan_intron = "Introns [%]",
-                         tRNAscan_score = "tRNAscan-SE score",
-                         tRNAscan_hmm.score = "HMM score",
-                         tRNAscan_sec.str.score = "Secondary structure score",
-                         tRNAscan_infernal = "Infernal score")
+TRNA_PLOT_LABELS <- list(
+  gc = "GC content [%]",
+  width = "gene length [bp]",
+  length = "tRNA Length [nt]",
+  cca = "genomically encoded 3'-CCA ends [%]",
+  
+  features_all_valid = "all tRNA structures found [%]",
+  features_Dstem_found = "with D loop [%]",
+  features_Tstem_found = "with T loop [%]",
+  
+  acceptorStem_length = "Acceptor stem length [nt]",
+  Dprime5_length = "Center (5' of D-Stem) length [nt]",
+  DStem_length = "D stem length [nt]",
+  Dloop_length = "D loop length [nt]",
+  Dprime3_length = "Center (3' of D-Stem) length [nt]",
+  anticodonStem_length = "Anticodon stem length [nt]",
+  anticodonLoop_length = "Anticodon loop length [nt]",
+  variableLoop_length = "Variable loop length [nt]",
+  TStem_length = "T stem length [nt]",
+  Tloop_length = "T loop length [nt]",
+  discriminator_length = "Discriminator Length [nt]",
+  
+  acceptorStem_unpaired = "Acceptor stem unpaired [%]",
+  DStem_unpaired = "D stem stem unpaired [%]",
+  anticodonStem_unpaired = "Anticodon stem unpaired [%]",
+  variableLoop_unpaired = "Variable loop unpaired [%]",
+  TStem_unpaired = "T stem unpaired [%]",
+  
+  acceptorStem_mismatches = "Acceptor stem mismatches [%]",
+  DStem_mismatches = "D stem mismatches [%]",
+  anticodonStem_mismatches = "Anticodon stem mismatches [%]",
+  variableLoop_mismatches = "Variable loop mismatches [%]",
+  TStem_mismatches = "T stem mismatches [%]",
+  
+  acceptorStem_bulges = "Acceptor stem bulges [%]",
+  DStem_bulges = "D stem bulges [%]",
+  anticodonStem_bulges = "Anticodon stem bulges [%]",
+  variableLoop_bulges = "Variable loop bulges [%]",
+  TStem_bulges = "T stem bulges [%]",
+  
+  tRNAscan_potential.pseudogene = "Potential pseudogenes [%]",
+  tRNAscan_intron = "Introns [%]",
+  tRNAscan_score = "tRNAscan-SE score",
+  tRNAscan_hmm.score = "HMM score",
+  tRNAscan_sec.str.score = "Secondary structure score",
+  tRNAscan_infernal = "Infernal score")
 
 # allowed values NA, "percent", "yn"
 TRNA_PLOT_DATATYPES <- list(gc = "percent",
@@ -185,20 +186,21 @@ setMethod(
                      # remove the scores from the summary
                      mcoldata <- mcoldata[,!(colnames(mcoldata) == "score")]
                      name <- names(x[i])
-                     coldata <- lapply(seq_len(ncol(mcoldata)),
-                                       function(j){
-                                         column <- mcoldata[,j]
-                                         f <- which(!is.na(column))
-                                         column <- column[f]
-                                         if(length(column) == 0) return(NULL)
-                                         if(plotScores){
-                                           return(data.frame(id = name,
-                                                             value = column,
-                                                             score = scores[[i]][f]))
-                                         }
-                                         data.frame(id = name,
-                                                    value = column)
-                                       })
+                     coldata <- lapply(
+                       seq_len(ncol(mcoldata)),
+                       function(j){
+                         column <- mcoldata[,j]
+                         f <- which(!is.na(column))
+                         column <- column[f]
+                         if(length(column) == 0) return(NULL)
+                         if(plotScores){
+                           return(data.frame(id = name,
+                                             value = column,
+                                             score = scores[[i]][f]))
+                         }
+                         data.frame(id = name,
+                                    value = column)
+                       })
                      names(coldata) <- colnames(mcoldata)
                      return(coldata)
                    })

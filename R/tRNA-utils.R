@@ -2,9 +2,10 @@
 NULL
 
 #input type checks
-.checkValueValidity <- function(value,
-                                checkValues,
-                                .xvalue = assertive::get_name_in_parent(value)){
+.checkValueValidity <- function(
+  value,
+  checkValues,
+  .xvalue = assertive::get_name_in_parent(value)){
   if(!all(value %in% checkValues)){
     stop("'",.xvalue,
          "' must be one of the following values: '",
@@ -16,8 +17,9 @@ NULL
 }
 
 # checks whether a string is a valid tRNA structure
-.check_trna_structure_ident <- function(value,
-                                        .xvalue = assertive::get_name_in_parent(value)){
+.check_trna_structure_ident <- function(
+  value,
+  .xvalue = assertive::get_name_in_parent(value)){
   # check input
   checkValues <- c("",TRNA_STRUCTURES)
   if(!(value %in% checkValues)){

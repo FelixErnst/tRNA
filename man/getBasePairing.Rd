@@ -58,3 +58,10 @@ in the forward and reverse columns.
 \code{getHairpinLoops} and \code{getStems} are helper functions for getting
 coordinates for stems and hairpin loops as \code{IRanges} objects.
 }
+\examples{
+data("gr", package = "tRNA", envir = environment())
+gettRNABasePairing(gr[1])
+getBasePairing(gr[1]$tRNA_str)
+gettRNALoopIDs(gr[1])
+getLoopIDs(gr[1]$tRNA_str)
+}

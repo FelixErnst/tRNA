@@ -413,12 +413,13 @@ setMethod(
     strList,
     end)
   # use center positions to get search parameters
-  tmp <- sapply(loopPositions,
-                     function(l){
-                       if(length(l) == 0) return(c(NA,NA))
-                       list(start(l)[1],
-                            end(l)[length(l)])
-                     })
+  tmp <- mapply(
+    function(l){
+      if(length(l) == 0) return(c(NA,NA))
+      list(start(l)[1],
+           end(l)[length(l)])
+    },
+    loopPositions)
   maxStart <- tmp[1,]
   minEnd <- tmp[2,]
   # get the last base paired position, which is before the D stem

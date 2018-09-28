@@ -183,7 +183,7 @@ setMethod(
   ans <- lapply(str,
                 function(s){
                   if(is.list(s)){
-                    z <- sapply(s, .get_widths)
+                    z <- mapply(.get_widths,s)
                     z <- rowMeans(z)
                   } else {
                     z <- .get_widths(s)

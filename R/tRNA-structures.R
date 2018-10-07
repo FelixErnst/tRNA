@@ -13,11 +13,11 @@ NULL
 #' internally uses \code{getBasePairing}.
 #'
 #' \code{gettRNAstructureSeq} returns split or partial tRNA sequences based on
-#' the structure information of tRNAscan. Variances in length of certain
-#' structure features can be padded. If sequences are joined by setting
-#' \code{joinCompletely = FALSE}, the boundaries of the tRNA structure are
-#' stored in the result as metadata. They can be accessesed as an IRanges
-#' object by using \code{metadata()[["tRNA_structures"]]}.
+#' the structure information. Variations in the ength of structure features can
+#' be padded to retrieve sequences of equal length. If sequences are joined by
+#' setting \code{joinCompletely = FALSE}, the boundaries of the tRNA structure
+#' are stored in the result as metadata. They can be accessesed as an IRanges
+#' object by using \code{metadata(seq)[["tRNA_structures"]]}.
 #'
 #' @param x a GRanges object with tRNA information. It has to pass the
 #' \code{istRNAGRanges} function.

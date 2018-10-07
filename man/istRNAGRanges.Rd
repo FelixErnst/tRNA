@@ -12,14 +12,15 @@ istRNAGRanges(x)
 \S4method{istRNAGRanges}{GRanges}(x)
 }
 \arguments{
-\item{x}{the \code{GRanges} object to test}
+\item{x}{the \code{GRanges} object to test for compatibility.}
 }
 \value{
 a logical value
 }
 \description{
 \code{istRNAGRanges} checks whether a GRanges object contains the
-information expected for a tRNA result.
+information expected for a tRNA result. This is used internally to ensure the
+the required data is present in the input.
 }
 \examples{
 data("gr", package = "tRNA", envir = environment())

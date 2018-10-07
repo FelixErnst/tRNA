@@ -10,9 +10,6 @@ NULL
 #' \code{getBasePairing} converts a dot bracket annotation into a
 #' \code{data.frame}. Base pairing is indicated by corresponding numbers
 #' in the forward and reverse columns.
-#' 
-#' \code{getHairpinLoops} and \code{getStems} are helper functions for getting
-#' coordinates for stems and hairpin loops as \code{IRanges} objects.
 #'
 #' @return
 #' \code{getBasePairing}: 
@@ -170,6 +167,12 @@ getBasePairing <- function(dotBracket,
                       SIMPLIFY = FALSE)
   return(structure)
 }
+
+# This will be ported into C, if I find the time to learn C
+# this is derived from the ViennaRNA package
+# I have not idea how to avoid the for loop since it requires op to be modified
+# from within the iteration
+#
 # assembles base pairing data.frame
 .get_base_pairing_data_frame <- function(open,
                                          close,
@@ -274,6 +277,11 @@ getLoopIDs <- function(dotBracket){
   return(ans)
 }
 
+# This will be ported into C, if I find the time to learn C
+# this is derived from the ViennaRNA package
+# I have not idea how to avoid the for loop since it requires things to be 
+# modified from within the iteration
+#
 # z = the base pairing table with forward, reverse and chr column
 .get_loop_ids_c <- function(z){
   len <- nrow(z)

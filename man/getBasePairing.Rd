@@ -54,9 +54,6 @@ return a list of list of loop ids.
 \code{getBasePairing} converts a dot bracket annotation into a
 \code{data.frame}. Base pairing is indicated by corresponding numbers
 in the forward and reverse columns.
-
-\code{getHairpinLoops} and \code{getStems} are helper functions for getting
-coordinates for stems and hairpin loops as \code{IRanges} objects.
 }
 \examples{
 data("gr", package = "tRNA", envir = environment())

@@ -52,10 +52,9 @@ NULL
 }
 
 # get the tRNA length without the intron
-.get_tRNA_length_c <- function(x){
+.get_tRNA_length <- function(x){
   nchar(as.character(x$tRNA_seq))
 }
-.get_tRNA_length <- compiler::cmpfun(.get_tRNA_length_c)
 
 .is_continous_evenly_spaced_c <- function(n){
   if(length(n) < 2) return(FALSE)

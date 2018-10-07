@@ -2,8 +2,10 @@
 NULL
 
 #' @name tRNA-subset
+#' @aliases hasTStem hasDStem hasAcceptorStem hasAnticodonStem hasTloop hasDloop
+#' hasVariableLoop hasAnticodonLoop
 #'
-#' @title Subsetting tRNA
+#' @title Subsetting tRNAs
 #'
 #' @description
 #' The functions \code{has*} can be used to subset the GRanges object containing

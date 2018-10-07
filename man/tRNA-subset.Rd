@@ -11,6 +11,14 @@
 \alias{hasAnticodonLoop}
 \alias{hasVariableLoop}
 \alias{tRNA-subset}
+\alias{hasTStem}
+\alias{hasDStem}
+\alias{hasAcceptorStem}
+\alias{hasAnticodonStem}
+\alias{hasTloop}
+\alias{hasDloop}
+\alias{hasVariableLoop}
+\alias{hasAnticodonLoop}
 \alias{hasTStem,GRanges-method}
 \alias{hasDStem,GRanges-method}
 \alias{hasAcceptorStem,GRanges-method}
@@ -19,7 +27,7 @@
 \alias{hasDloop,GRanges-method}
 \alias{hasAnticodonLoop,GRanges-method}
 \alias{hasVariableLoop,GRanges-method}
-\title{Subsetting tRNA}
+\title{Subsetting tRNAs}
 \usage{
 hasTStem(x, length = NA, unpaired = NA, mismatches = NA, bulged = NA)
 

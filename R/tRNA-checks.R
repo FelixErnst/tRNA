@@ -8,9 +8,10 @@ NULL
 #'
 #' @description
 #' \code{istRNAGRanges} checks whether a GRanges object contains the
-#' information expected for a tRNA result.
+#' information expected for a tRNA result. This is used internally to ensure the
+#' the required data is present in the input.
 #'
-#' @param x the \code{GRanges} object to test
+#' @param x the \code{GRanges} object to test for compatibility.
 #'
 #' @return a logical value
 #'

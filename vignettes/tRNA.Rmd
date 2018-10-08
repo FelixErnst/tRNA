@@ -23,15 +23,16 @@ BiocStyle::markdown(css.files = c('custom.css'))
 
 # Introduction
 
-The `tRNA` package allows information of tRNA to be accessed and subset based on 
-these features for further analysis. The package expects a `GRanges` object with 
-certain columns as input. The following columns are a requirement:
-`tRNA_length`, `tRNA_type`, `tRNA_anticodon`, `tRNA_seq`, `tRNA_str`,
-`tRNA_CCA.end`.
+The `tRNA` package allows tRNA sequences and structures to be accessed and used
+for subsetting. In addition, it provides visualization tools to compare feature
+parameters of multiple tRNA sets and correlate them to additional data. The
+package expects a `GRanges` object with certain columns as input. The following
+columns are a requirement: `tRNA_length`, `tRNA_type`, `tRNA_anticodon`,
+`tRNA_seq`, `tRNA_str`, `tRNA_CCA.end`.
 
 # Loading tRNA information
 
-For working with the tRNA packages, tRNA information can be retrieved in a 
+To work with the tRNA packages, tRNA information can be retrieved in a 
 number of ways:
 
   1. A `GRanges` object can be constructed by hand containing the
@@ -70,7 +71,8 @@ gettRNAstructureSeqs(gr,
 ```
 
 In addition the sequences can be returned already joined to get a fully blank
-padded set of sequences.
+padded set of sequences. The boundaries of the individual structures is returned
+as metadata of the `RNAStringSet` object.
 
 ```{r}
 seqs <- gettRNAstructureSeqs(gr[1:10],
@@ -83,7 +85,7 @@ metadata(seqs)[["tRNA_structures"]]
 Be aware, that `gettRNAstructureGRanges` and `gettRNAstructureSeqs` might not be
 working as expected, if the tRNA sequences in questions are armless or deviate a
 lot from the canonical tRNA model. It was thouroughly tested using human
-mitochondrial tRNA and other tRNAs missing certain features. However, for finge
+mitochondrial tRNA and other tRNAs missing certain features. However, for fringe
 cases this might not be the case. Please report these cases, if you find them,
 with an example.
 
@@ -109,7 +111,7 @@ To get an overview of tRNA feature and compare different datasets,
 `gettRNAFeaturePlots` can be used. It accepts a named `GRangesList` as input.
 Internally it will calculate a list of features values based on the functions
 mentioned above and the data contained in the mcols of the `GRanges` objects. 
-The results can also be accessed using `gettRNASummary`.
+The results can be retrieved without generating plots using `gettRNASummary`.
 
 ```{r}
 # load tRNA data for E. coli and H. sapiens
@@ -171,7 +173,7 @@ plots$length + ggplot2::geom_boxplot()
 
 # Options
 
-The output of the plot figures can be customized slightly on creation with the 
+The colours of the plots can be customized directly on creation with the 
 following options.
 
 ```{r}

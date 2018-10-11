@@ -121,15 +121,15 @@ getBasePairing <- function(dotBracket,
                   function(chr){
                     stringr::str_locate_all(x, chr)
                   })
-  lengthOpen <- lapply(open,function(z){lapply(z,length)})
-  lengthClose <- lapply(close,function(z){lapply(z,length)})
+  lengthOpen <- lapply(open,function(z){lengths(z)})
+  lengthClose <- lapply(close,function(z){lengths(z)})
   lengthMatch <- lapply(
     seq_along(lengthOpen),
     function(i){
       which(unlist(lengthOpen[[i]]) != unlist(lengthClose[[i]]))
     })
   # check for unmatched positions
-  if(any(unlist(lapply(lengthMatch,length)) != 0)){
+  if(any(unlist(lengths(lengthMatch)) != 0)){
     stop("Following structures are invalid: \n'",
          paste(unique(unlist(lengthMatch)),
                collapse = "', '"),
@@ -141,7 +141,7 @@ getBasePairing <- function(dotBracket,
                       close,
                       STRUCTURE_OPEN_CHR,
                       STRUCTURE_CLOSE_CHR)
-  structure <- split(structure,seq_len(length(x)))
+  structure <- split(structure,seq_along(x))
   # check if any positions are unmatched due to orientation
   check <- vapply(structure,
                   function(z){

@@ -315,14 +315,14 @@ setMethod(
                           .subset_structure,
                           split(c(str[[id]]$prime5,
                                   str[[id]]$prime3),
-                                c(seq_len(length(str[[id]]$prime5)),
-                                  seq_len(length(str[[id]]$prime3)))),
+                                c(seq_along(str[[id]]$prime5),
+                                  seq_along(str[[id]]$prime3))),
                           strList,
                           SIMPLIFY = FALSE)
                       } else {
                         strL <- mapply(
                           .subset_structure,
-                          split(str[[id]],seq_len(length(str[[id]]))),
+                          split(str[[id]],seq_along(str[[id]])),
                           strList,
                           MoreArgs = list(pairedOnly = FALSE),
                           SIMPLIFY = FALSE)

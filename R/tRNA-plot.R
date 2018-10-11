@@ -180,7 +180,7 @@ setMethod(
       }
     }
     # aggregate data
-    data <- lapply(seq_len(length(x)),
+    data <- lapply(seq_along(x),
                    function(i){
                      mcoldata <- gettRNASummary(x[[i]])
                      # remove the scores from the summary
@@ -214,7 +214,7 @@ setMethod(
     colour_palette <- .get_colour("palette")
     colour_yes <- .get_colour("yes")
     colour_no <- .get_colour("no")
-    plots <- lapply(seq_len(length(data)),
+    plots <- lapply(seq_along(data),
                     function(i){
                       if(is.null(data[[i]])){
                         return(NULL)

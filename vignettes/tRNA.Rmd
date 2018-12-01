@@ -28,7 +28,9 @@ for subsetting. In addition, it provides visualization tools to compare feature
 parameters of multiple tRNA sets and correlate them to additional data. The
 package expects a `GRanges` object with certain columns as input. The following
 columns are a requirement: `tRNA_length`, `tRNA_type`, `tRNA_anticodon`,
-`tRNA_seq`, `tRNA_str`, `tRNA_CCA.end`.
+`tRNA_seq`, `tRNA_str`, `tRNA_CCA.end`. The `tRNA_str` column must contain a
+valid dot bracket annotation. For more details please have a look at the 
+vignette of the `Structstrings` package.
 
 # Loading tRNA information
 
@@ -42,17 +44,19 @@ required colums (see above)
   3. selected tRNA information can be retrieved using
   `import.tRNAdb()` from `tRNAdbImport` package
 
-For this vignette a predefined `GRanges` object is loaded.
+For this vignette a number of predefined `GRanges` objects are loaded.
 
 ```{r, echo=FALSE}
-suppressPackageStartupMessages(
+suppressPackageStartupMessages({
   library(tRNA)
-)
+  library(Structstrings)
+})
 data("gr", package = "tRNA", envir = environment())
 ```
 
 ```{r, eval=FALSE}
 library(tRNA)
+library(Structstrings)
 data("gr", package = "tRNA", envir = environment())
 ```
 
@@ -86,7 +90,7 @@ Be aware, that `gettRNAstructureGRanges` and `gettRNAstructureSeqs` might not be
 working as expected, if the tRNA sequences in questions are armless or deviate a
 lot from the canonical tRNA model. It was thouroughly tested using human
 mitochondrial tRNA and other tRNAs missing certain features. However, for fringe
-cases this might not be the case. Please report these cases, if you find them,
+cases results may differ. Please report these cases, if you find them,
 with an example.
 
 # Subsetting tRNA sequences
@@ -111,7 +115,8 @@ To get an overview of tRNA feature and compare different datasets,
 `gettRNAFeaturePlots` can be used. It accepts a named `GRangesList` as input.
 Internally it will calculate a list of features values based on the functions
 mentioned above and the data contained in the mcols of the `GRanges` objects. 
-The results can be retrieved without generating plots using `gettRNASummary`.
+The results can be retrieved without generating plots using `gettRNASummary` for
+the individual `GRanges` objects.
 
 ```{r}
 # load tRNA data for E. coli and H. sapiens
@@ -184,11 +189,14 @@ options("tRNA_colour_no")
 
 # Dot bracket annotation
 
-To retrieve detailed information on the base pairing `gettRNABasePairing()` or
-`getBasePairing()` can be used depending on the input type. The DotBracket
-annotation is expected with pairs of `<>{}[]()` (Please note the orientation.
-For `<>` the orientation is variable, since the tRNAscan files use the `><`
-annotation by default).
+To retrieve detailed information on the base pairing `gettRNABasePairing()` can 
+be used. Internally this will construct a `DotBracketStringSet` from the 
+`tRNA_str`, if this is not already used for the column, and pass on to 
+`Structstrings::getBasePairing`. The DotBracket annotation is expected with 
+pairs of `<>{}[]()` (Please note the orientation. For `<>` the orientation 
+is variable, since the tRNAscan files use the `><` annotation by default. 
+However upon creation of a `DotBracketStringSet` this annotation will be 
+converted).
 
 ```{r}
 head(gettRNABasePairing(gr)[[1]])
@@ -196,8 +204,9 @@ head(getBasePairing(gr[1]$tRNA_str)[[1]])
 ```
 
 The loop ids for the structure elements can be retrieved with `gettRNALoopIDs()`
-or `getLoopIDs()`. Please not that pseudoloops are currently not correctly
-reflected in the output of these functions.
+, which relies on the `Structstrings::getLoopIDs` function. (Please not that 
+pseudoloops are currently not correctly reflected in the output of this 
+function. For more details, please have a look at the `?getLoopIDs`)
 
 ```{r}
 gettRNALoopIDs(gr)[[1]]

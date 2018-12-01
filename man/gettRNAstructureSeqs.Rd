@@ -6,8 +6,6 @@
 \alias{gettRNAstructureGRanges}
 \alias{gettRNAstructureSeqs}
 \alias{gettRNAstructureSeqs,GRanges-method}
-\alias{gettRNAstructureSeqs}
-\alias{gettRNAstructureGRanges}
 \alias{gettRNAstructureGRanges,GRanges-method}
 \title{tRNA structures and sequences}
 \usage{
@@ -72,5 +70,4 @@ data("gr", package = "tRNA", envir = environment())
 gettRNAstructureGRanges(gr, structure = "anticodonLoop")
 gettRNAstructureSeqs(gr, structure = "anticodonLoop")
 gettRNABasePairing(gr[1:10])
-getBasePairing(gr[1:10]$tRNA_str)
 }

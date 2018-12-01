@@ -12,9 +12,16 @@ NULL
 
 #' @import methods
 #' @import GenomicRanges
+#' @import Biostrings
+#' @import Structstrings
+#' @import Modstrings
 #' @import assertive
 NULL
 requireNamespace("assertive")
+requireNamespace("GenomicRanges")
+requireNamespace("Biostrings")
+requireNamespace("Structstrings")
+requireNamespace("Modstrings")
 
 # constants tRNA ---------------------------------------------------------------
 

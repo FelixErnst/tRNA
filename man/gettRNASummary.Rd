@@ -3,7 +3,6 @@
 \docType{methods}
 \name{gettRNASummary}
 \alias{gettRNASummary}
-\alias{gettRNASummary}
 \alias{gettRNASummary,GRangesList-method}
 \alias{gettRNASummary,GRanges-method}
 \title{Summary of tRNA features}

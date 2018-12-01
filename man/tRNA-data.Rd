@@ -4,11 +4,8 @@
 \name{tRNA-data}
 \alias{tRNA-data}
 \alias{gr}
-\alias{tRNA-data}
 \alias{gr_human}
-\alias{tRNA-data}
 \alias{gr_human2}
-\alias{tRNA-data}
 \alias{gr_eco}
 \title{tRNA example data}
 \format{object of class \code{GRanges}}

@@ -52,7 +52,6 @@ NULL
 #' gettRNAstructureGRanges(gr, structure = "anticodonLoop")
 #' gettRNAstructureSeqs(gr, structure = "anticodonLoop")
 #' gettRNABasePairing(gr[1:10])
-#' getBasePairing(gr[1:10]$tRNA_str)
 NULL
 
 #' @rdname gettRNAstructureSeqs
@@ -91,34 +90,44 @@ setMethod(
   tRNAStructureTypes <- .get_tRNA_structure_type(loopPositions)
   # discriminator stem
   discriminator <- .getDiscriminator(gr,
-                                     strList,
                                      tRNAStructureTypes)
   ans[["discriminator"]] <- .get_IRanges(discriminator,
                                          gr$tRNA_anticodon)
   if(all(structure %in% names(ans))){
     return(ans[structure])
   }
+  # browser()
   # acceptor stem
+  pos <- lapply(strList,"[[","pos")
+  forward <- lapply(strList,"[[","forward")
+  reverse <- lapply(strList,"[[","reverse")
   acceptorStem <- .getAcceptorStem(gr,
-                                   strList,
+                                   forward,
+                                   reverse,
                                    tRNAStructureTypes,
                                    loopPositions,
                                    discriminator)
   # T stem
   TStem <- .getTstem(gr,
-                     strList,
+                     pos,
+                     forward,
+                     reverse,
                      tRNAStructureTypes,
                      loopPositions,
                      acceptorStem)
   # D stem
   DStem <- .getDstem(gr,
-                     strList,
+                     pos,
+                     forward,
+                     reverse,
                      tRNAStructureTypes,
                      loopPositions,
                      acceptorStem)
   # anticodon stem
   anticodonStem <- .getAnticodonStem(gr,
-                                     strList,
+                                     pos,
+                                     forward,
+                                     reverse,
                                      tRNAStructureTypes,
                                      loopPositions)
   ##############################################################################
@@ -188,17 +197,14 @@ setMethod(
   if(any(structure %in% c("Dloop","Tloop","anticodonLoop"))){
     # D loop, T loop and anticodon loop
     Dloop <- .getDloop(gr,
-                       strList,
                        tRNAStructureTypes,
                        loopPositions,
                        DStem)
     Tloop <- .getTloop(gr,
-                       strList,
                        tRNAStructureTypes,
                        loopPositions,
                        TStem)
     anticodonLoop <- .getAnticodonLoop(gr,
-                                       strList,
                                        tRNAStructureTypes,
                                        loopPositions,
                                        anticodonStem)
@@ -214,15 +220,12 @@ setMethod(
   }
   # Dprime5, Dprime3 and vairable loop
   Dprime5 <- .getDprime5(gr,
-                         strList,
                          acceptorStem,
                          DStem)
   Dprime3 <- .getDprime3(gr,
-                         strList,
                          DStem,
                          anticodonStem)
   variableLoop <- .getVariableLoop(gr,
-                                   strList,
                                    TStem,
                                    anticodonStem)
   ans[["Dprime5"]] <- .get_IRanges(Dprime5,
@@ -239,7 +242,7 @@ setMethod(
 
 # returns the boundary positions of the center of the tRNA
 .get_loop_positions <- function(strList){
-  loopids <- .get_ids_of_loops(strList)
+  loopids <- Structstrings::getLoopIDs(strList)
   min <- .local_min(loopids)
   ans <- mapply(
     function(z,zz){
@@ -394,7 +397,8 @@ setMethod(
 ################################################################################
 ################################################################################
 .getAcceptorStem <- function(x,
-                             strList,
+                             forward,
+                             reverse,
                              tRNAStructureTypes,
                              loopPositions,
                              discriminator){
@@ -403,14 +407,16 @@ setMethod(
   end <- discriminator - 1
   # 5'start is opposite of the discriminator 
   start5 <- mapply(
-    function(z,zend){
+    function(fo,re,zend){
       if(is.na(zend)) return(NA)
-      diff <- zend - max(z$reverse)
-      ans <- z[z$reverse == max(z$reverse),]$forward - diff
-      if(ans < 0) return(NA)
-      ans
+      max <- max(re)
+      diff <- zend - max(re)
+      f <- re == max
+      if(!any(f)) return(NA)
+      return(fo[f] - diff)
     },
-    strList,
+    forward,
+    reverse,
     end)
   # use center positions to get search parameters
   tmp <- mapply(
@@ -425,16 +431,17 @@ setMethod(
   # get the last base paired position, which is before the D stem
   # returns both end5 and start3
   tmp <- mapply(
-    function(z,zstart,zend){
+    function(fo,re,zstart,zend){
       if(is.na(zstart) | is.na(zend)) return(c(NA,NA))
-      ans <- z[z$forward <= zend & 
-                 z$reverse >= zend & 
-                 z$forward != 0, ]
-      ans <- ans[ans$forward <= zstart,]
-      if(nrow(ans) == 0) return(c(NA,NA))
-      return(c(max(ans$forward),min(ans$reverse)))
+      f <- fo <= zend &
+        re >= zend &
+        fo != 0 &
+        fo <= zstart
+      if(!any(f)) return(c(NA,NA))
+      return(c(max(fo[f]),min(re[f])))
     },
-    strList,
+    forward,
+    reverse,
     maxStart,
     minEnd)
   end5 <- tmp[1,]
@@ -451,7 +458,6 @@ setMethod(
 ################################################################################
 ################################################################################
 .getDprime5 <- function(x,
-                        strList,
                         acceptor,
                         dstem){
   start <- acceptor$prime5$end + 1
@@ -471,7 +477,9 @@ setMethod(
 
 ################################################################################
 .getDstem <- function(x,
-                      strList,
+                      pos,
+                      forward,
+                      reverse,
                       tRNAStructureTypes,
                       loopPositions,
                       acceptor){
@@ -493,16 +501,18 @@ setMethod(
   # make sure if the start position is a mismatch to extend the end for this as
   # well
   tmp <- mapply(
-    function(z,zstart,zend){
+    function(po,fo,re,zstart,zend){
       if(is.na(zstart) | is.na(zend)) return(c(NA,NA))
-      ans <- z[z$pos < zend & 
-                 z$reverse < zend & 
-                 z$forward != 0, ]
-      if(nrow(ans) == 0) return(c(NA,NA))
-      ans <- ans[1,]
-      return(c(ans$forward,ans$reverse))
+      f <- po < zend &
+        re < zend &
+        fo != 0
+      if(!any(f)) return(c(NA,NA))
+      f <- which(f)
+      return(c(fo[f[1L]],re[f[1L]]))
     },
-    strList,
+    pos,
+    forward,
+    reverse,
     minStart,
     maxEnd)
   start5 <- tmp[1,]
@@ -510,16 +520,19 @@ setMethod(
   # remove all unpaired position between the start and end. the last row in the
   # middle contain both end5 and start3
   tmp <- mapply(
-    function(z,zstart,zend){
+    function(po,fo,re,zstart,zend){
       if(is.na(zstart) | is.na(zend)) return(c(NA,NA))
-      ans <- z[z$pos >= zstart &
-              z$pos <= zend &
-              z$forward != 0,]
-      if(nrow(ans) == 0) return(c(NA,NA))
-      ans <- ans[max(1,floor(nrow(ans) / 2)),]
-      return(c(ans$forward,ans$reverse))
+      f <- po >= zstart &
+        po <= zend &
+        fo != 0
+      if(!any(f)) return(c(NA,NA))
+      f <- which(f)
+      f <- f[max(1,floor(length(f) / 2))]
+      return(c(fo[f],re[f]))
     },
-    strList,
+    pos,
+    forward,
+    reverse,
     start5,
     end3)
   end5 <- tmp[1,]
@@ -534,7 +547,6 @@ setMethod(
 
 ################################################################################
 .getDloop <- function(x,
-                      strList,
                       tRNAStructureTypes,
                       loopPositions,
                       dstem){
@@ -568,7 +580,6 @@ setMethod(
 
 ################################################################################
 .getDprime3 <- function(x,
-                        strList,
                         dstem,
                         anticodon){
   start <- dstem$prime3$end + 1
@@ -590,7 +601,9 @@ setMethod(
 ################################################################################
 ################################################################################
 .getAnticodonStem <- function(x,
-                              strList,
+                              pos,
+                              forward,
+                              reverse,
                               tRNAStructureTypes,
                               loopPositions){
   # for search parameters use center positions 
@@ -623,16 +636,18 @@ setMethod(
   maxEnd <- tmp[2,]
   # 
   tmp <- mapply(
-    function(z,zstart,zend){
+    function(po,fo,re,zstart,zend){
       if(is.na(zstart) | is.na(zend)) return(c(NA,NA))
-      ans <- z[z$pos >= zstart & 
-                 z$pos <= zend & 
-                 z$forward != 0, ]
-      if(nrow(ans) == 0) return(c(NA,NA))
-      ans <- ans[1,]
-      return(c(ans$forward,ans$reverse))
+      f <- po >= zstart &
+        po <= zend &
+        fo != 0
+      if(!any(f)) return(c(NA,NA))
+      f <- which(f)[1L]
+      return(c(fo[f],re[f]))
     },
-    strList,
+    pos,
+    forward,
+    reverse,
     minStart,
     maxEnd)
   start5 <- tmp[1,]
@@ -640,16 +655,19 @@ setMethod(
   # get the last base paired position, which is before the D stem
   # returns both end5 and start3
   tmp <- mapply(
-    function(z,zstart,zend){
+    function(po,fo,re,zstart,zend){
       if(is.na(zstart) | is.na(zend)) return(c(NA,NA))
-      ans <- z[z$pos >= zstart & 
-                 z$pos <= zend &
-                 z$forward != 0,]
-      if(nrow(ans) == 0) return(c(NA,NA))
-      ans <- ans[max(1,floor(nrow(ans) / 2)),]
-      return(c(ans$forward,ans$reverse))
+      f <- po >= zstart &
+        po <= zend &
+        fo != 0
+      if(!any(f)) return(c(NA,NA))
+      f <- which(f)
+      f <- f[max(1,floor(length(f) / 2))]
+      return(c(fo[f],re[f]))
     },
-    strList,
+    pos,
+    forward,
+    reverse,
     start5,
     end3)
   end5 <- tmp[1,]
@@ -673,7 +691,6 @@ setMethod(
 
 ################################################################################
 .getAnticodonLoop <- function(x,
-                              strList,
                               tRNAStructureTypes,
                               loopPositions,
                               anticodon){
@@ -711,7 +728,6 @@ setMethod(
 ################################################################################
 ################################################################################
 .getVariableLoop <- function(x,
-                             strList,
                              tstem,
                              anticodon){
   coord <- list(start = (anticodon$prime3$end + 1),
@@ -732,7 +748,9 @@ setMethod(
 ################################################################################
 ################################################################################
 .getTstem <- function(x,
-                      strList,
+                      pos,
+                      forward,
+                      reverse,
                       tRNAStructureTypes,
                       loopPositions,
                       acceptor){
@@ -755,16 +773,19 @@ setMethod(
   # make sure if the start position is a mismatch to extend the end for this as
   # well
   tmp <- mapply(
-    function(z,zstart,zend){
+    function(po,fo,re,zstart,zend){
       if(is.na(zstart) | is.na(zend)) return(c(NA,NA))
-      ans <- z[z$pos > zstart & 
-                 z$reverse > zstart & 
-                 z$forward != 0, ]
-      if(nrow(ans) == 0) return(c(NA,NA))
-      ans <- z[z$forward == max(ans$forward),]
-      return(c(ans$reverse,ans$forward))
+      f <- po > zstart &
+        re > zstart &
+        fo != 0
+      if(!any(f)) return(c(NA,NA))
+      f <- which(f)
+      f <- fo == max(fo[f])
+      return(c(re[f],fo[f]))
     },
-    strList,
+    pos,
+    forward,
+    reverse,
     minStart,
     maxEnd)
   start5 <- tmp[1,]
@@ -772,16 +793,19 @@ setMethod(
   # remove all unpaired position between the start and end. the last row in the
   # middle contain both end5 and start3
   tmp <- mapply(
-    function(z,zstart,zend){
+    function(po,fo,re,zstart,zend){
       if(is.na(zstart) | is.na(zend)) return(c(NA,NA))
-      ans <- z[z$pos >= zstart &
-                 z$pos <= zend &
-                 z$forward != 0,]
-      if(nrow(ans) == 0) return(c(NA,NA))
-      ans <- ans[max(1,floor(nrow(ans) / 2)),]
-      return(c(ans$forward,ans$reverse))
+      f <- po >= zstart &
+        po <= zend &
+        fo != 0
+      if(!any(f)) return(c(NA,NA))
+      f <- which(f)
+      f <- f[max(1,floor(length(f) / 2))]
+      return(c(fo[f],re[f]))
     },
-    strList,
+    pos,
+    forward,
+    reverse,
     start5,
     end3)
   end5 <- tmp[1,]
@@ -796,7 +820,6 @@ setMethod(
 
 ################################################################################
 .getTloop <- function(x,
-                      strList,
                       tRNAStructureTypes,
                       loopPositions,
                       tstem){
@@ -832,7 +855,6 @@ setMethod(
 ################################################################################
 ################################################################################
 .getDiscriminator <- function(x,
-                              strList,
                               tRNAStructureTypes){
   ans <- as.integer(ifelse(x$tRNA_CCA.end,
                            .get_tRNA_length(x)-3,

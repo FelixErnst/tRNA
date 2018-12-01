@@ -31,13 +31,14 @@ setGeneric (
                  joinFeatures = FALSE,
                  padSequences = TRUE) standardGeneric("gettRNAstructureSeqs")
 )
-#' @rdname getBasePairing
+#' @rdname gettRNABasePairing
 #' @export
 setGeneric (
   name = "gettRNABasePairing",
-  def = function(x) standardGeneric("gettRNABasePairing")
+  def = function(x,
+                 with.nucleotides = FALSE) standardGeneric("gettRNABasePairing")
 )
-#' @rdname getBasePairing
+#' @rdname gettRNABasePairing
 #' @export
 setGeneric (
   name = "gettRNALoopIDs",

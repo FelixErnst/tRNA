@@ -308,6 +308,10 @@ setMethod(
                                 gr,
                                 strList)
   }
+  # Since we will subset the DotBracketDataFrameList it is best to convert them
+  # to a normal CompressedDataFrameList, since not all positions remain paired
+  # resulting in an invalid DotBracketDataFrame
+  strList <- lapply(strList,as.data.frame)
   strList <- lapply(ident,
                     function(id){
                       if(is.list(str[[id]])){

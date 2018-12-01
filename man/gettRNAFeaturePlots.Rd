@@ -3,7 +3,6 @@
 \docType{methods}
 \name{gettRNAFeaturePlots}
 \alias{gettRNAFeaturePlots}
-\alias{gettRNAFeaturePlots}
 \alias{gettRNAFeaturePlots,GRangesList-method}
 \title{Graphical summary of tRNA features}
 \usage{

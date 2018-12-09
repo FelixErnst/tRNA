@@ -23,7 +23,6 @@ BiocManager::install("tRNA")
 # Load and attach thepackage
 library("tRNA")
 ```
-A submission to Bioconductor might follow.
 
 ## Functions
 

@@ -204,13 +204,13 @@ head(getBasePairing(gr[1]$tRNA_str)[[1]])
 ```
 
 The loop ids for the structure elements can be retrieved with `gettRNALoopIDs()`
-, which relies on the `Structstrings::getLoopIDs` function. (Please not that 
+, which relies on the `Structstrings::getLoopIndices` function. (Please not that 
 pseudoloops are currently not correctly reflected in the output of this 
-function. For more details, please have a look at the `?getLoopIDs`)
+function. For more details, please have a look at the `?getLoopIndices`)
 
 ```{r}
 gettRNALoopIDs(gr)[[1]]
-getLoopIDs(gr[1]$tRNA_str)
+getLoopIndices(gr[1]$tRNA_str)
 ```
 
 # Session info

@@ -75,6 +75,6 @@ setMethod(
     if(!is(str,"DotBracketStringSet")){
       str <- as(str,"DotBracketStringSet")
     }
-    Structstrings::getLoopIDs(str)
+    Structstrings::getLoopIndices(str)
   }
 )

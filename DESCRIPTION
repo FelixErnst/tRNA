@@ -53,3 +53,4 @@ Collate:
     'tRNA-utils.R'
 VignetteBuilder: knitr
 RoxygenNote: 6.1.1
+BugReports: https://github.com/FelixErnst/tRNA/issues

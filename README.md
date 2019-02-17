@@ -1,5 +1,5 @@
 # tRNA 
-<img src="https://raw.githubusercontent.com/Bioconductor/BiocStickers/master/tRNA/tRNA.png" height="120">
+<img src="https://raw.githubusercontent.com/Bioconductor/BiocStickers/master/tRNA/tRNA.png" height="300" align="right">
 
 The tRNA package allows feature information of tRNAs to be accessed and list of 
 tRNA to be subset based on these features. The main purpose is to unify 

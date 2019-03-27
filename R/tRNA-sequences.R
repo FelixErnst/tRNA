@@ -520,8 +520,7 @@ setMethod(
                                        strList[f],
                                        ans_class)
   }
-  return(list(prime5 = prime5,
-              prime3 = prime3))
+  return(list(prime5 = prime5, prime3 = prime3))
 }
 
 #
@@ -532,58 +531,74 @@ setMethod(
   dims <- lapply(
     seq_along(strList),
     function(i){
+      # subset to relevant structure
       z <- strList[[i]][strList[[i]]$pos %in% 
                           BiocGenerics::start(ir[i]):BiocGenerics::end(ir[i]),]
       z <- z[z$reverse != 0,]
+      # check for bulge
       zz <- vapply(
         seq_len(nrow(z)),
         function(j){
+          # skip last
           if(j >= nrow(z)) return(FALSE)
           # missing pos on reverse
           z[j,]$reverse - 1 > z[j + 1,]$reverse &
             # not the same bulge on the other side
             (z[j,]$reverse - 1 - z[j + 1,]$reverse) != 
             (z[j + 1,]$forward - 1 - z[j,]$forward)
-        },logical(1))
+        },
+        logical(1))
       # if not unpaired position can be detected it is just a shorter
       # stem
-      if(length(which(zz)) == 0){
+      w_zz <- which(zz)
+      if(length(w_zz) == 0){
         return(NULL)
       }
-      return(list(start = z[zz,]$forward + 1 - BiocGenerics::start(ir[i]),
-                  stop = z[which(zz) + 1,]$forward +
-                    1 -
-                    BiocGenerics::start(ir[i]) -
-                    (z[which(zz) + 1,]$forward - z[which(zz),]$forward - 1),
-                  length = z[zz,]$reverse -
-                    z[which(zz) + 1,]$reverse -
-                    1 -
-                    (z[which(zz) + 1,]$forward - z[which(zz),]$forward - 1)))
+      length <- z[zz,]$reverse - z[w_zz + 1,]$reverse - 1L -
+        (z[w_zz + 1,]$forward - z[w_zz,]$forward - 1)
+      # if bulge is shorter in the other side, skip
+      length_neg <- length <= 0L
+      if(all(length_neg)){
+        return(NULL)
+      }
+      start <- z[zz,]$forward + 1 - BiocGenerics::start(ir[i])
+      stop <- z[w_zz + 1,]$forward + 1L - BiocGenerics::start(ir[i]) -
+        (z[w_zz + 1,]$forward - z[w_zz,]$forward - 1)
+      return(list(start = start[!length_neg], 
+                  stop = stop[!length_neg], 
+                  length = length[!length_neg]))
     })
-  dims <- dims[!vapply(dims,is.null,logical(1))]
-  if(length(dims) == 0){
+  need_editing <- !vapply(dims,is.null,logical(1))
+  if(!any(need_editing)){
     return(seqs)
   }
-  dims <- data.frame(dims)
-  return(.add_padding_to_pos(seqs,
-                             dims$start,
-                             dims$stop,
-                             dims$length,
-                             ans_class))
+  dims <- dims[need_editing]
+  ans_class_fun <- match.fun(elementType(seqs))
+  seqs[need_editing] <- mapply(.add_padding_to_pos,
+                               seqs[need_editing],
+                               lapply(dims,"[[","start"),
+                               lapply(dims,"[[","stop"),
+                               lapply(dims,"[[","length"),
+                               MoreArgs = list(ans_class_fun))
+  return(seqs)
 }
 
 #
-.add_padding_to_pos <- function(seqs, start, stop, length, ans_class){
-  add <- do.call(ans_class,
-                 list(unlist(
-                   lapply(length,
-                          function(n){
-                            do.call(paste0,as.list(rep("-",n)))
-                          })))
-  )
-  Biostrings::xscat(
-    XVector::subseq(seqs, start = 1, end = start),
-    add,
-    XVector::subseq(seqs, start = stop, end = BiocGenerics::width(seqs))
-  )
+.add_padding_to_pos <- function(seq, start, stop, length, ans_class_fun){
+  length_add <- c(0L,length[seq_len(length(length) - 1L)])
+  start <- start + length_add
+  stop <- stop + length_add
+  add <- lapply(length,
+                function(n){
+                  ans_class_fun(paste(rep("-",n),collapse = ""))
+                })
+  # for-loop needed since multiple addition per sequence can occur
+  for(i in seq_along(add)){
+    seq <- Biostrings::xscat(
+      XVector::subseq(seq, start = 1, end = start[i]),
+      add[[i]],
+      XVector::subseq(seq, start = stop[i], end = length(seq))
+    )
+  }
+  seq
 }

@@ -96,7 +96,6 @@ setMethod(
   if(all(structure %in% names(ans))){
     return(ans[structure])
   }
-  # browser()
   # acceptor stem
   pos <- lapply(strList,"[[","pos")
   forward <- lapply(strList,"[[","forward")

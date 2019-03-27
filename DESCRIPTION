@@ -1,7 +1,7 @@
 Package: tRNA
 Title: tRNA: Analyzing tRNA sequences and structures
-Version: 1.1.1
-Date: 2018-12-01
+Version: 1.1.2
+Date: 2018-03-27
 Authors@R: person("Felix GM", 
                   "Ernst", 
                   email = "felix.gm.ernst@outlook.com", 

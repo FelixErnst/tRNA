@@ -8,3 +8,4 @@ Changes in version 1.1.1 (2018-12-01)
 
 Changes in version 1.1.2 (2018-03-27)
 + bugfix for padding unpaired region in stem sequences
++ bugfix for getting empty sequences of non-existing variable loops

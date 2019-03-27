@@ -14,14 +14,13 @@ these requirements.
 
 ## Installation
 
-The current version of the `tRNA` package is available from GitHub.
+The current version of the `tRNA` package is available from Bioconductor.
  
 ```{r}
-devtools::install_github("FelixErnst/tRNA")
+BiocManager::install("tRNA")
 # Load and attach thepackage
 library("tRNA")
 ```
-A submission to Bioconductor might follow.
 
 ## Functions
 

@@ -96,7 +96,6 @@ setMethod(
   if(all(structure %in% names(ans))){
     return(ans[structure])
   }
-  # browser()
   # acceptor stem
   pos <- lapply(strList,"[[","pos")
   forward <- lapply(strList,"[[","forward")
@@ -242,7 +241,7 @@ setMethod(
 
 # returns the boundary positions of the center of the tRNA
 .get_loop_positions <- function(strList){
-  loopids <- Structstrings::getLoopIDs(strList)
+  loopids <- Structstrings::getLoopIndices(strList)
   min <- .local_min(loopids)
   ans <- mapply(
     function(z,zz){

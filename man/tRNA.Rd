@@ -6,7 +6,18 @@
 \alias{tRNA-package}
 \title{tRNA: analyzing tRNA sequences and structures}
 \description{
-title
+The tRNA package allows feature information of tRNAs to be
+accessed and list of tRNA to be subset based on these features. The main
+purpose is to unify overlapping functions from the tRNAscanImport and
+tRNAdbImport packages. The functionality is currently under development and
+may change. The package expects a GRanges object with certain columns as
+input. The following columns are a requirement: \code{tRNA_length},
+\code{tRNA_type}, \code{tRNA_anticodon}, \code{tRNA_seq}, \code{tRNA_str},
+\code{tRNA_CCA.end}. Outputs of tRNAscanImport and tRNAdbImport meet these
+requirements.
+
+Have a look at the vignette for an overview of the functionality. Additional
+functions are planned to be added in the future.
 }
 \author{
 Felix G M Ernst [aut]

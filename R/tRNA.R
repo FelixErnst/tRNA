@@ -8,8 +8,8 @@
 #' tRNAdbImport packages. The functionality is currently under development and
 #' may change. The package expects a GRanges object with certain columns as
 #' input. The following columns are a requirement: \code{tRNA_length},
-#' \code{tRNA_type], \code{tRNA_anticodon], \code{tRNA_seq], \code{tRNA_str],
-#' \code{tRNA_CCA.end]. Outputs of tRNAscanImport and tRNAdbImport meet these
+#' \code{tRNA_type}, \code{tRNA_anticodon}, \code{tRNA_seq}, \code{tRNA_str},
+#' \code{tRNA_CCA.end}. Outputs of tRNAscanImport and tRNAdbImport meet these
 #' requirements.
 #'
 #' Have a look at the vignette for an overview of the functionality. Additional

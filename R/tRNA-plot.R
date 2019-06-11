@@ -336,7 +336,7 @@ setMethod(
                                    palette = colour_palette) + 
       ggplot2::expand_limits(y = c(min - 1,
                                    max + 1)) + 
-      ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 15, 
+      ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, 
                                                          hjust = 1))
   } 
   if(!is.na(dataType[[name]]) &&
@@ -354,7 +354,7 @@ setMethod(
                                   limits = c(0,1)) +
       ggplot2::scale_colour_brewer(name = "Sample",
                                    palette = colour_palette) + 
-      ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 15, 
+      ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, 
                                                          hjust = 1))
   }
   if(!is.na(dataType[[name]]) &&
@@ -375,7 +375,7 @@ setMethod(
       ggplot2::scale_fill_identity(name = "",
                                    guide = "legend",
                                    labels = c("Yes","No")) + 
-      ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 15, 
+      ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, 
                                                          hjust = 1))
   }
   return(plot)

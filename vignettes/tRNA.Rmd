@@ -80,7 +80,7 @@ padded set of sequences. The boundaries of the individual structures is returned
 as metadata of the `RNAStringSet` object.
 
 ```{r}
-seqs <- gettRNAstructureSeqs(gr[1:10], joinCompletely = TRUE)
+seqs <- gettRNAstructureSeqs(gr[1L:10L], joinCompletely = TRUE)
 seqs
 # getting the tRNA structure boundaries
 metadata(seqs)[["tRNA_structures"]]
@@ -106,7 +106,7 @@ gr[hasAcceptorStem(gr, mismatches = TRUE)]
 gr[hasAcceptorStem(gr, bulged = TRUE)]
 # combination of different structure parameters
 gr[hasAcceptorStem(gr, mismatches = TRUE) & 
-     hasDloop(gr, length = 8)]
+     hasDloop(gr, length = 8L)]
 ```
 
 Please have a look at the man page `?hasAccpeptorStem` for all available 
@@ -161,9 +161,9 @@ plots <- gettRNAFeaturePlots(grl, plotScores = TRUE)
 ```
 ```{r}
 plots <- gettRNAFeaturePlots(grl,
-                             scores = list(runif(length(grl[[1]]),0,100),
-                                           runif(length(grl[[2]]),0,100),
-                                           runif(length(grl[[3]]),0,100)))
+                             scores = list(runif(length(grl[[1L]]),0L,100L),
+                                           runif(length(grl[[2L]]),0L,100L),
+                                           runif(length(grl[[3L]]),0L,100L)))
 ```
 ```{r plot6, fig.cap = "tRNA length and score correlation."}
 plots$length
@@ -176,7 +176,7 @@ Since all plots returned by the functions mentioned above are `ggplot2` objects,
 they can be modified manually and changed to suit your needs.
 
 ```{r plot8, fig.cap = "Customized plot switching out the point and violin plot into a boxplot."}
-plots$length$layers <- plots$length$layers[c(-1,-2)]
+plots$length$layers <- plots$length$layers[c(-1L,-2L)]
 plots$length + ggplot2::geom_boxplot()
 ```
 
@@ -211,8 +211,8 @@ variable, since the tRNAscan files use the `><` annotation by default. However
 upon creation of a `DotBracketStringSet` this annotation will be converted).
 
 ```{r}
-head(gettRNABasePairing(gr)[[1]])
-head(getBasePairing(gr[1]$tRNA_str)[[1]])
+head(gettRNABasePairing(gr)[[1L]])
+head(getBasePairing(gr[1L]$tRNA_str)[[1L]])
 ```
 
 The loop ids for the structure elements can be retrieved with the
@@ -220,8 +220,8 @@ The loop ids for the structure elements can be retrieved with the
 function. (For more details, please have a look at the `?getLoopIndices`)
 
 ```{r}
-gettRNALoopIDs(gr)[[1]]
-getLoopIndices(gr[1]$tRNA_str)
+gettRNALoopIDs(gr)[[1L]]
+getLoopIndices(gr[1L]$tRNA_str)
 ```
 
 # Session info

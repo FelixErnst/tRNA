@@ -3,7 +3,6 @@
 \docType{package}
 \name{tRNA}
 \alias{tRNA}
-\alias{tRNA-package}
 \title{tRNA: analyzing tRNA sequences and structures}
 \description{
 The tRNA package allows feature information of tRNAs to be

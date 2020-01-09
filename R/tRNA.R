@@ -142,13 +142,18 @@ TRNA_COLOUR_NO <- "red"
 #' @title tRNA example data
 #' @description Example data for using the tRNA package
 #' @docType data
-#' @usage tRNA
+#' 
 #' @format object of class \code{GRanges}
 #' @keywords datasets tRNA
+#' 
+#' @usage data(gr)
 "gr"
 #' @name tRNA-data
+#' @usage data(gr_human)
 "gr_human"
 #' @name tRNA-data
+#' @usage data(gr_human2)
 "gr_human2"
 #' @name tRNA-data
+#' @usage data(gr_eco)
 "gr_eco"

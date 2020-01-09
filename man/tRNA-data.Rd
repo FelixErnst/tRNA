@@ -10,13 +10,13 @@
 \title{tRNA example data}
 \format{object of class \code{GRanges}}
 \usage{
-tRNA
+data(gr)
 
-gr_human
+data(gr_human)
 
-gr_human2
+data(gr_human2)
 
-gr_eco
+data(gr_eco)
 }
 \description{
 Example data for using the tRNA package

@@ -1,17 +1,17 @@
 Package: tRNA
 Title: Analyzing tRNA sequences and structures
-Version: 1.3.3
+Version: 1.5.1
 Date: 2020-01-09
-Authors@R: person("Felix G.M.", 
-                  "Ernst", 
-                  email = "felix.gm.ernst@outlook.com", 
+Authors@R: person("Felix GM", 
+                  "Ernst",
+                  email = "felix.gm.ernst@outlook.com",
                   role = c("aut", "cre"),
                   comment = c(ORCID = "0000-0001-5064-0928"))
-Description: 
-    The tRNA package allows tRNA sequences and structures to be accessed and 
+Description:
+    The tRNA package allows tRNA sequences and structures to be accessed and
     used for subsetting. In addition, it provides visualization tools
-    to compare feature parameters of multiple tRNA sets and correlate them to 
-    additional data. The tRNA package uses GRanges objects as inputs requiring 
+    to compare feature parameters of multiple tRNA sets and correlate them to
+    additional data. The tRNA package uses GRanges objects as inputs requiring
     only few additional column data sets.
 License: GPL-3 + file LICENSE
 Encoding: UTF-8

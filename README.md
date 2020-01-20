@@ -1,4 +1,5 @@
-# tRNA 
+# tRNA [![Build Status](https://travis-ci.com/FelixErnst/tRNA.svg?branch=master)](https://travis-ci.com/FelixErnst/tRNA) [![codecov](https://codecov.io/gh/FelixErnst/tRNA/branch/master/graph/badge.svg)](https://codecov.io/gh/FelixErnst/tRNA)
+
 <img src="https://raw.githubusercontent.com/Bioconductor/BiocStickers/master/tRNA/tRNA.png" height="300" align="right">
 
 The tRNA package allows feature information of tRNAs to be accessed and list of 

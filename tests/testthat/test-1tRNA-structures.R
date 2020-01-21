@@ -124,4 +124,12 @@ test_that("tRNA structures:",{
   expect_true(hasAnticodonStem(tRNA))
   expect_true(hasAnticodonLoop(tRNA))
   expect_true(hasVariableLoop(tRNA))
+  #
+  expect_false(hasTloop(tRNA,length = 10))
+  expect_false(hasVariableLoop(tRNA, paired = TRUE))
+  expect_false(hasVariableLoop(tRNA, mismatches = TRUE))
+  expect_false(hasVariableLoop(tRNA, bulged = TRUE))
+  expect_false(hasTStem(tRNA, mismatches = TRUE))
+  expect_false(hasTStem(tRNA, bulged = TRUE, mismatches = TRUE))
+  expect_false(hasTStem(tRNA, unpaired = TRUE))
 })

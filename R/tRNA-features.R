@@ -18,7 +18,7 @@ NULL
 #' 
 #' @export
 #' @examples
-#' data("gr", package = "tRNA", envir = environment())
+#' data("gr", package = "tRNA")
 #' gettRNASummary(gr)
 NULL
 
@@ -85,26 +85,20 @@ setMethod(
     strListSubsetPaired <- strListSubsetAll[TRNA_STRUCTURES_PAIRED]
     data <- lapply(TRNA_SUMMARY_FEATURES_LIST,
                    function(f){
-                     do.call(f,list(x,
-                                    str))
+                     do.call(f,list(x, str))
                    })
     dataSubset <- lapply(TRNA_SUMMARY_FEATURES_LIST_SUBSET,
                          function(f){
-                           do.call(f,list(x,
-                                          strListSubsetAll))
+                           do.call(f,list(x, strListSubsetAll))
                          })
     dataSubsetPaired <- lapply(TRNA_SUMMARY_FEATURES_LIST_SUBSET_PAIRED,
                    function(f){
-                     do.call(f,list(x,
-                                    strListSubsetPaired))
+                     do.call(f,list(x, strListSubsetPaired))
                    })
     dfAdd <- do.call(cbind,
-                     c(unname(lapply(data,
-                                     S4Vectors::DataFrame)),
-                       unname(lapply(dataSubset,
-                                     S4Vectors::DataFrame)),
-                       unname(lapply(dataSubsetPaired,
-                                     S4Vectors::DataFrame))))
+                     c(unname(lapply(data, S4Vectors::DataFrame)),
+                       unname(lapply(dataSubset, S4Vectors::DataFrame)),
+                       unname(lapply(dataSubsetPaired, S4Vectors::DataFrame))))
     colnames(dfAdd) <- unname(c(unlist(lapply(data,names)),
                                 unlist(lapply(dataSubset,names)),
                                 unlist(lapply(dataSubsetPaired,names))))
@@ -126,6 +120,41 @@ setMethod(
     f <- match(names(TRNA_SUMMARY_FEATURES_RENAMED), cnames)
     cnames[f] <- TRNA_SUMMARY_FEATURES_RENAMED
     colnames(df) <- cnames
+    # convert columns to fix types
+    df$width <- as.integer(df$width)
+    df$length <- as.integer(df$length)
+    df$cca <- as.logical(df$cca)
+    df$features_all_valid <- as.logical(df$features_all_valid)
+    df$features_Dstem_found <- as.logical(df$features_Dstem_found)
+    df$features_Tstem_found <- as.logical(df$features_Tstem_found)
+    df$acceptorStem_length <- as.integer(df$acceptorStem_length)
+    df$Dprime5_length <- as.integer(df$Dprime5_length)
+    df$DStem_length <- as.integer(df$DStem_length)
+    df$Dloop_length <- as.integer(df$Dloop_length)
+    df$Dprime3_length <- as.integer(df$Dprime3_length)
+    df$anticodonStem_length <- as.integer(df$anticodonStem_length)
+    df$anticodonLoop_length <- as.integer(df$anticodonLoop_length)
+    df$variableLoop_length <- as.integer(df$variableLoop_length)
+    df$TStem_length <- as.integer(df$TStem_length)
+    df$Tloop_length <- as.integer(df$Tloop_length)
+    df$discriminator_length <- as.integer(df$discriminator_length)
+    df$acceptorStem_unpaired <- as.logical(df$acceptorStem_unpaired)
+    df$DStem_unpaired <- as.logical(df$DStem_unpaired)
+    df$anticodonStem_unpaired <- as.logical(df$anticodonStem_unpaired)
+    df$variableLoop_unpaired <- as.logical(df$variableLoop_unpaired)
+    df$TStem_unpaired <- as.logical(df$TStem_unpaired)
+    df$acceptorStem_mismatches <- as.logical(df$acceptorStem_mismatches)
+    df$DStem_mismatches <- as.logical(df$DStem_mismatches)
+    df$anticodonStem_mismatches <- as.logical(df$anticodonStem_mismatches)
+    df$variableLoop_mismatches <- as.logical(df$variableLoop_mismatches)
+    df$TStem_mismatches <- as.logical(df$TStem_mismatches)
+    df$acceptorStem_bulges <- as.logical(df$acceptorStem_bulges)
+    df$DStem_bulges <- as.logical(df$DStem_bulges)
+    df$anticodonStem_bulges <- as.logical(df$anticodonStem_bulges)
+    df$variableLoop_bulges <- as.logical(df$variableLoop_bulges)
+    df$TStem_bulges <- as.logical(df$TStem_bulges)
+    df$tRNAscan_potential.pseudogene <- as.logical(df$tRNAscan_potential.pseudogene)
+    df$tRNAscan_intron <- as.logical(df$tRNAscan_intron)
     #
     return(df)
   }
@@ -157,8 +186,7 @@ setMethod(
 }
 
 # Summarize features
-.get_features_length <- function(gr,
-                                 strList){
+.get_features_length <- function(gr, strList){
   lengths <- lapply(TRNA_STRUCTURES,
                     function(ident){
                       l <- .get_str_lengths(ident = ident,
@@ -298,15 +326,10 @@ setMethod(
   ans
 }
 
-.get_ident_structures <- function(ident,
-                                  gr,
-                                  strList,
-                                  str){
+.get_ident_structures <- function(ident, gr,  strList, str){
   if(missing(strList) || missing(str)){
     strList <- getBasePairing(gr$tRNA_str)
-    str <- .get_tRNA_structures(ident,
-                                gr,
-                                strList)
+    str <- .get_tRNA_structures(ident, gr, strList)
   }
   # Since we will subset the DotBracketDataFrameList it is best to convert them
   # to a normal CompressedDataFrameList, since not all positions remain paired
@@ -376,14 +399,11 @@ setMethod(
               reverseLength = unname(reverseLength)))
 }
 
-.get_mismatches <- function(gr,
-                            ident,
-                            strList){
+.get_mismatches <- function(gr, ident, strList){
   if(!missing(gr) && 
      !missing(ident) &&
      missing(strList)){
-    strList <- .get_ident_structures(ident,
-                                     gr)[[1]]
+    strList <- .get_ident_structures(ident, gr)[[1]]
   }
   strListDetails <- .get_structures_details(strList)
   ansMismatchesFalse <- strListDetails[["forwardLength"]] == 
@@ -430,12 +450,9 @@ setMethod(
               "F" = unname(ansBulgedFalse)))
 }
 
-.get_str_lengths <- function(gr,
-                        ident,
-                        strList){
+.get_str_lengths <- function(gr, ident, strList){
   if(missing(strList)){
-    strList <- .get_ident_structures(ident,
-                                     gr)[[1]]
+    strList <- .get_ident_structures(ident, gr)[[1]]
   }
   if(!(ident %in% TRNA_STRUCTURES_LOOP)){
     length <- lapply(strList,

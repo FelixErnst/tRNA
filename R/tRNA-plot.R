@@ -29,8 +29,8 @@ NULL
 #' @export
 #' 
 #' @examples 
-#' data("gr", package = "tRNA", envir = environment())
-#' data("gr_eco", package = "tRNA", envir = environment())
+#' data("gr", package = "tRNA")
+#' data("gr_eco", package = "tRNA")
 #' grl <- GRangesList(Sce = gr,
 #'                    Eco = gr_eco)
 #' plots <- gettRNAFeaturePlots(grl)

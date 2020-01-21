@@ -53,13 +53,13 @@ suppressPackageStartupMessages({
   library(tRNA)
   library(Structstrings)
 })
-data("gr", package = "tRNA", envir = environment())
+data("gr", package = "tRNA")
 ```
 
 ```{r, eval=FALSE}
 library(tRNA)
 library(Structstrings)
-data("gr", package = "tRNA", envir = environment())
+data("gr", package = "tRNA")
 ```
 
 # tRNA sequences and structures
@@ -121,8 +121,8 @@ mentioned above and the data contained in the mcols of the `GRanges` objects.
 
 ```{r}
 # load tRNA data for E. coli and H. sapiens
-data("gr_eco", package = "tRNA", envir = environment())
-data("gr_human", package = "tRNA", envir = environment())
+data("gr_eco", package = "tRNA")
+data("gr_human", package = "tRNA")
 
 # get summary plots
 grl <- GRangesList(Sce = gr,

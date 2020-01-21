@@ -32,7 +32,7 @@ NULL
 #' saved alongside the base pairing information in the 'base' column?
 #' 
 #' @examples 
-#' data("gr", package = "tRNA", envir = environment())
+#' data("gr", package = "tRNA")
 #' gettRNABasePairing(gr[1])
 #' gettRNALoopIDs(gr[1])
 NULL
@@ -42,8 +42,7 @@ NULL
 setMethod(
   f = "gettRNABasePairing",
   signature = signature(x = "GRanges"),
-  definition = function(x,
-                        with.nucleotides = FALSE) {
+  definition = function(x, with.nucleotides = FALSE) {
     .check_trna_granges(x, TRNA_FEATURES)
     seq <- x$tRNA_seq
     str <- x$tRNA_str
@@ -60,7 +59,7 @@ setMethod(
     } else {
       strseq <- str
     }
-    Structstrings::getBasePairing(strseq)
+    Structstrings::getBasePairing(strseq, return.sequence = with.nucleotides)
   }
 )
 

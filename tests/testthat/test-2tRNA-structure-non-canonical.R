@@ -1,8 +1,7 @@
-library(tRNA)
 
 context("tRNA structure - non-canonical")
 test_that("Human anticodon-, D- and T-loop missing:",{
-  data("gr_human2", package = "tRNA", envir = environment())
+  data("gr_human2", package = "tRNA")
   tRNA <- gr_human2[17]
   # check that atRNA with a missing anticodon loop produces the expected result
   str <- gettRNAstructureGRanges(tRNA)

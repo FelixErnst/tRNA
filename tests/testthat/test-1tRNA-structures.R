@@ -1,13 +1,28 @@
-library(tRNA)
 
 context("tRNA structures")
 test_that("tRNA structures:",{
-  data("gr", package = "tRNA", envir = environment())
+  data("gr", package = "tRNA")
   tRNA <- gr
   tRNA <- tRNA[1]
+  #
   strList <- gettRNABasePairing(tRNA)
-  loopPositions <- .get_loop_positions(strList)
-  tRNAStructureTypes <- .get_tRNA_structure_type(loopPositions)
+  expect_equal(colnames(strList[[1]]),c("pos","forward","reverse","character"))
+  mcols(tRNA)$tRNA_seq <- as.character(mcols(tRNA)$tRNA_seq)
+  expect_equal(strList, gettRNABasePairing(tRNA))
+  mcols(tRNA)$tRNA_str <- as.character(mcols(tRNA)$tRNA_str)
+  expect_equal(strList, gettRNABasePairing(tRNA))
+  tRNA <- gr
+  tRNA <- tRNA[1]
+  strList <- gettRNABasePairing(tRNA, with.nucleotides = TRUE)
+  expect_equal(colnames(strList[[1]]),
+               c("pos","forward","reverse","character","base"))
+  #
+  actual <- gettRNALoopIDs(tRNA)
+  expect_s4_class(actual,"LoopIndexList")
+  #
+  loopPositions <- tRNA:::.get_loop_positions(strList)
+  expect_type(loopPositions,"list")
+  tRNAStructureTypes <- tRNA:::.get_tRNA_structure_type(loopPositions)
   pos <- lapply(strList,"[[","pos")
   forward <- lapply(strList,"[[","forward")
   reverse <- lapply(strList,"[[","reverse")
@@ -100,4 +115,13 @@ test_that("tRNA structures:",{
                                  anticodon)
   expect_named(var, c("start","end"))
   expect_equal(var, list(start = 43,end = 46))
+  #
+  expect_true(hasTloop(tRNA))
+  expect_true(hasTStem(tRNA))
+  expect_true(hasDStem(tRNA))
+  expect_true(hasDloop(tRNA))
+  expect_true(hasAcceptorStem(tRNA))
+  expect_true(hasAnticodonStem(tRNA))
+  expect_true(hasAnticodonLoop(tRNA))
+  expect_true(hasVariableLoop(tRNA))
 })

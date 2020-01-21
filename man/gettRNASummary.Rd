@@ -25,6 +25,6 @@ of tRNAs from a GRanges object. Logical values are converted to numeric
 values.
 }
 \examples{
-data("gr", package = "tRNA", envir = environment())
+data("gr", package = "tRNA")
 gettRNASummary(gr)
 }

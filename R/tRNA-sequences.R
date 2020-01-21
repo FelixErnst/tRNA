@@ -13,11 +13,8 @@ NULL
 setMethod(
   f = "gettRNAstructureSeqs",
   signature = signature(x = "GRanges"),
-  definition = function(x,
-                        structure,
-                        joinCompletely,
-                        joinFeatures,
-                        padSequences) {
+  definition = function(x, structure, joinCompletely = FALSE,
+                        joinFeatures = FALSE, padSequences = TRUE) {
     # input check
     .check_trna_granges(x, TRNA_FEATURES)
     .check_trna_structure_ident(structure)
@@ -113,7 +110,7 @@ setMethod(
       prime5,
       prime3
     )
-    names(ans) <- name
+    names(ans) <- names(ir$prime5)
     return(ans)
   }
   ##############################################################################

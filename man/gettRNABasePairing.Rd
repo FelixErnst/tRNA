@@ -43,7 +43,7 @@ numbers in the forward and reverse columns. For more detail have a look at
 \code{\link[Structstrings:getBasePairing]{getLoopIDList}}.
 }
 \examples{
-data("gr", package = "tRNA", envir = environment())
+data("gr", package = "tRNA")
 gettRNABasePairing(gr[1])
 gettRNALoopIDs(gr[1])
 }

@@ -83,7 +83,7 @@ the results, please consider constructing a logical vectors with two calls as
 suggested in the examples.
 }
 \examples{
-data("gr", package = "tRNA", envir = environment())
+data("gr", package = "tRNA")
 hasTStem(gr, length = 5, mismatches = TRUE)
 gr[hasTStem(gr, length = 5, mismatches = TRUE)]
 gr[hasDStem(gr, unpaired = FALSE) & hasDStem(gr, mismatches = FALSE)]

@@ -75,7 +75,7 @@ are stored in the result as metadata. They can be accessesed as an IRanges
 object by using \code{metadata(seq)[["tRNA_structures"]]}.
 }
 \examples{
-data("gr", package = "tRNA", envir = environment())
+data("gr", package = "tRNA")
 gettRNAstructureGRanges(gr, structure = "anticodonLoop")
 gettRNAstructureSeqs(gr, structure = "anticodonLoop")
 gettRNABasePairing(gr[1:10])

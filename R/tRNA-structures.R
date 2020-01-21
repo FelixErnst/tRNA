@@ -48,7 +48,7 @@ NULL
 #'
 #' @export
 #' @examples
-#' data("gr", package = "tRNA", envir = environment())
+#' data("gr", package = "tRNA")
 #' gettRNAstructureGRanges(gr, structure = "anticodonLoop")
 #' gettRNAstructureSeqs(gr, structure = "anticodonLoop")
 #' gettRNABasePairing(gr[1:10])
@@ -62,8 +62,7 @@ NULL
 setMethod(
   f = "gettRNAstructureGRanges",
   signature = signature(x = "GRanges"),
-  definition = function(x,
-                        structure) {
+  definition = function(x, structure) {
     # input check
     .check_trna_granges(x, TRNA_FEATURES)
     .check_trna_structure_ident(structure)
@@ -81,9 +80,7 @@ setMethod(
 # not recognized, NA is returned for one or both start/end. In this case the
 # width is zero, which will result in downstream recognition of the missing
 # feature
-.get_tRNA_structures <- function(structure,
-                                 gr,
-                                 strList){
+.get_tRNA_structures <- function(structure, gr, strList){
   # get start data
   ans <- list()
   loopPositions <- .get_loop_positions(strList)

@@ -31,7 +31,7 @@ NULL
 #' @return a logical vector of the length or input GRanges object
 #'
 #' @examples
-#' data("gr", package = "tRNA", envir = environment())
+#' data("gr", package = "tRNA")
 #' hasTStem(gr, length = 5, mismatches = TRUE)
 #' gr[hasTStem(gr, length = 5, mismatches = TRUE)]
 #' gr[hasDStem(gr, unpaired = FALSE) & hasDStem(gr, mismatches = FALSE)]

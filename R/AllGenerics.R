@@ -25,10 +25,7 @@ setGeneric (
 #' @export
 setGeneric (
   name = "gettRNAstructureSeqs",
-  def = function(x,
-                 structure = "",
-                 joinCompletely = FALSE,
-                 joinFeatures = FALSE,
+  def = function(x, structure = "", joinCompletely = FALSE,joinFeatures = FALSE,
                  padSequences = TRUE) standardGeneric("gettRNAstructureSeqs")
 )
 #' @rdname gettRNABasePairing

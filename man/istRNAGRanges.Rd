@@ -21,6 +21,6 @@ information expected for a tRNA result. This is used internally to ensure the
 the required data is present in the input.
 }
 \examples{
-data("gr", package = "tRNA", envir = environment())
+data("gr", package = "tRNA")
 istRNAGRanges(gr)
 }

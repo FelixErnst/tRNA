@@ -34,8 +34,8 @@ The options \code{tRNA_colour_palette}, \code{tRNA_colour_yes} and
 \code{tRNA_colour_no} will be used for colours.
 }
 \examples{
-data("gr", package = "tRNA", envir = environment())
-data("gr_eco", package = "tRNA", envir = environment())
+data("gr", package = "tRNA")
+data("gr_eco", package = "tRNA")
 grl <- GRangesList(Sce = gr,
                    Eco = gr_eco)
 plots <- gettRNAFeaturePlots(grl)

@@ -1,9 +1,12 @@
-library(tRNA)
 
 context("tRNA structure - canonical")
 test_that("tRNA structure - canonical:",{
-  data("gr", package = "tRNA", envir = environment())
+  data("gr", package = "tRNA")
   tRNA <- gr
+  expect_true(istRNAGRanges(gr))
+  mcols(gr)$tRNA_seq <- NULL
+  expect_warning(expect_false(istRNAGRanges(gr)),
+                 "Input GRanges object does not meet the requirements")
   # check that a canonical tRNA produces the expected result
   tRNA <- tRNA[1]
   str <- gettRNAstructureGRanges(tRNA)

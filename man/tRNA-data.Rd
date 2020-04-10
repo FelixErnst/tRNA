@@ -8,7 +8,15 @@
 \alias{gr_human2}
 \alias{gr_eco}
 \title{tRNA example data}
-\format{object of class \code{GRanges}}
+\format{
+object of class \code{GRanges}
+
+An object of class \code{GRanges} of length 596.
+
+An object of class \code{GRanges} of length 631.
+
+An object of class \code{GRanges} of length 89.
+}
 \usage{
 data(gr)
 

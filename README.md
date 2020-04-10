@@ -2,9 +2,10 @@
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/FelixErnst/tRNA/workflows/R-CMD-check/badge.svg)](https://github.com/FelixErnst/tRNA/actions/)
+[![Build Status](https://travis-ci.com/FelixErnst/tRNA.svg?branch=master)](https://travis-ci.com/FelixErnst/tRNA)
+[![BioC Build](https://bioconductor.org/shields/build/release/bioc/tRNA.svg)](http://bioconductor.org/checkResults/release/bioc-LATEST/tRNA/)
 [![codecov](https://codecov.io/gh/FelixErnst/tRNA/branch/master/graph/badge.svg)](https://codecov.io/gh/FelixErnst/tRNA)
 [![BioC Years](https://bioconductor.org/shields/years-in-bioc/tRNA.svg)](https://doi.org/doi:10.18129/B9.bioc.tRNA)
-[![BioC Build](https://bioconductor.org/shields/build/release/bioc/tRNA.svg)](http://bioconductor.org/checkResults/release/bioc-LATEST/tRNA/)
 <!-- badges: end -->
 
 The tRNA package allows feature information of tRNAs to be accessed and list of 

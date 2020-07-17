@@ -10,8 +10,6 @@ r_packages:
   - magick
 cache:
   packages: true
-  directories:
-  - docs
 warnings_are_errors: false
 notifications:
   email:

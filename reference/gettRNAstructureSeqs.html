@@ -81,7 +81,7 @@ object by using metadata(seq)[[&quot;tRNA_structures&quot;]]." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tRNA</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.5.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.7.1</span>
       </span>
     </div>
 
@@ -138,27 +138,27 @@ are stored in the result as metadata. They can be accessesed as an IRanges
 object by using <code>metadata(seq)[["tRNA_structures"]]</code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>gettRNAstructureGRanges</span>(<span class='no'>x</span>, <span class='kw'>structure</span> <span class='kw'>=</span> <span class='st'>""</span>)
+    <pre class="usage"><span class='fu'>gettRNAstructureGRanges</span>(<span class='kw'>x</span>, structure = <span class='st'>""</span>)
 
 <span class='fu'>gettRNAstructureSeqs</span>(
-  <span class='no'>x</span>,
-  <span class='kw'>structure</span> <span class='kw'>=</span> <span class='st'>""</span>,
-  <span class='kw'>joinCompletely</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>joinFeatures</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>padSequences</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
+  <span class='kw'>x</span>,
+  structure = <span class='st'>""</span>,
+  joinCompletely = <span class='fl'>FALSE</span>,
+  joinFeatures = <span class='fl'>FALSE</span>,
+  padSequences = <span class='fl'>TRUE</span>
 )
 
 <span class='co'># S4 method for GRanges</span>
 <span class='fu'>gettRNAstructureSeqs</span>(
-  <span class='no'>x</span>,
-  <span class='kw'>structure</span> <span class='kw'>=</span> <span class='st'>""</span>,
-  <span class='kw'>joinCompletely</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>joinFeatures</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>padSequences</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
+  <span class='kw'>x</span>,
+  structure = <span class='st'>""</span>,
+  joinCompletely = <span class='fl'>FALSE</span>,
+  joinFeatures = <span class='fl'>FALSE</span>,
+  padSequences = <span class='fl'>TRUE</span>
 )
 
 <span class='co'># S4 method for GRanges</span>
-<span class='fu'>gettRNAstructureGRanges</span>(<span class='no'>x</span>, <span class='kw'>structure</span> <span class='kw'>=</span> <span class='st'>""</span>)</pre>
+<span class='fu'>gettRNAstructureGRanges</span>(<span class='kw'>x</span>, structure = <span class='st'>""</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -209,8 +209,8 @@ is set to TRUE automatically.</p></td>
 joinCompletly is set to TRUE a single <code>DNAStringSet</code> is returned.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>"gr"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"tRNA"</span>)
-<span class='fu'>gettRNAstructureGRanges</span>(<span class='no'>gr</span>, <span class='kw'>structure</span> <span class='kw'>=</span> <span class='st'>"anticodonLoop"</span>)</div><div class='output co'>#&gt; $anticodonLoop
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>"gr"</span>, package = <span class='st'>"tRNA"</span>)
+<span class='fu'>gettRNAstructureGRanges</span>(<span class='kw'>gr</span>, structure = <span class='st'>"anticodonLoop"</span>)</div><div class='output co'>#&gt; $anticodonLoop
 #&gt; IRanges object with 299 ranges and 0 metadata columns:
 #&gt;           start       end     width
 #&gt;       &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;
@@ -225,21 +225,21 @@ joinCompletly is set to TRUE a single <code>DNAStringSet</code> is returned.</p>
 #&gt;   TTA        31        37         7
 #&gt;   TAC        32        38         7
 #&gt;   CAT        32        38         7
-#&gt; </div><div class='input'><span class='fu'>gettRNAstructureSeqs</span>(<span class='no'>gr</span>, <span class='kw'>structure</span> <span class='kw'>=</span> <span class='st'>"anticodonLoop"</span>)</div><div class='output co'>#&gt; $anticodonLoop
-#&gt;   A RNAStringSet instance of length 299
+#&gt; </div><div class='input'><span class='fu'>gettRNAstructureSeqs</span>(<span class='kw'>gr</span>, structure = <span class='st'>"anticodonLoop"</span>)</div><div class='output co'>#&gt; $anticodonLoop
+#&gt; RNAStringSet object of length 299:
 #&gt;       width seq                                             names               
-#&gt;   [1]     7 UUUGGGU                                         TGG
-#&gt;   [2]     7 CUUGCAA                                         TGC
-#&gt;   [3]     7 UUCAAGC                                         CAA
-#&gt;   [4]     7 UUAGAAA                                         AGA
-#&gt;   [5]     7 CUUAAGA                                         TAA
+#&gt;   [1]     7 <span style='color: #000000;background-color: #BBBBBB;'>UUUGGGU</span><span>                                         TGG
+#&gt;   [2]     7 </span><span style='color: #000000;background-color: #BBBBBB;'>CUUGCAA</span><span>                                         TGC
+#&gt;   [3]     7 </span><span style='color: #000000;background-color: #BBBBBB;'>UUCAAGC</span><span>                                         CAA
+#&gt;   [4]     7 </span><span style='color: #000000;background-color: #BBBBBB;'>UUAGAAA</span><span>                                         AGA
+#&gt;   [5]     7 </span><span style='color: #000000;background-color: #BBBBBB;'>CUUAAGA</span><span>                                         TAA
 #&gt;   ...   ... ...
-#&gt; [295]     7 CUCAUAA                                         CAT
-#&gt; [296]     7 UUGAAGA                                         GAA
-#&gt; [297]     7 UUUUAGU                                         TTA
-#&gt; [298]     7 UUUACAC                                         TAC
-#&gt; [299]     7 GUCAUGA                                         CAT
-#&gt; </div><div class='input'><span class='fu'><a href='gettRNABasePairing.html'>gettRNABasePairing</a></span>(<span class='no'>gr</span>[<span class='fl'>1</span>:<span class='fl'>10</span>])</div><div class='output co'>#&gt; SplitDotBracketDataFrameList of length 10
+#&gt; [295]     7 </span><span style='color: #000000;background-color: #BBBBBB;'>CUCAUAA</span><span>                                         CAT
+#&gt; [296]     7 </span><span style='color: #000000;background-color: #BBBBBB;'>UUGAAGA</span><span>                                         GAA
+#&gt; [297]     7 </span><span style='color: #000000;background-color: #BBBBBB;'>UUUUAGU</span><span>                                         TTA
+#&gt; [298]     7 </span><span style='color: #000000;background-color: #BBBBBB;'>UUUACAC</span><span>                                         TAC
+#&gt; [299]     7 </span><span style='color: #000000;background-color: #BBBBBB;'>GUCAUGA</span><span>                                         CAT
+#&gt; </div><div class='input'><span class='fu'>gettRNABasePairing</span>(<span class='kw'>gr</span>[<span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>])</div><div class='output co'>#&gt; SplitDotBracketDataFrameList of length 10
 #&gt; [[1]]
 #&gt; DotBracketDataFrame with 71 rows and 4 columns
 #&gt;           pos   forward   reverse   character
@@ -257,7 +257,7 @@ joinCompletly is set to TRUE a single <code>DNAStringSet</code> is returned.</p>
 #&gt; 71         71         0         0           .
 #&gt; 
 #&gt; ...
-#&gt; &lt;9 more elements&gt;</div></pre>
+#&gt; &lt;9 more elements&gt;</div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

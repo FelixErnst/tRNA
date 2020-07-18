@@ -74,7 +74,7 @@ values." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tRNA</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.5.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.7.1</span>
       </span>
     </div>
 
@@ -124,13 +124,13 @@ of tRNAs from a GRanges object. Logical values are converted to numeric
 values.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>gettRNASummary</span>(<span class='no'>x</span>)
+    <pre class="usage"><span class='fu'>gettRNASummary</span>(<span class='kw'>x</span>)
 
 <span class='co'># S4 method for GRangesList</span>
-<span class='fu'>gettRNASummary</span>(<span class='no'>x</span>)
+<span class='fu'>gettRNASummary</span>(<span class='kw'>x</span>)
 
 <span class='co'># S4 method for GRanges</span>
-<span class='fu'>gettRNASummary</span>(<span class='no'>x</span>)</pre>
+<span class='fu'>gettRNASummary</span>(<span class='kw'>x</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -147,21 +147,21 @@ values.</p>
     <p>a DataFrame object</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>"gr"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"tRNA"</span>)
-<span class='fu'>gettRNASummary</span>(<span class='no'>gr</span>)</div><div class='output co'>#&gt; DataFrame with 299 rows and 39 columns
-#&gt;                    gc     width    length       cca features_all_valid
-#&gt;             &lt;numeric&gt; &lt;integer&gt; &lt;integer&gt; &lt;logical&gt;          &lt;logical&gt;
-#&gt; 1   0.605633802816901       103        71     FALSE               TRUE
-#&gt; 2   0.611111111111111        73        72     FALSE               TRUE
-#&gt; 3                 0.5       114        80     FALSE               TRUE
-#&gt; 4    0.54320987654321        82        81     FALSE               TRUE
-#&gt; 5   0.585365853658537        84        82     FALSE               TRUE
-#&gt; ...               ...       ...       ...       ...                ...
-#&gt; 295 0.263888888888889        74        72     FALSE               TRUE
-#&gt; 296 0.323943661971831        72        71     FALSE               TRUE
-#&gt; 297 0.197183098591549        72        71     FALSE               TRUE
-#&gt; 298 0.347222222222222        73        72     FALSE               TRUE
-#&gt; 299 0.291666666666667        73        72     FALSE               TRUE
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>"gr"</span>, package = <span class='st'>"tRNA"</span>)
+<span class='fu'>gettRNASummary</span>(<span class='kw'>gr</span>)</div><div class='output co'>#&gt; DataFrame with 299 rows and 39 columns
+#&gt;            gc     width    length       cca features_all_valid
+#&gt;     &lt;numeric&gt; &lt;integer&gt; &lt;integer&gt; &lt;logical&gt;          &lt;logical&gt;
+#&gt; 1    0.605634       103        71     FALSE               TRUE
+#&gt; 2    0.611111        73        72     FALSE               TRUE
+#&gt; 3    0.500000       114        80     FALSE               TRUE
+#&gt; 4    0.543210        82        81     FALSE               TRUE
+#&gt; 5    0.585366        84        82     FALSE               TRUE
+#&gt; ...       ...       ...       ...       ...                ...
+#&gt; 295  0.263889        74        72     FALSE               TRUE
+#&gt; 296  0.323944        72        71     FALSE               TRUE
+#&gt; 297  0.197183        72        71     FALSE               TRUE
+#&gt; 298  0.347222        73        72     FALSE               TRUE
+#&gt; 299  0.291667        73        72     FALSE               TRUE
 #&gt;     features_Dstem_found features_Tstem_found acceptorStem_length
 #&gt;                &lt;logical&gt;            &lt;logical&gt;           &lt;integer&gt;
 #&gt; 1                   TRUE                 TRUE                   7
@@ -256,7 +256,7 @@ values.</p>
 #&gt;     anticodonStem_bulges variableLoop_bulges TStem_bulges tRNAscan_score
 #&gt;                &lt;logical&gt;           &lt;logical&gt;    &lt;logical&gt;      &lt;numeric&gt;
 #&gt; 1                  FALSE               FALSE        FALSE           62.1
-#&gt; 2                  FALSE               FALSE        FALSE             76
+#&gt; 2                  FALSE               FALSE        FALSE           76.0
 #&gt; 3                  FALSE               FALSE        FALSE           57.5
 #&gt; 4                  FALSE               FALSE        FALSE           83.1
 #&gt; 5                  FALSE               FALSE        FALSE           75.2
@@ -270,7 +270,7 @@ values.</p>
 #&gt;                         &lt;logical&gt;       &lt;logical&gt;          &lt;numeric&gt;
 #&gt; 1                           FALSE            TRUE               37.9
 #&gt; 2                           FALSE           FALSE               53.4
-#&gt; 3                           FALSE            TRUE                 27
+#&gt; 3                           FALSE            TRUE               27.0
 #&gt; 4                           FALSE           FALSE               49.7
 #&gt; 5                           FALSE           FALSE               45.3
 #&gt; ...                           ...             ...                ...

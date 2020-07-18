@@ -21,12 +21,18 @@ setMethod(
     if(structure == ""){
       structure <- TRNA_STRUCTURES
     }
-    assertive::assert_is_a_bool(joinCompletely)
-    assertive::assert_is_a_bool(joinFeatures)
-    assertive::assert_is_a_bool(padSequences)
+    if(!.is_a_bool(joinCompletely)){
+      stop("'joinCompletely' must TRUE or FALSE.", call. = FALSE)
+    }
+    if(!.is_a_bool(joinFeatures)){
+      stop("'joinFeatures' must TRUE or FALSE.", call. = FALSE)
+    }
+    if(!.is_a_bool(padSequences)){
+      stop("'padSequences' must TRUE or FALSE.", call. = FALSE)
+    }
     if(joinCompletely == TRUE && joinCompletely == joinFeatures){
       warning("Both 'joinCompletely' and 'joinFeatures' are set to TRUE.
-              'joinCompletely' takes precedence.")
+              'joinCompletely' takes precedence.", call. = FALSE)
     }
     # join completly or get splitup sequences
     if(joinCompletely){

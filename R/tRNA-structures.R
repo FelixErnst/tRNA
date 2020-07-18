@@ -324,9 +324,9 @@ setMethod(
 .get_width <- function(start,
                        end){
   width <- rep(0,length(start))
-  f <- which(assertive::is_negative(as.numeric(start)))
+  f <- which(as.numeric(start) < 0L)
   width[f] <- end[f] - 1
-  f <- which(assertive::is_negative(as.numeric(end)))
+  f <- which(as.numeric(end) < 0L)
   width[f] <- 0
   f <- which(!is.na(start) & 
                !is.na(end))

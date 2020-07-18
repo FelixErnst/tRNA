@@ -111,24 +111,30 @@ setMethod(
   # input check
   .check_trna_granges(gr, TRNA_FEATURES)
   if(!(ident %in% names(tRNAStructureFunctionList))){
-    stop("Unknown identifier '",ident,"'.")
+    stop("Unknown identifier '",ident,"'.", call. = FALSE)
   }
   if(!is.na(mismatches)){
-    assertive::assert_is_a_bool(mismatches)
+    if(!.is_a_bool(mismatches)){
+      stop("'mismatches' must TRUE or FALSE.", call. = FALSE)
+    }
     unpaired <- TRUE
   }
   if(!is.na(bulged)){
-    assertive::assert_is_a_bool(bulged)
+    if(!.is_a_bool(bulged)){
+      stop("'bulged' must TRUE or FALSE.", call. = FALSE)
+    }
     unpaired <- TRUE
   }
   if(!is.na(unpaired) &&
      is.na(mismatches) &&
      is.na(bulged)){
-    assertive::assert_is_a_bool(unpaired)
-    if(assertive::is_true(unpaired)){
+    if(!.is_a_bool(unpaired)){
+      stop("'unpaired' must TRUE or FALSE.", call. = FALSE)
+    }
+    if(unpaired){
       mismatches <- TRUE
       bulged <- TRUE
-    } else if(assertive::is_false(unpaired)) {
+    } else {
       mismatches <- FALSE
       bulged <- FALSE
     }
@@ -150,18 +156,21 @@ setMethod(
   if(!is.na(unpaired)){
     ansMismatches <- ans
     ansBulged <- ans
-    if(assertive::is_false(mismatches)){
-      ansMismatches <- .get_mismatches(strList = strList)[["F"]]
-    } else if(assertive::is_true(mismatches)) {
-      ansMismatches <- .get_mismatches(strList = strList)[["T"]]
+    if(!is.na(mismatches)){
+      if(!mismatches){
+        ansMismatches <- .get_mismatches(strList = strList)[["F"]]
+      } else {
+        ansMismatches <- .get_mismatches(strList = strList)[["T"]]
+      }
     }
-    if(assertive::is_false(bulged)){
-      ansBulged <- .get_bulges(strList = strList)[["F"]]
-    } else if(assertive::is_true(bulged)) {
-      ansBulged <- .get_bulges(strList = strList)[["T"]]
+    if(!is.na(bulged)){
+      if(!bulged){
+        ansBulged <- .get_bulges(strList = strList)[["F"]]
+      } else {
+        ansBulged <- .get_bulges(strList = strList)[["T"]]
+      }
     }
-    if(assertive::is_true(mismatches) &&
-       assertive::is_true(bulged)){
+    if(!is.na(mismatches) && !is.na(bulged) && mismatches && bulged){
       ans <- ans & (ansMismatches | ansBulged)
     } else {
       ans <- ans & ansMismatches & ansBulged
@@ -169,7 +178,9 @@ setMethod(
   }
   # apply length subsetting
   if(!is.na(length)){
-    assertive::assert_all_are_whole_numbers(length)
+    if(!.are_whole_numbers(length)){
+      stop("'length' must contain integer values (whole numbers) only.")
+    }
     isLength <- unlist(.get_structures_length(str))
     ansLength <- isLength == length
     # if no length is found, NA is returned. Set these to FALSE
@@ -262,18 +273,24 @@ setMethod(
   # input check
   .check_trna_granges(gr, TRNA_FEATURES)
   if(!(ident %in% names(tRNAStructureFunctionList))){
-    stop("Unknown identifier '",ident,"'.")
+    stop("Unknown identifier '",ident,"'.", call. = FALSE)
   }
   if(!is.na(mismatches)){
-    assertive::assert_is_a_bool(mismatches)
+    if(!.is_a_bool(mismatches)){
+      stop("'mismatches' must TRUE or FALSE.", call. = FALSE)
+    }
     paired <- TRUE
   }
   if(!is.na(bulged)){
-    assertive::assert_is_a_bool(bulged)
+    if(!.is_a_bool(bulged)){
+      stop("'bulged' must TRUE or FALSE.", call. = FALSE)
+    }
     paired <- TRUE
   }
   if(!is.na(paired)){
-    assertive::assert_is_a_bool(paired)
+    if(!.is_a_bool(paired)){
+      stop("'paired' must TRUE or FALSE.", call. = FALSE)
+    }
   }
   # get structure information, only one information is returned
   strList <- getBasePairing(gr$tRNA_str)
@@ -309,24 +326,27 @@ setMethod(
                                        str[seq_len(floor(nrow(str)/2)),]
                                      })
       #
-      if(assertive::is_false(mismatches)){
-        ansMismatches <- .get_mismatches(strList = strList)[["F"]]
-      } else if(assertive::is_true(mismatches)) {
-        ansMismatches <- .get_mismatches(strList = strList)[["T"]]
+      if(!is.na(mismatches)){
+        if(!mismatches){
+          ansMismatches <- .get_mismatches(strList = strList)[["F"]]
+        } else {
+          ansMismatches <- .get_mismatches(strList = strList)[["T"]]
+        }
       }
-      if(assertive::is_false(bulged)){
-        ansBulged <- .get_bulges(strList = strList)[["F"]]
-      } else if(assertive::is_true(bulged)) {
-        ansBulged <- .get_bulges(strList = strList)[["T"]]
+      if(!is.na(bulged)){
+        if(!bulged){
+          ansBulged <- .get_bulges(strList = strList)[["F"]]
+        } else {
+          ansBulged <- .get_bulges(strList = strList)[["T"]]
+        }
       }
-      if(assertive::is_true(mismatches) &&
-         assertive::is_true(bulged)){
+      if(!is.na(mismatches) && !is.na(bulged) && mismatches && bulged){
         ans <- ans & (ansMismatches | ansBulged)
       } else {
         ans <- ans & ansMismatches & ansBulged
       }
     }
-    if(assertive::is_true(paired)){
+    if(paired){
       ans <- ans &
         pairedAns
     } else {
@@ -336,7 +356,9 @@ setMethod(
   }
   # apply length subsetting
   if(!is.na(length)){
-    assertive::assert_all_are_whole_numbers(length)
+    if(!.are_whole_numbers(length)){
+      stop("'length' must contain integer values (whole numbers) only.")
+    }
     isLength <- unlist(.get_structures_length(str))
     ansLength <- isLength == length
     # if no length is found, NA is returned. Set these to FALSE

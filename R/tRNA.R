@@ -24,13 +24,7 @@ NULL
 #' @import Biostrings
 #' @import Structstrings
 #' @import Modstrings
-#' @import assertive
 NULL
-requireNamespace("assertive")
-requireNamespace("GenomicRanges")
-requireNamespace("Biostrings")
-requireNamespace("Structstrings")
-requireNamespace("Modstrings")
 
 # constants tRNA ---------------------------------------------------------------
 
@@ -120,7 +114,7 @@ TRNA_COLOUR_NO <- "red"
   # construct complete ident
   ident <- paste0("tRNA_colour_",ident)
   colour_palette <- getOption(ident)
-  if(!assertive::is_a_string(colour_palette)){
+  if(!.is_a_string(colour_palette)){
     identVar <- toupper(ident)
     colour_palette <- get(identVar)
     warning("The option '",

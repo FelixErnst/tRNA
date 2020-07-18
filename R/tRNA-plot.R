@@ -170,8 +170,13 @@ setMethod(
              call. = FALSE)
       }
     }
-    assertive::assert_is_a_non_empty_string(scoreLabel)
-    assertive::assert_is_a_bool(plotScores)
+    if(!.is_non_empty_string(scoreLabel)){
+      stop("'scoreLabel' must be a single non empty character value.",
+           call. = FALSE)
+    }
+    if(!.is_a_bool(plotScores)){
+      stop("'plotScores' must TRUE or FALSE.", call. = FALSE)
+    }
     if(plotScores && is.na(scores[1])){
       scores <- lapply(x, score)
       if(any(vapply(scores, is.null, logical(1)))){

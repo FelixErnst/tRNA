@@ -10,3 +10,6 @@ Changes in version 1.1.2 (2018-03-27)
 + bugfix for padding unpaired region in stem sequences
 + bugfix for getting empty sequences of non-existing variable loops
 + fixed man page issue
+
+Changes in version 1.17.1 (2022-12-19)
++ bugfix for gettRNAstructureSeqs

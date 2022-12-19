@@ -83,7 +83,7 @@ setMethod(
                                      strList))
     }
     return(seqs)
-    }
+  }
 )
 
 ################################################################################
@@ -226,7 +226,7 @@ setMethod(
   #
   getGGPos <- function(seqs, ir, i, searchString){
     if(is.null(searchString[i])) return(NULL)
-    x <- stringr::str_locate(reverse(XVector::subseq(seqs, ir)),
+    x <- stringr::str_locate(as.list(as.character(reverse(XVector::subseq(seqs, ir)))),
                              reverse(searchString[i]))
     x <- BiocGenerics::start(ir) +
       width(reverse(XVector::subseq(seqs, ir))) -

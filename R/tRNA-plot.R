@@ -370,7 +370,7 @@ setMethod(
     df[[name]][df[[name]]$value == 0,"value"] <- "No"
     plot <- ggplot2::ggplot(df[[name]],
                             ggplot2::aes_(x = ~id,
-                                          y = ~((..count..)/sum(..count..)),
+                                          y = ~(ggplot2::after_stat(count)/sum(ggplot2::after_stat(count))),
                                           fill = ~colour)) +
       ggplot2::geom_bar(position = "fill") +
       ggplot2::scale_x_discrete(name = "Sample") +

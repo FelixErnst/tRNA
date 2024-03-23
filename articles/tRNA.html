@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,18 +33,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tRNA</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.7.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.1</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="../articles/tRNA.html">Get started</a>
 </li>
@@ -52,8 +48,8 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/FelixErnst/tRNA/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+  <a href="https://github.com/FelixErnst/tRNA/" class="external-link">
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -67,15 +63,16 @@
 
       
 
-      </header><script src="tRNA_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Analyzing tRNA sequences and structures</h1>
-                        <h4 class="author">Felix G.M. Ernst</h4>
+                        <h4 data-toc-skip class="author">Felix G.M.
+Ernst</h4>
             
-            <h4 class="date">2020-07-18</h4>
+            <h4 data-toc-skip class="date">2024-03-23</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/FelixErnst/tRNA/blob/master/vignettes/tRNA.Rmd"><code>vignettes/tRNA.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/FelixErnst/tRNA/blob/HEAD/vignettes/tRNA.Rmd" class="external-link"><code>vignettes/tRNA.Rmd</code></a></small>
       <div class="hidden name"><code>tRNA.Rmd</code></div>
 
     </div>
@@ -97,350 +94,378 @@ document.addEventListener("DOMContentLoaded", function() {
     if (links[i].hostname != window.location.hostname)
       links[i].target = '_blank';
 });
-</script><div id="introduction" class="section level1">
-<h1 class="hasAnchor">
-<a href="#introduction" class="anchor"></a>Introduction</h1>
-<p>The <code>tRNA</code> package provides access to tRNA feature information for subsetting and visualization. Visualization functions are implemented to compare feature parameters of multiple tRNA sets and to correlate them to additional data.</p>
-<p>As input the package expects a <code>GRanges</code> object with certain metadata columns. The following columns are required: <code>tRNA_length</code>, <code>tRNA_type</code>, <code>tRNA_anticodon</code>, <code>tRNA_seq</code>, <code>tRNA_str</code>, <code>tRNA_CCA.end</code>. The <code>tRNA_str</code> column must contain a valid dot bracket annotation. For more details please have a look at the vignette of the <code>Structstrings</code> package.</p>
+</script><div class="section level2">
+<h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+</h2>
+<p>The <code>tRNA</code> package provides access to tRNA feature
+information for subsetting and visualization. Visualization functions
+are implemented to compare feature parameters of multiple tRNA sets and
+to correlate them to additional data.</p>
+<p>As input the package expects a <code>GRanges</code> object with
+certain metadata columns. The following columns are required:
+<code>tRNA_length</code>, <code>tRNA_type</code>,
+<code>tRNA_anticodon</code>, <code>tRNA_seq</code>,
+<code>tRNA_str</code>, <code>tRNA_CCA.end</code>. The
+<code>tRNA_str</code> column must contain a valid dot bracket
+annotation. For more details please have a look at the vignette of the
+<code>Structstrings</code> package.</p>
 </div>
-<div id="loading-trna-information" class="section level1">
-<h1 class="hasAnchor">
-<a href="#loading-trna-information" class="anchor"></a>Loading tRNA information</h1>
-<p>To work with the <code>tRNA</code> package, tRNA information can be retrieved or loaded into a R session in a number of ways:</p>
+<div class="section level2">
+<h2 id="loading-trna-information">Loading tRNA information<a class="anchor" aria-label="anchor" href="#loading-trna-information"></a>
+</h2>
+<p>To work with the <code>tRNA</code> package, tRNA information can be
+retrieved or loaded into a R session in a number of ways:</p>
 <ol style="list-style-type: decimal">
-<li>A <code>GRanges</code> object can be constructed manually containing the required colums mentioned above.</li>
-<li>a tRNAscan result file can be loaded using the function <code>import.tRNAscanAsGRanges()</code> from the <code>tRNAscanImport</code> package</li>
-<li>selected tRNA information can be retrieved using the function <code>import.tRNAdb()</code> from the <code>tRNAdbImport</code> package</li>
+<li>A <code>GRanges</code> object can be constructed manually containing
+the required colums mentioned above.</li>
+<li>a tRNAscan result file can be loaded using the function
+<code>import.tRNAscanAsGRanges()</code> from the
+<code>tRNAscanImport</code> package</li>
+<li>selected tRNA information can be retrieved using the function
+<code>import.tRNAdb()</code> from the <code>tRNAdbImport</code>
+package</li>
 </ol>
-<p>For the examples in this vignette a number of predefined <code>GRanges</code> objects are loaded.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw">tRNA</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://github.com/FelixErnst/Structstrings">Structstrings</a></span>)
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="st">"gr"</span>, package = <span class="st">"tRNA"</span>)
-</pre></div>
+<p>For the examples in this vignette a number of predefined
+<code>GRanges</code> objects are loaded.</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">tRNA</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/FelixErnst/Structstrings" class="external-link">Structstrings</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"gr"</span>, package <span class="op">=</span> <span class="st">"tRNA"</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div id="trna-sequences-and-structures" class="section level1">
-<h1 class="hasAnchor">
-<a href="#trna-sequences-and-structures" class="anchor"></a>tRNA sequences and structures</h1>
-<p>To retrieve the sequences for individual tRNA structure elements the functions <code>gettRNAstructureGRanges</code> or <code>gettRNAstructureSeqs</code> can be used. Several optional arguments can be used to modify the result (See <code><a href="../reference/gettRNAstructureGRanges.html">?gettRNAstructureSeqs</a></code>).</p>
-<div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="co"># just get the coordinates of the anticodonloop</span>
-<span class="fu"><a href="../reference/gettRNAstructureGRanges.html">gettRNAstructureGRanges</a></span>(<span class="kw">gr</span>, structure = <span class="st">"anticodonLoop"</span>)
-</pre></div>
-<pre><code>## $anticodonLoop
-## IRanges object with 299 ranges and 0 metadata columns:
-##           start       end     width
-##       &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;
-##   TGG        31        37         7
-##   TGC        32        38         7
-##   CAA        31        37         7
-##   AGA        31        37         7
-##   TAA        31        37         7
-##   ...       ...       ...       ...
-##   CAT        32        38         7
-##   GAA        31        37         7
-##   TTA        31        37         7
-##   TAC        32        38         7
-##   CAT        32        38         7</code></pre>
-<div class="sourceCode" id="cb4"><pre class="downlit">
-<span class="fu"><a href="../reference/gettRNAstructureGRanges.html">gettRNAstructureSeqs</a></span>(<span class="kw">gr</span>, joinFeatures = <span class="fl">TRUE</span>, structure = <span class="st">"anticodonLoop"</span>)
-</pre></div>
-<pre><code>## $anticodonLoop
-## RNAStringSet object of length 299:
-##       width seq                                             names               
-##   [1]     7 UUUGGGU                                         TGG
-##   [2]     7 CUUGCAA                                         TGC
-##   [3]     7 UUCAAGC                                         CAA
-##   [4]     7 UUAGAAA                                         AGA
-##   [5]     7 CUUAAGA                                         TAA
-##   ...   ... ...
-## [295]     7 CUCAUAA                                         CAT
-## [296]     7 UUGAAGA                                         GAA
-## [297]     7 UUUUAGU                                         TTA
-## [298]     7 UUUACAC                                         TAC
-## [299]     7 GUCAUGA                                         CAT</code></pre>
-<p>In addition, the sequences can be returned already joined to get a fully blank padded set of sequences. The boundaries of the individual structures is returned as metadata of the <code>RNAStringSet</code> object.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit">
-<span class="kw">seqs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gettRNAstructureGRanges.html">gettRNAstructureSeqs</a></span>(<span class="kw">gr</span>[<span class="fl">1L</span><span class="op">:</span><span class="fl">10L</span>], joinCompletely = <span class="fl">TRUE</span>)
-<span class="kw">seqs</span>
-</pre></div>
-<pre><code>## RNAStringSet object of length 10:
-##      width seq
-##  [1]    85 GGGCGUGUGGUC-UAGU-GGUAU-GAUUCUCGC...------GCCUGGGUUCAAUUCCCAGCUCGCCCC
-##  [2]    85 GGGCACAUGGCGCAGUU-GGU-AGCGCGCUUCC...------GCAUCGGUUCGAUUCCGGUUGCGUCCA
-##  [3]    85 GGUUGUUUGGCC-GAGC-GGUAA-GGCGCCUGA...AA-GAUGCAAGAGUUCGAAUCUCUUAGCAACCA
-##  [4]    85 GGCAACUUGGCC-GAGU-GGUAA-GGCGAAAGA...U-GCCCGCGCAGGUUCGAGUCCUGCAGUUGUCG
-##  [5]    85 GGAGGGUUGGCC-GAGU-GGUAA-GGCGGCAGA...UUGUCCGCGCGAGUUCGAACCUCGCAUCCUUCA
-##  [6]    85 GCGGAUUUAGCUCAGUU-GGG-AGAGCGCCAGA...------GCCUGUGUUCGAUCCACAGAAUUCGCA
-##  [7]    85 GGUCUCUUGGCC-CAGUUGGUAA-GGCACCGUG...------ACAGCGGUUCGAUCCCGCUAGAGACCA
-##  [8]    85 GCGCAAGUGGUUUAGU--GGU-AAAAUCCAACG...-------CCCCGGUUCGAUUCCGGGCUUGCGCA
-##  [9]    85 GGCAACUUGGCC-GAGU-GGUAA-GGCGAAAGA...U-GCCCGCGCAGGUUCGAGUCCUGCAGUUGUCG
-## [10]    85 GCUUCUAUGGCC-AAGUUGGUAA-GGCGCCACA...------ACAUCGGUUCAAAUCCGAUUGGAAGCA</code></pre>
-<div class="sourceCode" id="cb8"><pre class="downlit">
-<span class="co"># getting the tRNA structure boundaries</span>
-<span class="fu">metadata</span>(<span class="kw">seqs</span>)[[<span class="st">"tRNA_structures"</span>]]
-</pre></div>
-<pre><code>## IRanges object with 15 ranges and 0 metadata columns:
-##                           start       end     width
-##                       &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;
-##   acceptorStem.prime5         1         7         7
-##               Dprime5         8         9         2
-##          DStem.prime5        10        13         4
-##                 Dloop        14        23        10
-##          DStem.prime3        24        27         4
-##                   ...       ...       ...       ...
-##          TStem.prime5        61        65         5
-##                 Tloop        66        72         7
-##          TStem.prime3        73        77         5
-##   acceptorStem.prime3        78        84         7
-##         discriminator        85        85         1</code></pre>
-<p>Be aware, that <code>gettRNAstructureGRanges</code> and <code>gettRNAstructureSeqs</code> might not be working as expected, if the tRNA sequences in questions are armless or deviate drastically from the canonical tRNA model. The functions in the <code>tRNA</code> packages were thouroughly tested using human mitochondrial tRNA and other tRNAs missing certain features. However, for fringe cases results may differ. If you encounter such a case, please report it with an example.</p>
+<div class="section level2">
+<h2 id="trna-sequences-and-structures">tRNA sequences and structures<a class="anchor" aria-label="anchor" href="#trna-sequences-and-structures"></a>
+</h2>
+<p>To retrieve the sequences for individual tRNA structure elements the
+functions <code>gettRNAstructureGRanges</code> or
+<code>gettRNAstructureSeqs</code> can be used. Several optional
+arguments can be used to modify the result (See
+<code><a href="../reference/gettRNAstructureSeqs.html">?gettRNAstructureSeqs</a></code>).</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># just get the coordinates of the anticodonloop</span></span>
+<span><span class="fu"><a href="../reference/gettRNAstructureSeqs.html">gettRNAstructureGRanges</a></span><span class="op">(</span><span class="va">gr</span>, structure <span class="op">=</span> <span class="st">"anticodonLoop"</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## $anticodonLoop</span></span>
+<span><span class="co">## IRanges object with 299 ranges and 0 metadata columns:</span></span>
+<span><span class="co">##           start       end     width</span></span>
+<span><span class="co">##       &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;</span></span>
+<span><span class="co">##   TGG        31        37         7</span></span>
+<span><span class="co">##   TGC        32        38         7</span></span>
+<span><span class="co">##   CAA        31        37         7</span></span>
+<span><span class="co">##   AGA        31        37         7</span></span>
+<span><span class="co">##   TAA        31        37         7</span></span>
+<span><span class="co">##   ...       ...       ...       ...</span></span>
+<span><span class="co">##   CAT        32        38         7</span></span>
+<span><span class="co">##   GAA        31        37         7</span></span>
+<span><span class="co">##   TTA        31        37         7</span></span>
+<span><span class="co">##   TAC        32        38         7</span></span>
+<span><span class="co">##   CAT        32        38         7</span></span></code></pre>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/gettRNAstructureSeqs.html">gettRNAstructureSeqs</a></span><span class="op">(</span><span class="va">gr</span>, joinFeatures <span class="op">=</span> <span class="cn">TRUE</span>, structure <span class="op">=</span> <span class="st">"anticodonLoop"</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## $anticodonLoop</span></span>
+<span><span class="co">## RNAStringSet object of length 299:</span></span>
+<span><span class="co">##       width seq                                             names               </span></span>
+<span><span class="co">##   [1]     7 <span style="color: #000000; background-color: #FFFFAF;">UUU</span><span style="color: #000000; background-color: #AFFFFF;">GGG</span><span style="color: #000000; background-color: #FFFFAF;">U</span>                                         TGG</span></span>
+<span><span class="co">##   [2]     7 <span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFFFAF;">UU</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">AA</span>                                         TGC</span></span>
+<span><span class="co">##   [3]     7 <span style="color: #000000; background-color: #FFFFAF;">UU</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span>                                         CAA</span></span>
+<span><span class="co">##   [4]     7 <span style="color: #000000; background-color: #FFFFAF;">UU</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">AAA</span>                                         AGA</span></span>
+<span><span class="co">##   [5]     7 <span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFFFAF;">UU</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span>                                         TAA</span></span>
+<span><span class="co">##   ...   ... ...</span></span>
+<span><span class="co">## [295]     7 <span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #FFAFAF;">AA</span>                                         CAT</span></span>
+<span><span class="co">## [296]     7 <span style="color: #000000; background-color: #FFFFAF;">UU</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span>                                         GAA</span></span>
+<span><span class="co">## [297]     7 <span style="color: #000000; background-color: #FFFFAF;">UUUU</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFFFAF;">U</span>                                         TTA</span></span>
+<span><span class="co">## [298]     7 <span style="color: #000000; background-color: #FFFFAF;">UUU</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">C</span>                                         TAC</span></span>
+<span><span class="co">## [299]     7 <span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span>                                         CAT</span></span></code></pre>
+<p>In addition, the sequences can be returned already joined to get a
+fully blank padded set of sequences. The boundaries of the individual
+structures is returned as metadata of the <code>RNAStringSet</code>
+object.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">seqs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gettRNAstructureSeqs.html">gettRNAstructureSeqs</a></span><span class="op">(</span><span class="va">gr</span><span class="op">[</span><span class="fl">1L</span><span class="op">:</span><span class="fl">10L</span><span class="op">]</span>, joinCompletely <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">seqs</span></span></code></pre></div>
+<pre><code><span><span class="co">## RNAStringSet object of length 10:</span></span>
+<span><span class="co">##      width seq</span></span>
+<span><span class="co">##  [1]    85 <span style="color: #000000; background-color: #AFFFFF;">GGG</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #AFFFAF;">C</span>-<span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFFFAF;">U</span>-<span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFFFAF;">U</span>-<span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFFFAF;">UU</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span>...------<span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #AFFFFF;">GGG</span><span style="color: #000000; background-color: #FFFFAF;">UU</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #FFFFAF;">UU</span><span style="color: #000000; background-color: #AFFFAF;">CCC</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">CCCC</span></span></span>
+<span><span class="co">##  [2]    85 <span style="color: #000000; background-color: #AFFFFF;">GGG</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFFFAF;">UU</span>-<span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFFFAF;">U</span>-<span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFFFAF;">UU</span><span style="color: #000000; background-color: #AFFFAF;">CC</span>...------<span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFFFAF;">UU</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFFFAF;">UU</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFFFAF;">UU</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #FFAFAF;">A</span></span></span>
+<span><span class="co">##  [3]    85 <span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFFFAF;">UU</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFFFAF;">UUU</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #AFFFAF;">CC</span>-<span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span>-<span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #FFAFAF;">AA</span>-<span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span>...<span style="color: #000000; background-color: #FFAFAF;">AA</span>-<span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFFFAF;">UU</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFFFAF;">UU</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #FFAFAF;">A</span></span></span>
+<span><span class="co">##  [4]    85 <span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFFFAF;">UU</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #AFFFAF;">CC</span>-<span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFFFAF;">U</span>-<span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #FFAFAF;">AA</span>-<span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">AAA</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span>...<span style="color: #000000; background-color: #FFFFAF;">U</span>-<span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">CCC</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFFFAF;">UU</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFFFAF;">UU</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span></span></span>
+<span><span class="co">##  [5]    85 <span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">GGG</span><span style="color: #000000; background-color: #FFFFAF;">UU</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #AFFFAF;">CC</span>-<span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFFFAF;">U</span>-<span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #FFAFAF;">AA</span>-<span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span>...<span style="color: #000000; background-color: #FFFFAF;">UU</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFFFAF;">UU</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #FFFFAF;">UU</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span></span></span>
+<span><span class="co">##  [6]    85 <span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFFFAF;">UUU</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFFFAF;">UU</span>-<span style="color: #000000; background-color: #AFFFFF;">GGG</span>-<span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span>...------<span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFFFAF;">UU</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #FFFFAF;">UU</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span></span></span>
+<span><span class="co">##  [7]    85 <span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFFFAF;">UU</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #AFFFAF;">CC</span>-<span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFFFAF;">UU</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #FFAFAF;">AA</span>-<span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #AFFFFF;">G</span>...------<span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFFFAF;">UU</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #AFFFAF;">CCC</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #FFAFAF;">A</span></span></span>
+<span><span class="co">##  [8]    85 <span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFFFAF;">UUU</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFFFAF;">U</span>--<span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFFFAF;">U</span>-<span style="color: #000000; background-color: #FFAFAF;">AAAA</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span>...-------<span style="color: #000000; background-color: #AFFFAF;">CCCC</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFFFAF;">UU</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFFFAF;">UU</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #AFFFFF;">GGG</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFFFAF;">UU</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span></span></span>
+<span><span class="co">##  [9]    85 <span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFFFAF;">UU</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #AFFFAF;">CC</span>-<span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFFFAF;">U</span>-<span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #FFAFAF;">AA</span>-<span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">AAA</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span>...<span style="color: #000000; background-color: #FFFFAF;">U</span>-<span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">CCC</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFFFAF;">UU</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFFFAF;">UU</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span></span></span>
+<span><span class="co">## [10]    85 <span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFFFAF;">UU</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #AFFFAF;">CC</span>-<span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFFFAF;">UU</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #FFAFAF;">AA</span>-<span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span>...------<span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFFFAF;">UU</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">AAA</span><span style="color: #000000; background-color: #FFFFAF;">U</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFFFAF;">UU</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span></span></span></code></pre>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># getting the tRNA structure boundaries</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Annotated-class.html" class="external-link">metadata</a></span><span class="op">(</span><span class="va">seqs</span><span class="op">)</span><span class="op">[[</span><span class="st">"tRNA_structures"</span><span class="op">]</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">## IRanges object with 15 ranges and 0 metadata columns:</span></span>
+<span><span class="co">##                           start       end     width</span></span>
+<span><span class="co">##                       &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;</span></span>
+<span><span class="co">##   acceptorStem.prime5         1         7         7</span></span>
+<span><span class="co">##               Dprime5         8         9         2</span></span>
+<span><span class="co">##          DStem.prime5        10        13         4</span></span>
+<span><span class="co">##                 Dloop        14        23        10</span></span>
+<span><span class="co">##          DStem.prime3        24        27         4</span></span>
+<span><span class="co">##                   ...       ...       ...       ...</span></span>
+<span><span class="co">##          TStem.prime5        61        65         5</span></span>
+<span><span class="co">##                 Tloop        66        72         7</span></span>
+<span><span class="co">##          TStem.prime3        73        77         5</span></span>
+<span><span class="co">##   acceptorStem.prime3        78        84         7</span></span>
+<span><span class="co">##         discriminator        85        85         1</span></span></code></pre>
+<p>Be aware, that <code>gettRNAstructureGRanges</code> and
+<code>gettRNAstructureSeqs</code> might not be working as expected, if
+the tRNA sequences in questions are armless or deviate drastically from
+the canonical tRNA model. The functions in the <code>tRNA</code>
+packages were thouroughly tested using human mitochondrial tRNA and
+other tRNAs missing certain features. However, for fringe cases results
+may differ. If you encounter such a case, please report it with an
+example.</p>
 </div>
-<div id="subsetting-trna-sequences" class="section level1">
-<h1 class="hasAnchor">
-<a href="#subsetting-trna-sequences" class="anchor"></a>Subsetting tRNA sequences</h1>
-<p>Structure information of the tRNA can be queried for subsetting using several functions. For the following examples the functions <code>hasAccpeptorStem</code> and <code>hasDloop</code> are used.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit">
-<span class="kw">gr</span>[<span class="fu"><a href="../reference/hasTStem.html">hasAcceptorStem</a></span>(<span class="kw">gr</span>, unpaired = <span class="fl">TRUE</span>)]
-<span class="co"># mismatches and bulged are subsets of unpaired</span>
-<span class="kw">gr</span>[<span class="fu"><a href="../reference/hasTStem.html">hasAcceptorStem</a></span>(<span class="kw">gr</span>, mismatches = <span class="fl">TRUE</span>)]
-<span class="kw">gr</span>[<span class="fu"><a href="../reference/hasTStem.html">hasAcceptorStem</a></span>(<span class="kw">gr</span>, bulged = <span class="fl">TRUE</span>)]
-<span class="co"># combination of different structure parameters</span>
-<span class="kw">gr</span>[<span class="fu"><a href="../reference/hasTStem.html">hasAcceptorStem</a></span>(<span class="kw">gr</span>, mismatches = <span class="fl">TRUE</span>) <span class="op">&amp;</span> 
-     <span class="fu"><a href="../reference/hasTStem.html">hasDloop</a></span>(<span class="kw">gr</span>, length = <span class="fl">8L</span>)]
-</pre></div>
-<p>Please have a look at the man page <code>?hasAccpeptorStem</code> for all available subsetting functions.</p>
+<div class="section level2">
+<h2 id="subsetting-trna-sequences">Subsetting tRNA sequences<a class="anchor" aria-label="anchor" href="#subsetting-trna-sequences"></a>
+</h2>
+<p>Structure information of the tRNA can be queried for subsetting using
+several functions. For the following examples the functions
+<code>hasAccpeptorStem</code> and <code>hasDloop</code> are used.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">gr</span><span class="op">[</span><span class="fu"><a href="../reference/tRNA-subset.html">hasAcceptorStem</a></span><span class="op">(</span><span class="va">gr</span>, unpaired <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="co"># mismatches and bulged are subsets of unpaired</span></span>
+<span><span class="va">gr</span><span class="op">[</span><span class="fu"><a href="../reference/tRNA-subset.html">hasAcceptorStem</a></span><span class="op">(</span><span class="va">gr</span>, mismatches <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">gr</span><span class="op">[</span><span class="fu"><a href="../reference/tRNA-subset.html">hasAcceptorStem</a></span><span class="op">(</span><span class="va">gr</span>, bulged <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="co"># combination of different structure parameters</span></span>
+<span><span class="va">gr</span><span class="op">[</span><span class="fu"><a href="../reference/tRNA-subset.html">hasAcceptorStem</a></span><span class="op">(</span><span class="va">gr</span>, mismatches <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">&amp;</span> </span>
+<span>     <span class="fu"><a href="../reference/tRNA-subset.html">hasDloop</a></span><span class="op">(</span><span class="va">gr</span>, length <span class="op">=</span> <span class="fl">8L</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
+<p>Please have a look at the man page <code>?hasAccpeptorStem</code> for
+all available subsetting functions.</p>
 </div>
-<div id="visualization" class="section level1">
-<h1 class="hasAnchor">
-<a href="#visualization" class="anchor"></a>Visualization</h1>
-<p>To get an overview of tRNA features and compare different datasets, the function <code>gettRNAFeaturePlots</code> is used. It accepts a named <code>GRangesList</code> as input. Internally it will calculate a list of features values based on the functions mentioned above and the data contained in the mcols of the <code>GRanges</code> objects.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit">
-<span class="co"># load tRNA data for E. coli and H. sapiens</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="st">"gr_eco"</span>, package = <span class="st">"tRNA"</span>)
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="st">"gr_human"</span>, package = <span class="st">"tRNA"</span>)
-
-<span class="co"># get summary plots</span>
-<span class="kw">grl</span> <span class="op">&lt;-</span> <span class="fu">GRangesList</span>(Sce = <span class="kw">gr</span>,
-                   Hsa = <span class="kw">gr_human</span>,
-                   Eco = <span class="kw">gr_eco</span>)
-<span class="kw">plots</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gettRNAFeaturePlots.html">gettRNAFeaturePlots</a></span>(<span class="kw">grl</span>)
-</pre></div>
-<div class="sourceCode" id="cb12"><pre class="downlit">
-<span class="kw">plots</span><span class="op">$</span><span class="kw">length</span>
-</pre></div>
+<div class="section level2">
+<h2 id="visualization">Visualization<a class="anchor" aria-label="anchor" href="#visualization"></a>
+</h2>
+<p>To get an overview of tRNA features and compare different datasets,
+the function <code>gettRNAFeaturePlots</code> is used. It accepts a
+named <code>GRangesList</code> as input. Internally it will calculate a
+list of features values based on the functions mentioned above and the
+data contained in the mcols of the <code>GRanges</code> objects.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># load tRNA data for E. coli and H. sapiens</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"gr_eco"</span>, package <span class="op">=</span> <span class="st">"tRNA"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"gr_human"</span>, package <span class="op">=</span> <span class="st">"tRNA"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># get summary plots</span></span>
+<span><span class="va">grl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRangesList-class.html" class="external-link">GRangesList</a></span><span class="op">(</span>Sce <span class="op">=</span> <span class="va">gr</span>,</span>
+<span>                   Hsa <span class="op">=</span> <span class="va">gr_human</span>,</span>
+<span>                   Eco <span class="op">=</span> <span class="va">gr_eco</span><span class="op">)</span></span>
+<span><span class="va">plots</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gettRNAFeaturePlots.html">gettRNAFeaturePlots</a></span><span class="op">(</span><span class="va">grl</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">plots</span><span class="op">$</span><span class="va">length</span></span></code></pre></div>
 <div class="figure">
 <img src="tRNA_files/figure-html/plot1-1.png" alt="tRNA length." width="700"><p class="caption">
 tRNA length.
 </p>
 </div>
-<div class="sourceCode" id="cb13"><pre class="downlit">
-<span class="kw">plots</span><span class="op">$</span><span class="kw">tRNAscan_score</span>
-</pre></div>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">plots</span><span class="op">$</span><span class="va">tRNAscan_score</span></span></code></pre></div>
 <div class="figure">
 <img src="tRNA_files/figure-html/plot2-1.png" alt="tRNAscan-SE scores." width="700"><p class="caption">
 tRNAscan-SE scores.
 </p>
 </div>
-<div class="sourceCode" id="cb14"><pre class="downlit">
-<span class="kw">plots</span><span class="op">$</span><span class="kw">gc</span>
-</pre></div>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">plots</span><span class="op">$</span><span class="va">gc</span></span></code></pre></div>
 <div class="figure">
 <img src="tRNA_files/figure-html/plot3-1.png" alt="tRNA GC content." width="700"><p class="caption">
 tRNA GC content.
 </p>
 </div>
-<div class="sourceCode" id="cb15"><pre class="downlit">
-<span class="kw">plots</span><span class="op">$</span><span class="kw">tRNAscan_intron</span>
-</pre></div>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">plots</span><span class="op">$</span><span class="va">tRNAscan_intron</span></span></code></pre></div>
 <div class="figure">
 <img src="tRNA_files/figure-html/plot4-1.png" alt="tRNAs with introns." width="700"><p class="caption">
 tRNAs with introns.
 </p>
 </div>
-<div class="sourceCode" id="cb16"><pre class="downlit">
-<span class="kw">plots</span><span class="op">$</span><span class="kw">variableLoop_length</span>
-</pre></div>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">plots</span><span class="op">$</span><span class="va">variableLoop_length</span></span></code></pre></div>
 <div class="figure">
 <img src="tRNA_files/figure-html/plot5-1.png" alt="Length of the variable loop." width="700"><p class="caption">
 Length of the variable loop.
 </p>
 </div>
-<p>To access the results without generating plots, use the function <code>gettRNASummary</code>.</p>
-<p>To check whether features correlate with additional scores, optional arguments can be added to <code>gettRNAFeaturePlots</code> or used from the <code>score</code> column of the <code>GRanges</code> objects. For the first case a list of scores with the same dimensions as the <code>GRangesList</code> object has to be provided as the argument <code>scores</code>. For the latter case, just set the argument <code>plotScore = TRUE</code>.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit">
-<span class="co"># score column will be used</span>
-<span class="kw">plots</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gettRNAFeaturePlots.html">gettRNAFeaturePlots</a></span>(<span class="kw">grl</span>, plotScores = <span class="fl">TRUE</span>)
-</pre></div>
-<div class="sourceCode" id="cb18"><pre class="downlit">
-<span class="kw">plots</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gettRNAFeaturePlots.html">gettRNAFeaturePlots</a></span>(<span class="kw">grl</span>,
-                             scores = <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="kw">grl</span>[[<span class="fl">1L</span>]]),<span class="fl">0L</span>,<span class="fl">100L</span>),
-                                           <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="kw">grl</span>[[<span class="fl">2L</span>]]),<span class="fl">0L</span>,<span class="fl">100L</span>),
-                                           <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="kw">grl</span>[[<span class="fl">3L</span>]]),<span class="fl">0L</span>,<span class="fl">100L</span>)))
-</pre></div>
-<div class="sourceCode" id="cb19"><pre class="downlit">
-<span class="kw">plots</span><span class="op">$</span><span class="kw">length</span>
-</pre></div>
+<p>To access the results without generating plots, use the function
+<code>gettRNASummary</code>.</p>
+<p>To check whether features correlate with additional scores, optional
+arguments can be added to <code>gettRNAFeaturePlots</code> or used from
+the <code>score</code> column of the <code>GRanges</code> objects. For
+the first case a list of scores with the same dimensions as the
+<code>GRangesList</code> object has to be provided as the argument
+<code>scores</code>. For the latter case, just set the argument
+<code>plotScore = TRUE</code>.</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># score column will be used</span></span>
+<span><span class="va">plots</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gettRNAFeaturePlots.html">gettRNAFeaturePlots</a></span><span class="op">(</span><span class="va">grl</span>, plotScores <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">plots</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gettRNAFeaturePlots.html">gettRNAFeaturePlots</a></span><span class="op">(</span><span class="va">grl</span>,</span>
+<span>                             scores <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">grl</span><span class="op">[[</span><span class="fl">1L</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>,<span class="fl">0L</span>,<span class="fl">100L</span><span class="op">)</span>,</span>
+<span>                                           <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">grl</span><span class="op">[[</span><span class="fl">2L</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>,<span class="fl">0L</span>,<span class="fl">100L</span><span class="op">)</span>,</span>
+<span>                                           <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">grl</span><span class="op">[[</span><span class="fl">3L</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>,<span class="fl">0L</span>,<span class="fl">100L</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">plots</span><span class="op">$</span><span class="va">length</span></span></code></pre></div>
 <div class="figure">
 <img src="tRNA_files/figure-html/plot6-1.png" alt="tRNA length and score correlation." width="700"><p class="caption">
 tRNA length and score correlation.
 </p>
 </div>
-<div class="sourceCode" id="cb20"><pre class="downlit">
-<span class="kw">plots</span><span class="op">$</span><span class="kw">variableLoop_length</span>
-</pre></div>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">plots</span><span class="op">$</span><span class="va">variableLoop_length</span></span></code></pre></div>
 <div class="figure">
 <img src="tRNA_files/figure-html/plot7-1.png" alt="variable loop length and score correlation." width="700"><p class="caption">
 variable loop length and score correlation.
 </p>
 </div>
-<p>Since all plots returned by the functions mentioned above are <code>ggplot2</code> objects, they can be modified manually and changed to suit your needs.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit">
-<span class="kw">plots</span><span class="op">$</span><span class="kw">length</span><span class="op">$</span><span class="kw">layers</span> <span class="op">&lt;-</span> <span class="kw">plots</span><span class="op">$</span><span class="kw">length</span><span class="op">$</span><span class="kw">layers</span>[<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="op">-</span><span class="fl">1L</span>,<span class="op">-</span><span class="fl">2L</span>)]
-<span class="kw">plots</span><span class="op">$</span><span class="kw">length</span> <span class="op">+</span> <span class="kw">ggplot2</span>::<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html">geom_boxplot</a></span>()
-</pre></div>
+<p>Since all plots returned by the functions mentioned above are
+<code>ggplot2</code> objects, they can be modified manually and changed
+to suit your needs.</p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">plots</span><span class="op">$</span><span class="va">length</span><span class="op">$</span><span class="va">layers</span> <span class="op">&lt;-</span> <span class="va">plots</span><span class="op">$</span><span class="va">length</span><span class="op">$</span><span class="va">layers</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1L</span>,<span class="op">-</span><span class="fl">2L</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">plots</span><span class="op">$</span><span class="va">length</span> <span class="op">+</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html" class="external-link">geom_boxplot</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
 <img src="tRNA_files/figure-html/plot8-1.png" alt="Customized plot switching out the point and violin plot into a boxplot." width="700"><p class="caption">
 Customized plot switching out the point and violin plot into a boxplot.
 </p>
 </div>
 <p>In addition, the data of the plots can be accessed directly.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">plots</span><span class="op">$</span><span class="kw">length</span><span class="op">$</span><span class="kw">data</span>)
-</pre></div>
-<pre><code>##    id value    score
-## 1 Sce    71 12.33438
-## 2 Sce    72 80.37610
-## 3 Sce    80 59.73206
-## 4 Sce    81 38.94058
-## 5 Sce    82 96.24496
-## 6 Sce    72 68.28609</code></pre>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">plots</span><span class="op">$</span><span class="va">length</span><span class="op">$</span><span class="va">data</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">##    id value    score</span></span>
+<span><span class="co">## 1 Sce    71 88.46688</span></span>
+<span><span class="co">## 2 Sce    72 70.96746</span></span>
+<span><span class="co">## 3 Sce    80 11.07741</span></span>
+<span><span class="co">## 4 Sce    81 49.66890</span></span>
+<span><span class="co">## 5 Sce    82 60.77302</span></span>
+<span><span class="co">## 6 Sce    72 88.60789</span></span></code></pre>
 </div>
-<div id="options" class="section level1">
-<h1 class="hasAnchor">
-<a href="#options" class="anchor"></a>Options</h1>
-<p>The colours of the plots can be customized directly on creation with the following options.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span>(<span class="st">"tRNA_colour_palette"</span>)
-</pre></div>
-<pre><code>## $tRNA_colour_palette
-## [1] "Set1"</code></pre>
-<div class="sourceCode" id="cb26"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span>(<span class="st">"tRNA_colour_yes"</span>)
-</pre></div>
-<pre><code>## $tRNA_colour_yes
-## [1] "green"</code></pre>
-<div class="sourceCode" id="cb28"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span>(<span class="st">"tRNA_colour_no"</span>)
-</pre></div>
-<pre><code>## $tRNA_colour_no
-## [1] "red"</code></pre>
+<div class="section level2">
+<h2 id="options">Options<a class="anchor" aria-label="anchor" href="#options"></a>
+</h2>
+<p>The colours of the plots can be customized directly on creation with
+the following options.</p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span><span class="st">"tRNA_colour_palette"</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## $tRNA_colour_palette</span></span>
+<span><span class="co">## [1] "Set1"</span></span></code></pre>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span><span class="st">"tRNA_colour_yes"</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## $tRNA_colour_yes</span></span>
+<span><span class="co">## [1] "green"</span></span></code></pre>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span><span class="st">"tRNA_colour_no"</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## $tRNA_colour_no</span></span>
+<span><span class="co">## [1] "red"</span></span></code></pre>
 </div>
-<div id="dot-bracket-annotation" class="section level1">
-<h1 class="hasAnchor">
-<a href="#dot-bracket-annotation" class="anchor"></a>Dot bracket annotation</h1>
-<p>To retrieve detailed information on the base pairing the function <code><a href="../reference/gettRNABasePairing.html">gettRNABasePairing()</a></code> is used. Internally this will construct a <code>DotBracketStringSet</code> from the <code>tRNA_str</code> column, if this column does not already contain a <code>DotBracketStringSet</code>. It is then passed on to the <code><a href="https://rdrr.io/pkg/Structstrings/man/getBasePairing.html">Structstrings::getBasePairing</a></code> function.</p>
-<p>A valid DotBracket annotation is expected to contain only pairs of <code>&lt;&gt;{}[]()</code> and the <code>.</code> character (Please note the orientation. For <code>&lt;&gt;</code> the orientation is variable, since the tRNAscan files use the <code>&gt;&lt;</code> annotation by default. However upon creation of a <code>DotBracketStringSet</code> this annotation will be converted).</p>
-<div class="sourceCode" id="cb30"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="fu"><a href="../reference/gettRNABasePairing.html">gettRNABasePairing</a></span>(<span class="kw">gr</span>)[[<span class="fl">1L</span>]])
-</pre></div>
-<pre><code>## DotBracketDataFrame with 6 rows and 4 columns
-##         pos   forward   reverse   character
-##   &lt;integer&gt; &lt;integer&gt; &lt;integer&gt; &lt;character&gt;
-## 1         1         1        70           &lt;
-## 2         2         2        69           &lt;
-## 3         3         3        68           &lt;
-## 4         4         4        67           &lt;
-## 5         5         5        66           &lt;
-## 6         6         0         0           .</code></pre>
-<div class="sourceCode" id="cb32"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="fu"><a href="https://rdrr.io/pkg/Structstrings/man/getBasePairing.html">getBasePairing</a></span>(<span class="kw">gr</span>[<span class="fl">1L</span>]<span class="op">$</span><span class="kw">tRNA_str</span>)[[<span class="fl">1L</span>]])
-</pre></div>
-<pre><code>## DotBracketDataFrame with 6 rows and 4 columns
-##         pos   forward   reverse   character
-##   &lt;integer&gt; &lt;integer&gt; &lt;integer&gt; &lt;character&gt;
-## 1         1         1        70           &lt;
-## 2         2         2        69           &lt;
-## 3         3         3        68           &lt;
-## 4         4         4        67           &lt;
-## 5         5         5        66           &lt;
-## 6         6         0         0           .</code></pre>
-<p>The loop ids for the structure elements can be retrieved with the <code><a href="../reference/gettRNABasePairing.html">gettRNALoopIDs()</a></code> function, which relies on the <code><a href="https://rdrr.io/pkg/Structstrings/man/getBasePairing.html">Structstrings::getLoopIndices</a></code> function. (For more details, please have a look at the <code><a href="https://rdrr.io/pkg/Structstrings/man/getBasePairing.html">?getLoopIndices</a></code>)</p>
-<div class="sourceCode" id="cb34"><pre class="downlit">
-<span class="fu"><a href="../reference/gettRNABasePairing.html">gettRNALoopIDs</a></span>(<span class="kw">gr</span>)[[<span class="fl">1L</span>]]
-</pre></div>
-<pre><code>##  [1]  1  2  3  4  5  5  6  6  6  7  8  9  9  9  9  9  9  9  9  9  9  9  8  7  6
-## [26] 10 11 12 13 14 14 14 14 14 14 14 14 14 13 12 11 10  6  6  6  6 15 16 17 18
-## [51] 19 19 19 19 19 19 19 19 19 18 17 16 15  6  5  5  4  3  2  1  0</code></pre>
-<div class="sourceCode" id="cb36"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/pkg/Structstrings/man/getBasePairing.html">getLoopIndices</a></span>(<span class="kw">gr</span>[<span class="fl">1L</span>]<span class="op">$</span><span class="kw">tRNA_str</span>)
-</pre></div>
-<pre><code>## LoopIndexList of length 1
-## [[""]] 1 2 3 4 5 5 6 6 6 7 8 9 9 9 9 9 ... 19 19 19 18 17 16 15 6 5 5 4 3 2 1 0</code></pre>
+<div class="section level2">
+<h2 id="dot-bracket-annotation">Dot bracket annotation<a class="anchor" aria-label="anchor" href="#dot-bracket-annotation"></a>
+</h2>
+<p>To retrieve detailed information on the base pairing the function
+<code><a href="../reference/gettRNABasePairing.html">gettRNABasePairing()</a></code> is used. Internally this will
+construct a <code>DotBracketStringSet</code> from the
+<code>tRNA_str</code> column, if this column does not already contain a
+<code>DotBracketStringSet</code>. It is then passed on to the
+<code><a href="https://rdrr.io/pkg/Structstrings/man/getBasePairing.html" class="external-link">Structstrings::getBasePairing</a></code> function.</p>
+<p>A valid DotBracket annotation is expected to contain only pairs of
+<code>&lt;&gt;{}[]()</code> and the <code>.</code> character (Please
+note the orientation. For <code>&lt;&gt;</code> the orientation is
+variable, since the tRNAscan files use the <code>&gt;&lt;</code>
+annotation by default. However upon creation of a
+<code>DotBracketStringSet</code> this annotation will be converted).</p>
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/gettRNABasePairing.html">gettRNABasePairing</a></span><span class="op">(</span><span class="va">gr</span><span class="op">)</span><span class="op">[[</span><span class="fl">1L</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## DotBracketDataFrame with 6 rows and 4 columns</span></span>
+<span><span class="co">##         pos   forward   reverse   character</span></span>
+<span><span class="co">##   &lt;integer&gt; &lt;integer&gt; &lt;integer&gt; &lt;character&gt;</span></span>
+<span><span class="co">## 1         1         1        70           &lt;</span></span>
+<span><span class="co">## 2         2         2        69           &lt;</span></span>
+<span><span class="co">## 3         3         3        68           &lt;</span></span>
+<span><span class="co">## 4         4         4        67           &lt;</span></span>
+<span><span class="co">## 5         5         5        66           &lt;</span></span>
+<span><span class="co">## 6         6         0         0           .</span></span></code></pre>
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/Structstrings/man/getBasePairing.html" class="external-link">getBasePairing</a></span><span class="op">(</span><span class="va">gr</span><span class="op">[</span><span class="fl">1L</span><span class="op">]</span><span class="op">$</span><span class="va">tRNA_str</span><span class="op">)</span><span class="op">[[</span><span class="fl">1L</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## DotBracketDataFrame with 6 rows and 4 columns</span></span>
+<span><span class="co">##         pos   forward   reverse   character</span></span>
+<span><span class="co">##   &lt;integer&gt; &lt;integer&gt; &lt;integer&gt; &lt;character&gt;</span></span>
+<span><span class="co">## 1         1         1        70           &lt;</span></span>
+<span><span class="co">## 2         2         2        69           &lt;</span></span>
+<span><span class="co">## 3         3         3        68           &lt;</span></span>
+<span><span class="co">## 4         4         4        67           &lt;</span></span>
+<span><span class="co">## 5         5         5        66           &lt;</span></span>
+<span><span class="co">## 6         6         0         0           .</span></span></code></pre>
+<p>The loop ids for the structure elements can be retrieved with the
+<code><a href="../reference/gettRNABasePairing.html">gettRNALoopIDs()</a></code> function, which relies on the
+<code><a href="https://rdrr.io/pkg/Structstrings/man/getBasePairing.html" class="external-link">Structstrings::getLoopIndices</a></code> function. (For more details,
+please have a look at the <code><a href="https://rdrr.io/pkg/Structstrings/man/getBasePairing.html" class="external-link">?getLoopIndices</a></code>)</p>
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/gettRNABasePairing.html">gettRNALoopIDs</a></span><span class="op">(</span><span class="va">gr</span><span class="op">)</span><span class="op">[[</span><span class="fl">1L</span><span class="op">]</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">##  [1]  1  2  3  4  5  5  6  6  6  7  8  9  9  9  9  9  9  9  9  9  9  9  8  7  6</span></span>
+<span><span class="co">## [26] 10 11 12 13 14 14 14 14 14 14 14 14 14 13 12 11 10  6  6  6  6 15 16 17 18</span></span>
+<span><span class="co">## [51] 19 19 19 19 19 19 19 19 19 18 17 16 15  6  5  5  4  3  2  1  0</span></span></code></pre>
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/Structstrings/man/getBasePairing.html" class="external-link">getLoopIndices</a></span><span class="op">(</span><span class="va">gr</span><span class="op">[</span><span class="fl">1L</span><span class="op">]</span><span class="op">$</span><span class="va">tRNA_str</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## LoopIndexList of length 1</span></span>
+<span><span class="co">## [[""]] 1 2 3 4 5 5 6 6 6 7 8 9 9 9 9 9 ... 19 19 19 18 17 16 15 6 5 5 4 3 2 1 0</span></span></code></pre>
 </div>
-<div id="session-info" class="section level1">
-<h1 class="hasAnchor">
-<a href="#session-info" class="anchor"></a>Session info</h1>
-<div class="sourceCode" id="cb38"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span>()
-</pre></div>
-<pre><code>## R version 4.0.2 (2020-06-22)
-## Platform: x86_64-pc-linux-gnu (64-bit)
-## Running under: Ubuntu 18.04.4 LTS
-## 
-## Matrix products: default
-## BLAS:   /usr/lib/x86_64-linux-gnu/openblas/libblas.so.3
-## LAPACK: /usr/lib/x86_64-linux-gnu/libopenblasp-r0.2.20.so
-## 
-## locale:
-##  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       
-##  [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   
-##  [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          
-## [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   
-## 
-## attached base packages:
-## [1] parallel  stats4    stats     graphics  grDevices utils     datasets 
-## [8] methods   base     
-## 
-## other attached packages:
-##  [1] tRNA_1.7.1           Structstrings_1.4.0  Biostrings_2.56.0   
-##  [4] XVector_0.28.0       GenomicRanges_1.40.0 GenomeInfoDb_1.24.2 
-##  [7] IRanges_2.22.2       S4Vectors_0.26.1     BiocGenerics_0.34.0 
-## [10] BiocStyle_2.16.0    
-## 
-## loaded via a namespace (and not attached):
-##  [1] assertive.properties_0.0-4   assertive.types_0.0-3       
-##  [3] assertive.data.us_0.0-2      assertthat_0.2.1            
-##  [5] rprojroot_1.3-2              digest_0.6.25               
-##  [7] R6_2.4.1                     backports_1.1.8             
-##  [9] evaluate_0.14                assertive.code_0.0-3        
-## [11] ggplot2_3.3.2                highr_0.8                   
-## [13] pillar_1.4.6                 assertive.strings_0.0-3     
-## [15] zlibbioc_1.34.0              rlang_0.4.7                 
-## [17] assertive_0.3-5.1            assertive.data_0.0-3        
-## [19] rmarkdown_2.3.2              pkgdown_1.5.1.9000          
-## [21] desc_1.2.0                   labeling_0.3                
-## [23] stringr_1.4.0                RCurl_1.98-1.2              
-## [25] munsell_0.5.0                compiler_4.0.2              
-## [27] xfun_0.15                    pkgconfig_2.0.3             
-## [29] htmltools_0.5.0              tibble_3.0.3                
-## [31] GenomeInfoDbData_1.2.3       bookdown_0.20               
-## [33] assertive.sets_0.0-3         codetools_0.2-16            
-## [35] crayon_1.3.4                 withr_2.2.0                 
-## [37] bitops_1.0-6                 grid_4.0.2                  
-## [39] assertive.base_0.0-7         gtable_0.3.0                
-## [41] lifecycle_0.2.0              magrittr_1.5                
-## [43] assertive.models_0.0-2       scales_1.1.1                
-## [45] stringi_1.4.6                farver_2.0.3                
-## [47] fs_1.4.2                     assertive.matrices_0.0-2    
-## [49] assertive.reflection_0.0-4.1 ellipsis_0.3.1              
-## [51] assertive.datetimes_0.0-2    vctrs_0.3.2                 
-## [53] RColorBrewer_1.1-2           tools_4.0.2                 
-## [55] glue_1.4.1                   assertive.numbers_0.0-2     
-## [57] yaml_2.2.1                   colorspace_1.4-1            
-## [59] BiocManager_1.30.10          assertive.files_0.0-2       
-## [61] assertive.data.uk_0.0-2      memoise_1.1.0               
-## [63] knitr_1.29                   Modstrings_1.4.0</code></pre>
+<div class="section level2">
+<h2 id="session-info">Session info<a class="anchor" aria-label="anchor" href="#session-info"></a>
+</h2>
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## R Under development (unstable) (2024-03-20 r86162)</span></span>
+<span><span class="co">## Platform: x86_64-pc-linux-gnu</span></span>
+<span><span class="co">## Running under: Ubuntu 22.04.4 LTS</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Matrix products: default</span></span>
+<span><span class="co">## BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
+<span><span class="co">## LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.20.so;  LAPACK version 3.10.0</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## locale:</span></span>
+<span><span class="co">##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              </span></span>
+<span><span class="co">##  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    </span></span>
+<span><span class="co">##  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   </span></span>
+<span><span class="co">##  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 </span></span>
+<span><span class="co">##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            </span></span>
+<span><span class="co">## [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## time zone: UTC</span></span>
+<span><span class="co">## tzcode source: system (glibc)</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## attached base packages:</span></span>
+<span><span class="co">## [1] stats4    stats     graphics  grDevices utils     datasets  methods  </span></span>
+<span><span class="co">## [8] base     </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## other attached packages:</span></span>
+<span><span class="co">##  [1] tRNA_1.21.1          Structstrings_1.19.1 Biostrings_2.71.5   </span></span>
+<span><span class="co">##  [4] XVector_0.43.1       GenomicRanges_1.55.4 GenomeInfoDb_1.39.9 </span></span>
+<span><span class="co">##  [7] IRanges_2.37.1       S4Vectors_0.41.5     BiocGenerics_0.49.1 </span></span>
+<span><span class="co">## [10] BiocStyle_2.31.0    </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## loaded via a namespace (and not attached):</span></span>
+<span><span class="co">##  [1] gtable_0.3.4            xfun_0.42               bslib_0.6.2            </span></span>
+<span><span class="co">##  [4] ggplot2_3.5.0           vctrs_0.6.5             tools_4.4.0            </span></span>
+<span><span class="co">##  [7] bitops_1.0-7            generics_0.1.3          tibble_3.2.1           </span></span>
+<span><span class="co">## [10] fansi_1.0.6             highr_0.10              pkgconfig_2.0.3        </span></span>
+<span><span class="co">## [13] RColorBrewer_1.1-3      desc_1.4.3              lifecycle_1.0.4        </span></span>
+<span><span class="co">## [16] GenomeInfoDbData_1.2.11 compiler_4.4.0          farver_2.1.1           </span></span>
+<span><span class="co">## [19] stringr_1.5.1           textshaping_0.3.7       munsell_0.5.0          </span></span>
+<span><span class="co">## [22] Modstrings_1.19.0       htmltools_0.5.7         sass_0.4.9             </span></span>
+<span><span class="co">## [25] RCurl_1.98-1.14         yaml_2.3.8              pkgdown_2.0.7          </span></span>
+<span><span class="co">## [28] pillar_1.9.0            crayon_1.5.2            jquerylib_0.1.4        </span></span>
+<span><span class="co">## [31] cachem_1.0.8            tidyselect_1.2.1        digest_0.6.35          </span></span>
+<span><span class="co">## [34] stringi_1.8.3           dplyr_1.1.4             purrr_1.0.2            </span></span>
+<span><span class="co">## [37] bookdown_0.38           labeling_0.4.3          fastmap_1.1.1          </span></span>
+<span><span class="co">## [40] grid_4.4.0              colorspace_2.1-0        cli_3.6.2              </span></span>
+<span><span class="co">## [43] magrittr_2.0.3          utf8_1.2.4              withr_3.0.0            </span></span>
+<span><span class="co">## [46] scales_1.3.0            rmarkdown_2.26          ragg_1.3.0             </span></span>
+<span><span class="co">## [49] memoise_2.0.1           evaluate_0.23           knitr_1.45             </span></span>
+<span><span class="co">## [52] rlang_1.1.3             glue_1.7.0              BiocManager_1.30.22    </span></span>
+<span><span class="co">## [55] jsonlite_1.8.8          R6_2.5.1                systemfonts_1.0.6      </span></span>
+<span><span class="co">## [58] fs_1.6.3                zlibbioc_1.49.3</span></span></code></pre>
 </div>
   </div>
 
@@ -455,11 +480,13 @@ Customized plot switching out the point and violin plot into a boxplot.
 
 
       <footer><div class="copyright">
-  <p>Developed by Felix GM Ernst.</p>
+  <p></p>
+<p>Developed by Felix GM Ernst.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>
@@ -467,6 +494,8 @@ Customized plot switching out the point and violin plot into a boxplot.
 
   
 
+
+  
 
   </body>
 </html>

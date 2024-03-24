@@ -2,6 +2,7 @@
 % Please edit documentation in R/tRNA.R
 \docType{package}
 \name{tRNA}
+\alias{tRNA-package}
 \alias{tRNA}
 \title{tRNA: analyzing tRNA sequences and structures}
 \description{
@@ -17,6 +18,13 @@ requirements.
 
 Have a look at the vignette for an overview of the functionality. Additional
 functions are planned to be added in the future.
+}
+\seealso{
+Useful links:
+\itemize{
+  \item Report bugs at \url{https://github.com/FelixErnst/tRNA/issues}
+}
+
 }
 \author{
 Felix G M Ernst [aut]

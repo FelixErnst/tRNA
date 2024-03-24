@@ -261,10 +261,10 @@ setMethod(
     min <- min(df[[name]]$value)
     max <- max(df[[name]]$value)
     plot <- ggplot2::ggplot(df[[name]],
-                            ggplot2::aes_(x = ~score,
-                                          y = ~value,
-                                          group = ~id,
-                                          colour = ~id)) +
+                            ggplot2::aes(x = !!ggplot2::sym('score'),
+                                         y = !!ggplot2::sym('value'),
+                                         group = !!ggplot2::sym('id'),
+                                         colour = !!ggplot2::sym('id'))) +
       ggplot2::scale_y_continuous(name = writtenNames[[name]]) +
       ggplot2::scale_colour_brewer(name = "Sample",
                                    palette = colour_palette) + 
@@ -282,10 +282,10 @@ setMethod(
   if(!is.na(dataType[[name]]) &&
      dataType[[name]] == "percent"){
     plot <- ggplot2::ggplot(df[[name]],
-                            ggplot2::aes_(x = ~score,
-                                          y = ~value,
-                                          group = ~id,
-                                          colour = ~id)) +
+                            ggplot2::aes(x = !!ggplot2::sym('score'),
+                                         y = !!ggplot2::sym('value'),
+                                         group = !!ggplot2::sym('id'),
+                                         colour = !!ggplot2::sym('id'))) +
       ggplot2::geom_point() +
       ggplot2::scale_y_continuous(name = writtenNames[[name]],
                                   breaks = c(0,0.25,0.5,0.75,1),
@@ -302,10 +302,10 @@ setMethod(
     df[[name]][df[[name]]$value == 1,"value"] <- "Yes"
     df[[name]][df[[name]]$value == 0,"value"] <- "No"
     plot <- ggplot2::ggplot(df[[name]],
-                            ggplot2::aes_(x = ~score,
-                                          y = ~value,
-                                          group = ~id,
-                                          colour = ~id)) +
+                            ggplot2::aes(x = !!ggplot2::sym('score'),
+                                         y = !!ggplot2::sym('value'),
+                                         group = !!ggplot2::sym('id'),
+                                         colour = !!ggplot2::sym('id'))) +
       ggplot2::geom_jitter(height = 0.2) +
       ggplot2::scale_y_discrete(name = writtenNames[[name]]) +
       ggplot2::scale_colour_brewer(name = "Sample",
@@ -329,9 +329,9 @@ setMethod(
     min <- min(df[[name]]$value)
     max <- max(df[[name]]$value)
     plot <- ggplot2::ggplot(df[[name]],
-                            ggplot2::aes_(x = ~id,
-                                          y = ~value,
-                                          colour = ~id)) +
+                            ggplot2::aes(x = !!ggplot2::sym('id'),
+                                         y = !!ggplot2::sym('value'),
+                                         colour = !!ggplot2::sym('id'))) +
       ggplot2::geom_violin(scale = "width") +
       ggplot2::geom_jitter(width = 0.2,
                            height = 0.2) +
@@ -369,9 +369,9 @@ setMethod(
     df[[name]][df[[name]]$value == 1,"value"] <- "Yes"
     df[[name]][df[[name]]$value == 0,"value"] <- "No"
     plot <- ggplot2::ggplot(df[[name]],
-                            ggplot2::aes_(x = ~id,
-                                          y = ~(ggplot2::after_stat(count)/sum(ggplot2::after_stat(count))),
-                                          fill = ~colour)) +
+                            ggplot2::aes(x = !!ggplot2::sym('id'),
+                                         y = ggplot2::after_stat(count)/sum(ggplot2::after_stat(count)),
+                                         fill = !!ggplot2::sym('colour'))) +
       ggplot2::geom_bar(position = "fill") +
       ggplot2::scale_x_discrete(name = "Sample") +
       ggplot2::scale_y_continuous(name = writtenNames[[name]],

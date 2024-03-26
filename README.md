@@ -1,9 +1,9 @@
-# tRNA <img src="https://raw.githubusercontent.com/Bioconductor/BiocStickers/master/tRNA/tRNA.png" height="200" align="right">
+# tRNA <img src="https://raw.githubusercontent.com/Bioconductor/BiocStickers/devel/tRNA/tRNA.png" height="200" align="right">
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/FelixErnst/tRNA/workflows/R-CMD-check-bioc-devel/badge.svg)](https://github.com/FelixErnst/tRNA/actions/)
 [![BioC Build](https://bioconductor.org/shields/build/release/bioc/tRNA.svg)](http://bioconductor.org/checkResults/release/bioc-LATEST/tRNA/)
-[![codecov](https://codecov.io/gh/FelixErnst/tRNA/branch/master/graph/badge.svg)](https://codecov.io/gh/FelixErnst/tRNA)
+[![codecov](https://codecov.io/gh/FelixErnst/tRNA/branch/devel/graph/badge.svg)](https://codecov.io/gh/FelixErnst/tRNA)
 [![BioC Years](https://bioconductor.org/shields/years-in-bioc/tRNA.svg)](https://doi.org/doi:10.18129/B9.bioc.tRNA)
 <!-- badges: end -->
 
